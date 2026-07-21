@@ -1,6 +1,9 @@
 # weavatrix-refactor
 
-> **Status: pre-release scaffold. Nothing is published, nothing is functional yet.**
+> **Status: pre-release, not yet published to npm.** The apply side
+> (`apply_edit_plan`, `rollback_last_apply`) is implemented and tested (41 tests,
+> including a live stdio end-to-end run). The core preview tools that produce
+> edit plans are still landing in the `weavatrix` core and are not released yet.
 
 The only Weavatrix component that writes code.
 
@@ -32,12 +35,12 @@ consent step.
 This package never invents edits. It executes only plans the read-only core
 computed, proved, and hashed.
 
-## Planned tools
+## Tools
 
-| Tool | Purpose |
-| --- | --- |
-| `apply_edit_plan` | Apply a hash-bound edit plan issued by a core preview tool |
-| `rollback_last_apply` | Restore the pre-apply state from the rollback bundle |
+| Tool | Status | Purpose |
+| --- | --- | --- |
+| `apply_edit_plan` | implemented | Apply a hash-bound edit plan issued by a core preview tool (preview → single-use confirm token → atomic apply) |
+| `rollback_last_apply` | implemented | Restore the pre-apply state from the rollback bundle; retries converge, never wedge |
 
 Gating (all three required to write anything): this package installed and its
 `refactor` profile selected · `WEAVATRIX_ALLOW_SOURCE_EDITS=1` in the
