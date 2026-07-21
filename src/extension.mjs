@@ -17,4 +17,7 @@ export const refactorExtension = () => defineWeavatrixExtension({
     // Tools land here once the edit engine exists: apply_edit_plan, rollback_last_apply.
     // They are registered with cap 'edit' so no core profile can ever enable them.
     tools: [],
+    skills: [
+        {name: 'weavatrix-refactor', path: 'skill/SKILL.md'},
+    ],
 })

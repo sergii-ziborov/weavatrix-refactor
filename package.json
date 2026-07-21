@@ -23,6 +23,7 @@
   "files": [
     "bin",
     "src",
+    "skill",
     "docs",
     "README.md",
     "LICENSE",
