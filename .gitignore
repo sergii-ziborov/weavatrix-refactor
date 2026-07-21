@@ -1,0 +1,4 @@
+node_modules/
+.weavatrix/
+*.tgz
+.DS_Store

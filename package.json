@@ -1,0 +1,49 @@
+{
+  "name": "weavatrix-refactor",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "The only Weavatrix component that writes code. Applies hash-verified edit plans computed and proven by the read-only weavatrix core: preview in core, confirm token, apply here, rollback always possible.",
+  "author": "Sergii Ziborov <sergii.ziborov@gmail.com>",
+  "license": "Apache-2.0",
+  "homepage": "https://weavatrix.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sergii-ziborov/weavatrix-refactor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sergii-ziborov/weavatrix-refactor/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "weavatrix-refactor-mcp": "bin/weavatrix-refactor-mcp.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "docs",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "refactoring",
+    "rename-symbol",
+    "safe-refactoring",
+    "code-edit",
+    "weavatrix",
+    "claude",
+    "coding-agents",
+    "ai-agents"
+  ],
+  "dependencies": {
+    "weavatrix": "^0.3.11"
+  }
+}
