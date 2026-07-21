@@ -50,9 +50,10 @@ compatible-pair release.
 2. **`before` is mandatory** on every edit: the applier re-verifies not just
    the file hash but the exact text at the range before splicing. Any
    mismatch fails the whole plan closed — no partial applies.
-3. **Only `EXACT_LSP` / `RESOLVED` provenance edits may appear in `files`.**
-   Anything uncertain goes to `uncertainReferences` / `notModified`. A plan
-   never edits what it cannot prove.
+3. **Only `EXACT_LSP` / `RESOLVED` / `EXTRACTED` provenance edits may appear in
+   `files`** (`EXTRACTED` covers the declaration site itself, whose range the
+   parser owns exactly). `INFERRED`/`CONFLICT` evidence goes to
+   `uncertainReferences` / `notModified`. A plan never edits what it cannot prove.
 4. Edits within a file are applied **bottom-up** (descending offset) so
    earlier splices never invalidate later ranges.
 5. The applier writes a **rollback bundle** (original file contents) before

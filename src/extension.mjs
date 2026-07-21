@@ -1,5 +1,6 @@
 import {createRequire} from 'node:module'
 import {defineWeavatrixExtension} from 'weavatrix/extension-api'
+import {refactorTools} from './tools.mjs'
 
 const pkg = createRequire(import.meta.url)('../package.json')
 
@@ -14,9 +15,9 @@ export const refactorExtension = () => defineWeavatrixExtension({
     profiles: {
         refactor: [...CORE_CAPS, 'edit'],
     },
-    // Tools land here once the edit engine exists: apply_edit_plan, rollback_last_apply.
-    // They are registered with cap 'edit' so no core profile can ever enable them.
-    tools: [],
+    // Both tools carry cap 'edit' so no core profile can ever enable them; the environment
+    // write gate and the single-use confirm token are enforced inside the tools themselves.
+    tools: refactorTools(),
     skills: [
         {name: 'weavatrix-refactor', path: 'skill/SKILL.md'},
     ],

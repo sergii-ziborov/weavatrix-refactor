@@ -78,3 +78,8 @@ edits with your own editor, then run `verified_change phase=verify` as usual.
 - `WRITE_GATE_CLOSED` → set `WEAVATRIX_ALLOW_SOURCE_EDITS=1` on the server (a deliberate,
   user-visible choice) or apply the plan manually with your editor.
 - `ROLLED_BACK` → originals were restored; inspect the reported failing file before retrying.
+- `ROLLBACK_INCOMPLETE` → some files could not be restored (locked/read-only); the bundle is
+  kept. Unblock the listed files and run `rollback_last_apply` again — retries converge.
+- `REPO_BUSY` → another apply/rollback holds the per-repository lock; retry shortly.
+- `PATH_ESCAPES_REPO` / `EDIT_PRODUCES_INVALID_TEXT` / `FILE_TOO_LARGE` → the plan or tree
+  violates a write-safety invariant; nothing was written — fix the plan, do not force it.
