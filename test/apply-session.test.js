@@ -115,6 +115,18 @@ test('plan paths cannot escape the repository', () => {
     )
 })
 
+test('LEXICAL_EXACT provenance (bulk_replace plans) applies end-to-end', () => {
+    const sha = writeRepoFile('src/a.js', 'callApi("v1")\n')
+    const plan = {
+        schemaVersion: 'weavatrix.edit-plan.v1',
+        operation: 'bulk_replace',
+        files: [{path: 'src/a.js', sha256: sha, edits: [{startLine: 1, startChar: 8, endLine: 1, endChar: 12, before: '"v1"', after: '"v2"', provenance: 'LEXICAL_EXACT'}]}],
+    }
+    const applied = applyPlan(plan, {repoRoot})
+    assert.equal(applied.status, 'APPLIED')
+    assert.equal(readFileSync(join(repoRoot, 'src/a.js'), 'utf8'), 'callApi("v2")\n')
+})
+
 test('missing file reports MISSING, not a crash', () => {
     const result = dryRunPlan(planFor([{path: 'nope.js', sha256: 'a'.repeat(64), edits: [renameEdit]}]), {repoRoot})
     assert.equal(result.ok, false)

@@ -6,7 +6,10 @@ export const EDIT_PLAN_SCHEMA = 'weavatrix.edit-plan.v1'
 
 // Only provenance tiers that carry exact, proven ranges may be applied. INFERRED and
 // CONFLICT evidence belongs in uncertainReferences/notModified, never in edits.
-export const APPLYABLE_PROVENANCE = new Set(['EXACT_LSP', 'RESOLVED', 'EXTRACTED'])
+// LEXICAL_EXACT marks pattern-level edits (bulk_replace): their proof is the byte-exact
+// before-text itself, re-verified under the file hash at apply time — an honest label,
+// not a claim of parser or language-server evidence.
+export const APPLYABLE_PROVENANCE = new Set(['EXACT_LSP', 'RESOLVED', 'EXTRACTED', 'LEXICAL_EXACT'])
 
 const MAX_FILES = 500
 const MAX_EDITS_PER_FILE = 2000
