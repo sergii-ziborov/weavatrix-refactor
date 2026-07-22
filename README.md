@@ -2,8 +2,7 @@
 
 The refactoring layer of Weavatrix — **the only component that writes code.**
 
-It sits in the middle of the stack: `weavatrix-online ⊃ weavatrix-refactor ⊃
-weavatrix`. Install this one package and you get the full read-only
+Install this one package and you get the full read-only
 [weavatrix](https://github.com/sergii-ziborov/weavatrix) core (34 offline
 analysis tools) plus the 11 tools that turn its proven analysis into applied,
 reversible edits.
@@ -69,6 +68,21 @@ behind them — this package installed with its `refactor` profile selected (the
 to the exact file hashes of the plan; `rollback_last_apply` restores the
 pre-apply state from the last rollback bundle and takes no token.
 
+## What you also get from the core
+
+Installing `weavatrix-refactor` bundles the full MIT `weavatrix` core — all 34
+read-only tools, unchanged — in the same MCP server. The refactoring tools above
+build directly on them:
+
+- **Understand** — `module_map`, `list_communities`, `god_nodes`, `query_graph`, `shortest_path`, `search_code`, `read_source`, `inspect_symbol`, `context_bundle`
+- **Impact & safety** — `change_impact`, `get_dependents`, `coverage_map`, `hot_path_review`, `prepare_change`, `verified_change`
+- **Health & evidence** — `run_audit`, `find_dead_code`, `find_duplicates`, `git_history`, `graph_diff`
+- **Endpoints & contracts** — `list_endpoints`, `trace_endpoint`, `trace_api_contract`
+- **Architecture** — `get_architecture_contract`, `verify_architecture`, `explain_architecture_violation`, `propose_architecture_exception`
+- **Graph & repos** — `graph_stats`, `get_node`, `get_neighbors`, `get_community`, `rebuild_graph`, `open_repo`, `list_known_repos`
+
+See the [weavatrix README](https://github.com/sergii-ziborov/weavatrix) for the full core reference.
+
 ## Install
 
 ```bash
@@ -78,13 +92,12 @@ npx -y weavatrix-refactor <repoRoot>
 Or wire it as an MCP server (stdio). Set `WEAVATRIX_ALLOW_SOURCE_EDITS=1` only
 when you want the apply tools to be able to write.
 
-## Relationship to the Weavatrix family
+## Relationship to the core
 
 | Package | License | Nature |
 | --- | --- | --- |
 | `weavatrix` | MIT | Read-only analysis, previews, evidence — cannot write |
 | `weavatrix-refactor` | Apache-2.0 | **Writes code** — produces and applies proven plans, with rollback |
-| `weavatrix-online` | WOSL 1.0 | Paid intelligence — composes this layer, adds sync and advisories |
 
 It extends the MIT engine through its supported extension API
 (`weavatrix/extension-api`) and read-only analysis surface
