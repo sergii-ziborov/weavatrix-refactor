@@ -1,6 +1,7 @@
 import {createRequire} from 'node:module'
 import {defineWeavatrixExtension} from 'weavatrix/extension-api'
 import {refactorTools} from './tools.mjs'
+import {planTools} from './plan-tools.mjs'
 
 const pkg = createRequire(import.meta.url)('../package.json')
 
@@ -15,9 +16,11 @@ export const refactorExtension = () => defineWeavatrixExtension({
     profiles: {
         refactor: [...CORE_CAPS, 'edit'],
     },
-    // Both tools carry cap 'edit' so no core profile can ever enable them; the environment
-    // write gate and the single-use confirm token are enforced inside the tools themselves.
-    tools: refactorTools(),
+    // apply/rollback carry cap 'edit' (gated by the write env + confirm token); the
+    // plan-producer refactoring tools are read-only cap 'graph'. Together weavatrix-refactor
+    // is the full refactoring MCP: produce a proven plan, then apply it. The core catalog
+    // registers none of these — refactoring requires installing this package.
+    tools: [...refactorTools(), ...planTools()],
     skills: [
         {name: 'weavatrix-refactor', path: 'skill/SKILL.md'},
     ],

@@ -45,6 +45,7 @@
     "ai-agents"
   ],
   "dependencies": {
+    "typescript": "5.9.3",
     "weavatrix": "^0.3.11"
   }
 }
