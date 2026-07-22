@@ -1,7 +1,6 @@
 {
   "name": "weavatrix-refactor",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.1.0",
   "type": "module",
   "description": "The only Weavatrix component that writes code. Applies hash-verified edit plans computed and proven by the read-only weavatrix core: preview in core, confirm token, apply here, rollback always possible.",
   "author": "Sergii Ziborov <sergii.ziborov@gmail.com>",
@@ -14,6 +13,7 @@
   "bugs": {
     "url": "https://github.com/sergii-ziborov/weavatrix-refactor/issues"
   },
+  "mcpName": "io.github.sergii-ziborov/weavatrix-refactor",
   "engines": {
     "node": ">=18"
   },
@@ -31,10 +31,15 @@
     "docs",
     "README.md",
     "LICENSE",
-    "NOTICE"
+    "NOTICE",
+    "server.json"
   ],
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "verify:release": "node src/release-gate.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "mcp",
@@ -50,6 +55,6 @@
   ],
   "dependencies": {
     "typescript": "5.9.3",
-    "weavatrix": "^0.3.11"
+    "weavatrix": "^0.3.12"
   }
 }

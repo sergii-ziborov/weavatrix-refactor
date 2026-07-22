@@ -1,0 +1,27 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.sergii-ziborov/weavatrix-refactor",
+  "description": "The refactoring layer of Weavatrix: applies hash-verified edit plans proven by the read-only core. Preview in core, confirm token, apply here, rollback always possible.",
+  "repository": {"url": "https://github.com/sergii-ziborov/weavatrix-refactor", "source": "github"},
+  "version": "0.1.0",
+  "websiteUrl": "https://weavatrix.com",
+  "packages": [{
+    "registryType": "npm",
+    "registryBaseUrl": "https://registry.npmjs.org",
+    "identifier": "weavatrix-refactor",
+    "version": "0.1.0",
+    "runtimeHint": "npx",
+    "transport": {"type": "stdio"},
+    "packageArguments": [{
+      "type": "positional",
+      "valueHint": "repoRoot",
+      "description": "Absolute path to the initial local Git repository",
+      "isRequired": true
+    }],
+    "environmentVariables": [
+      {"name": "WEAVATRIX_ALLOW_SOURCE_EDITS", "description": "Set to 1 to authorize apply_edit_plan and rollback to write source files; unset, the refactor tools stay preview-only", "format": "string", "isRequired": false},
+      {"name": "WEAVATRIX_REFACTOR_HOME", "description": "Optional directory for the rollback snapshot store; defaults to a per-repo location", "format": "string", "isRequired": false},
+      {"name": "WEAVATRIX_PRECISION", "description": "Core semantic precision: lsp (default) or off", "format": "string", "isRequired": false}
+    ]
+  }]
+}
