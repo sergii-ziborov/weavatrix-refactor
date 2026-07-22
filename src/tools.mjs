@@ -1,7 +1,7 @@
 // MCP tools of the refactor extension. Contract with the core server:
 // run(graph, args, ctx) -> toolResult(text, result, extra); ctx carries {repoRoot, graphPath}.
-// These are the only tools in the Weavatrix family that write repository source, and both
-// sit behind the environment write gate plus (for apply) a single-use confirm token.
+// Shared write machinery for every Weavatrix refactor workflow. Every write sits behind
+// the environment gate plus a single-use, plan-bound confirm token.
 
 import {toolResult} from 'weavatrix/extension/local-services'
 import {PlanValidationError} from './edit-plan.mjs'
@@ -26,7 +26,7 @@ const invalidPlanResult = (error) => toolResult(
 
 const fileLines = (files) => files.map((file) => `- ${file.path}: ${file.status}${file.reason ? ` (${file.reason})` : ''}${file.edits ? ` [${file.edits} edits]` : ''}`).join('\n')
 
-function previewRun(plan, ctx) {
+function previewRun(plan, ctx, toolName = 'apply_edit_plan') {
     const dryRun = dryRunPlan(plan, {repoRoot: ctx.repoRoot})
     if (!dryRun.ok) {
         const files = dryRun.files.map(({path, status, reason}) => ({path, status, ...(reason ? {reason} : {})}))
@@ -42,13 +42,13 @@ function previewRun(plan, ctx) {
         `PREVIEW_OK — every file hash and every 'before' text matches; the plan is applyable as-is.`,
         fileLines(files),
         uncertain ? `${uncertain} uncertainReferences remain outside this plan — they stay your responsibility after apply.` : null,
-        `To apply: call apply_edit_plan again with mode="apply" and confirm_token="${token}" within ${Math.round(TOKEN_TTL_MS / 60000)} minutes. The token is single-use and bound to this exact plan and working tree.`,
+        `To apply: call ${toolName} again with the same operation inputs, mode="apply", and confirm_token="${token}" within ${Math.round(TOKEN_TTL_MS / 60000)} minutes. The token is single-use and bound to this exact plan and working tree.`,
     ].filter(Boolean).join('\n')
     return toolResult(text, {status: 'PREVIEW_OK', files, confirmToken: token, expiresAt, uncertainReferences: uncertain})
 }
 
-function applyRun(plan, args, ctx) {
-    if (!writeGateOpen()) return gateClosedResult('apply_edit_plan')
+function applyRun(plan, args, ctx, toolName = 'apply_edit_plan') {
+    if (!writeGateOpen()) return gateClosedResult(toolName)
     const consumed = consumeConfirmToken({token: args.confirm_token, plan, repoRoot: ctx.repoRoot})
     if (!consumed.ok) return toolResult(`${consumed.code}: ${consumed.reason}. Nothing was written.`, {status: consumed.code, reason: consumed.reason})
     const applied = applyPlan(plan, {repoRoot: ctx.repoRoot})
@@ -72,6 +72,38 @@ function applyRun(plan, args, ctx) {
     return toolResult(applied.files ? `${headline}\n${fileLines(applied.files)}` : headline, applied)
 }
 
+const planningSummary = (planning = {}) => ({
+    ...(planning.completeness ? {completeness: planning.completeness} : {}),
+    ...(planning.backend ? {backend: planning.backend} : {}),
+    ...(planning.kind ? {kind: planning.kind} : {}),
+    ...(planning.oldName ? {oldName: planning.oldName} : {}),
+    ...(planning.newName ? {newName: planning.newName} : {}),
+    ...(Array.isArray(planning.renames) ? {renameCount: planning.renames.length} : {}),
+    warnings: Array.isArray(planning.plan?.warnings)
+        ? planning.plan.warnings
+        : (Array.isArray(planning.warnings) ? planning.warnings : []),
+})
+
+// Shared two-phase executor for plan-producing tools that own their complete workflow. The
+// producing tool recomputes its deterministic plan on the apply call; the token then proves
+// that the recomputed plan and current working tree are byte-for-byte the previewed ones.
+export function runEditPlanWorkflow({toolName, plan, args = {}, ctx, planning = {}}) {
+    if (!ctx?.repoRoot) return toolResult('No active repository - open_repo first.', {status: 'NO_REPOSITORY'})
+    try {
+        const workflow = args.mode === 'apply'
+            ? applyRun(plan, args, ctx, toolName)
+            : previewRun(plan, ctx, toolName)
+        return toolResult(
+            `${toolName}: ${workflow.text}`,
+            {...workflow.result, operation: toolName, planning: planningSummary(planning)},
+            {warnings: workflow.warnings},
+        )
+    } catch (error) {
+        if (error instanceof PlanValidationError) return invalidPlanResult(error)
+        throw error
+    }
+}
+
 const applyEditPlanTool = {
     name: 'apply_edit_plan',
     cap: 'edit',
@@ -88,7 +120,7 @@ const applyEditPlanTool = {
     run: async (graph, args, ctx) => {
         if (!ctx?.repoRoot) return toolResult('No active repository — open_repo first.', {status: 'NO_REPOSITORY'})
         try {
-            return args.mode === 'apply' ? applyRun(args.plan, args, ctx) : previewRun(args.plan, ctx)
+            return runEditPlanWorkflow({toolName: 'apply_edit_plan', plan: args.plan, args, ctx})
         } catch (error) {
             if (error instanceof PlanValidationError) return invalidPlanResult(error)
             throw error

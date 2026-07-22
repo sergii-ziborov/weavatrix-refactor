@@ -16,9 +16,9 @@ export const refactorExtension = () => defineWeavatrixExtension({
     profiles: {
         refactor: [...CORE_CAPS, 'edit'],
     },
-    // apply/rollback carry cap 'edit' (gated by the write env + confirm token); the
-    // plan-producer refactoring tools are read-only cap 'graph'. Together weavatrix-refactor
-    // is the full refactoring MCP: produce a proven plan, then apply it. The core catalog
+    // Rename and the generic apply/rollback tools carry cap 'edit'. Rename owns the complete
+    // preview/confirm/apply workflow; every write is still gated by the env and a plan-bound
+    // token. The other plan producers remain read-only cap 'graph'. The core catalog
     // registers none of these — refactoring requires installing this package.
     tools: [...refactorTools(), ...planTools()],
     skills: [

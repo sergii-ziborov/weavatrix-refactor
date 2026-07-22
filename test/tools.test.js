@@ -4,6 +4,7 @@ import {mkdtempSync, readFileSync, writeFileSync} from 'node:fs'
 import {tmpdir} from 'node:os'
 import {join} from 'node:path'
 import {refactorTools} from '../src/tools.mjs'
+import {planTools} from '../src/plan-tools.mjs'
 import {sha256Hex} from '../src/refactor-home.mjs'
 
 let repoRoot, ctx
@@ -121,4 +122,71 @@ test('rollback tool respects the write gate and full cycle restores', async () =
     const rolledBack = await rollbackLast.run(null, {}, ctx)
     assert.equal(rolledBack.result.status, 'ROLLED_BACK')
     assert.equal(readFileSync(join(repoRoot, 'a.js'), 'utf8'), 'const getUser = 1\n')
+})
+
+test('rename_symbol owns preview -> confirm -> atomic apply instead of returning PLANNED', async () => {
+    const renameSymbol = planTools().find((tool) => tool.name === 'rename_symbol')
+    const util = 'def get_user(x):\n    return x\n'
+    const app = 'from util import get_user\nvalue = get_user(1)\n'
+    writeFileSync(join(repoRoot, 'util.py'), util)
+    writeFileSync(join(repoRoot, 'app.py'), app)
+    const graph = {
+        graphRevision: 'rename-workflow-test',
+        nodes: [
+            {id: 'util.py#get_user@1', label: 'get_user', source_file: 'util.py'},
+            {id: 'app.py#value@2', label: 'value', source_file: 'app.py'},
+        ],
+        links: [
+            {source: 'app.py', target: 'util.py#get_user@1', relation: 'references', line: 1, provenance: 'RESOLVED'},
+            {source: 'app.py#value@2', target: 'util.py#get_user@1', relation: 'calls', line: 2, provenance: 'RESOLVED'},
+        ],
+    }
+    const operation = {symbol: 'util.py#get_user@1', new_name: 'fetch_user'}
+    const preview = await renameSymbol.run(graph, operation, ctx)
+    assert.equal(preview.result.status, 'PREVIEW_OK')
+    assert.equal(preview.result.operation, 'rename_symbol')
+    assert.equal(preview.result.planning.completeness, 'PARTIAL')
+    assert.match(preview.result.confirmToken, /^[0-9a-f]{48}$/)
+    assert.doesNotMatch(preview.text, /: PLANNED/)
+    assert.equal(readFileSync(join(repoRoot, 'util.py'), 'utf8'), util)
+
+    process.env.WEAVATRIX_ALLOW_SOURCE_EDITS = '1'
+    const applied = await renameSymbol.run(graph, {...operation, mode: 'apply', confirm_token: preview.result.confirmToken}, ctx)
+    assert.equal(applied.result.status, 'APPLIED')
+    assert.equal(readFileSync(join(repoRoot, 'util.py'), 'utf8'), 'def fetch_user(x):\n    return x\n')
+    assert.equal(readFileSync(join(repoRoot, 'app.py'), 'utf8'), 'from util import fetch_user\nvalue = fetch_user(1)\n')
+})
+
+test('rename_related_symbols previews and applies the whole rename set through one method', {timeout: 120_000}, async () => {
+    const renameRelated = planTools().find((tool) => tool.name === 'rename_related_symbols')
+    writeFileSync(join(repoRoot, 'a.ts'), 'export function getUser() { return 1 }\nexport function getOrder() { return 2 }\n')
+    writeFileSync(join(repoRoot, 'b.ts'), "import {getUser, getOrder} from './a'\nexport const both = () => getUser() + getOrder()\n")
+    const graph = {
+        graphRevision: 'related-workflow-test',
+        nodes: [
+            {id: 'a.ts#getUser@1', label: 'getUser', source_file: 'a.ts', exported: true, selection_start: {line: 0, character: 16}, selection_end: {line: 0, character: 23}},
+            {id: 'a.ts#getOrder@2', label: 'getOrder', source_file: 'a.ts', exported: true, selection_start: {line: 1, character: 16}, selection_end: {line: 1, character: 24}},
+            {id: 'b.ts#both@2', label: 'both', source_file: 'b.ts'},
+        ],
+        links: [
+            {source: 'b.ts#both@2', target: 'a.ts#getUser@1', type: 'calls'},
+            {source: 'b.ts#both@2', target: 'a.ts#getOrder@2', type: 'calls'},
+        ],
+    }
+    const operation = {renames: [
+        {symbol: 'a.ts#getUser@1', new_name: 'getCustomer'},
+        {symbol: 'a.ts#getOrder@2', new_name: 'getPurchase'},
+    ]}
+    const preview = await renameRelated.run(graph, operation, ctx)
+    assert.equal(preview.result.status, 'PREVIEW_OK')
+    assert.equal(preview.result.operation, 'rename_related_symbols')
+    assert.equal(preview.result.planning.renameCount, 2)
+    assert.doesNotMatch(preview.text, /: PLANNED/)
+
+    process.env.WEAVATRIX_ALLOW_SOURCE_EDITS = '1'
+    const applied = await renameRelated.run(graph, {...operation, mode: 'apply', confirm_token: preview.result.confirmToken}, ctx)
+    assert.equal(applied.result.status, 'APPLIED')
+    assert.match(readFileSync(join(repoRoot, 'a.ts'), 'utf8'), /getCustomer/)
+    assert.match(readFileSync(join(repoRoot, 'a.ts'), 'utf8'), /getPurchase/)
+    assert.match(readFileSync(join(repoRoot, 'b.ts'), 'utf8'), /getCustomer\(\) \+ getPurchase\(\)/)
 })

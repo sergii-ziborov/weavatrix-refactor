@@ -16,7 +16,14 @@ export const sha256Hex = (data) => createHash('sha256').update(data).digest('hex
 // One stable directory key per repository root, independent of path separators or case.
 export const repoKey = (repoRoot) => sha256Hex(resolve(String(repoRoot)).toLowerCase().replaceAll('\\', '/')).slice(0, 24)
 
-export const planHash = (plan) => sha256Hex(JSON.stringify(plan))
+// createdAt is provenance metadata, not an edit instruction. Ignoring it lets a tool
+// deterministically recompute the same plan during its apply call while every executable
+// field (file hashes, ranges, before/after text, provenance) remains token-bound.
+export const planHash = (plan) => {
+    const {createdAt, ...executablePlan} = plan || {}
+    void createdAt
+    return sha256Hex(JSON.stringify(executablePlan))
+}
 
 const tokensDir = () => join(refactorHome(), 'tokens')
 

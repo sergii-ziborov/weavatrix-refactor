@@ -1,6 +1,6 @@
 {
   "name": "weavatrix-refactor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "The only Weavatrix component that writes code. Applies hash-verified edit plans computed and proven by the read-only weavatrix core: preview in core, confirm token, apply here, rollback always possible.",
   "author": "Sergii Ziborov <sergii.ziborov@gmail.com>",
@@ -55,6 +55,6 @@
   ],
   "dependencies": {
     "typescript": "5.9.3",
-    "weavatrix": "^0.3.12"
+    "weavatrix": "^0.3.13"
   }
 }

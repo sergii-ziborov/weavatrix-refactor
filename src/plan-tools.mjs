@@ -3,8 +3,8 @@
 // readiness, change signature, bulk replace, organize imports, symbol edits) plus the apply
 // side (tools.mjs). The engines themselves are read-only plan producers in this package's
 // ./engines, composing the core's read-only weavatrix/analysis-kit surface; the core catalog
-// registers none of them. Each tool returns a weavatrix.edit-plan.v1 (or verdict/dry-run) that
-// apply_edit_plan then applies.
+// registers none of them. Rename owns its preview/confirm/apply workflow; other tools return
+// a weavatrix.edit-plan.v1 (or verdict/dry-run) for apply_edit_plan or direct review.
 
 import {toolResult} from 'weavatrix/extension/local-services'
 import {buildBulkReplacePlan} from './engines/bulk-replace-plan.js'
@@ -18,6 +18,7 @@ import {buildRenamePlan} from './engines/rename-plan.js'
 import {buildSqlRenamePlan} from './engines/sql-rename-plan.js'
 import {buildSymbolEditPlan} from './engines/symbol-edit-plan.js'
 import {computeDeleteReadiness} from './engines/delete-readiness.js'
+import {runEditPlanWorkflow} from './tools.mjs'
 
 const JS_TS_RE = /\.(?:c|m)?[jt]sx?$/i
 const fileOf = (symbolId) => String(symbolId).split('#')[0]
@@ -47,21 +48,48 @@ async function renameDispatch({repoRoot, rawGraph, symbol, newName}) {
     return buildGraphRenamePlan({repoRoot, rawGraph, symbolId: symbol, newName})
 }
 
-const symbolSchema = {type: 'object', properties: {symbol: {type: 'string', description: 'Exact symbol id (file#name@line)'}, new_name: {type: 'string'}}, required: ['symbol', 'new_name']}
+const workflowProperties = {
+    mode: {type: 'string', enum: ['preview', 'apply'], default: 'preview', description: 'preview verifies the generated plan and returns a confirm_token; apply recomputes the same plan and consumes that token'},
+    confirm_token: {type: 'string', maxLength: 128, description: 'Required for mode="apply"; single-use and bound to the exact generated plan and working tree'},
+}
+
+const symbolSchema = {
+    type: 'object',
+    properties: {
+        symbol: {type: 'string', description: 'Exact symbol id (file#name@line)'},
+        new_name: {type: 'string'},
+        ...workflowProperties,
+    },
+    required: ['symbol', 'new_name'],
+}
+
+const finishRename = (operation, planning, args, ctx) => planning?.status === 'PLANNED' && planning?.plan
+    ? runEditPlanWorkflow({toolName: operation, plan: planning.plan, args, ctx, planning})
+    : wrap(operation, planning)
 
 export function planTools() {
     return [
         {
-            cap: 'graph', name: 'rename_symbol', refreshGraph: true,
-            description: 'Cross-language rename plan for a symbol: EXACT LSP backend for JS/TS, SQL schema backend for .sql, graph+lexical backend for Rust/Python/Go/Java/C#/Solidity. Emits a weavatrix.edit-plan.v1 with honest per-backend provenance and completeness; apply it with apply_edit_plan.',
+            cap: 'edit', name: 'rename_symbol', refreshGraph: true,
+            description: 'Complete cross-language rename workflow: EXACT LSP backend for JS/TS, SQL schema backend for .sql, graph+lexical backend for Rust/Python/Go/Java/C#/Solidity. Default mode="preview" proves the byte-exact edits and returns a single-use confirm_token; repeat the same call with mode="apply" and that token for an atomic write with rollback. Requires WEAVATRIX_ALLOW_SOURCE_EDITS=1 only for apply.',
             inputSchema: symbolSchema,
-            run: async (graph, args, ctx) => wrap('rename_symbol', await renameDispatch({repoRoot: ctx.repoRoot, rawGraph: graph, symbol: args.symbol, newName: args.new_name})),
+            run: async (graph, args, ctx) => finishRename(
+                'rename_symbol',
+                await renameDispatch({repoRoot: ctx.repoRoot, rawGraph: graph, symbol: args.symbol, newName: args.new_name}),
+                args,
+                ctx,
+            ),
         },
         {
-            cap: 'graph', name: 'rename_related_symbols', refreshGraph: true,
-            description: 'Coordinated multi-symbol rename (JS/TS) as ONE atomic plan with cross-rename conflict/chain/swap detection. Blocks entirely if any sub-rename fails.',
-            inputSchema: {type: 'object', properties: {renames: {type: 'array', items: {type: 'object', properties: {symbol: {type: 'string'}, new_name: {type: 'string'}}, required: ['symbol', 'new_name']}}}, required: ['renames']},
-            run: async (graph, args, ctx) => wrap('rename_related_symbols', await buildRelatedRenamePlan({repoRoot: ctx.repoRoot, rawGraph: graph, renames: (args.renames || []).map((entry) => ({targetId: entry.symbol, newName: entry.new_name}))})),
+            cap: 'edit', name: 'rename_related_symbols', refreshGraph: true,
+            description: 'Complete coordinated JS/TS multi-symbol rename as ONE atomic workflow with conflict/chain/swap detection. Default mode="preview" returns a plan-bound confirm_token; repeat with identical renames, mode="apply", and that token to write atomically with rollback. Blocks entirely if any sub-rename fails.',
+            inputSchema: {type: 'object', properties: {renames: {type: 'array', minItems: 1, maxItems: 50, items: {type: 'object', properties: {symbol: {type: 'string'}, new_name: {type: 'string'}}, required: ['symbol', 'new_name']}}, ...workflowProperties}, required: ['renames']},
+            run: async (graph, args, ctx) => finishRename(
+                'rename_related_symbols',
+                await buildRelatedRenamePlan({repoRoot: ctx.repoRoot, rawGraph: graph, renames: (args.renames || []).map((entry) => ({targetId: entry.symbol, newName: entry.new_name}))}),
+                args,
+                ctx,
+            ),
         },
         {
             cap: 'graph', name: 'move_file', refreshGraph: true,
