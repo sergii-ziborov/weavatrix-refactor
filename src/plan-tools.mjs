@@ -1,9 +1,10 @@
 // Plan-producer refactoring tools. This is where refactoring LIVES: weavatrix-refactor is
 // the refactoring MCP — it registers every refactoring operation (rename, move, delete
 // readiness, change signature, bulk replace, organize imports, symbol edits) plus the apply
-// side (tools.mjs). The engines themselves are read-only plan producers imported from the core
-// package's ./refactor-engines surface; the core catalog registers none of them. Each tool
-// returns a weavatrix.edit-plan.v1 (or verdict/dry-run) that apply_edit_plan then applies.
+// side (tools.mjs). The engines themselves are read-only plan producers in this package's
+// ./engines, composing the core's read-only weavatrix/analysis-kit surface; the core catalog
+// registers none of them. Each tool returns a weavatrix.edit-plan.v1 (or verdict/dry-run) that
+// apply_edit_plan then applies.
 
 import {toolResult} from 'weavatrix/extension/local-services'
 import {buildBulkReplacePlan} from './engines/bulk-replace-plan.js'

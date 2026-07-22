@@ -1,17 +1,15 @@
 ---
 name: weavatrix-refactor
-description: "Apply hash-verified refactoring edit plans computed by the read-only weavatrix core: preview in core, review the honest uncertainty labels, confirm, apply with automatic rollback, then prove the change with verified_change. The only Weavatrix component that writes code."
+description: "Apply hash-verified refactoring edit plans: a weavatrix-refactor plan producer computes and proves a plan against the read-only core, then apply_edit_plan previews it (issuing a confirm token), applies with automatic rollback, and verified_change proves it. The only Weavatrix component that writes code."
 ---
 
 # weavatrix-refactor MCP
 
-> **Status: pre-release. The tools described here are the committed contract but are not
-> implemented yet. Do not advertise them as available until this banner is removed.**
-
-The write-side companion to the MIT `weavatrix` core. The core is safe by design: its published
-artifact contains no source-writing paths, so it can *compute and prove* a refactoring but never
-*apply* one. This package applies **only** plans the core computed, proved, and hashed — it never
-invents edits of its own.
+The write-side layer of the Weavatrix stack. The MIT `weavatrix` core is safe by design: its
+published artifact contains no source-writing paths. This package's read-only plan producers
+*compute and prove* a refactoring against the core's `weavatrix/analysis-kit` surface, and its
+apply tools are the only thing in the family that *writes* — applying **only** plans it computed,
+proved, and hashed, never inventing edits of its own.
 
 ## Step 0 — if the tools are missing
 
@@ -21,39 +19,44 @@ selected, or the write gate is closed. Register with:
 `claude mcp add -s user weavatrix -- npx -y weavatrix-refactor <repoRoot>`
 (the bin defaults to the `refactor` profile: all seven offline core capabilities plus `edit`).
 
-## The three write gates
+## The write gates
 
-Nothing is ever written unless all three hold:
+Writing source needs the first two gates for either tool; `apply_edit_plan` adds the third:
 
 1. This package is installed and the `refactor` profile (or a custom list naming `edit`) is selected.
 2. The server environment has `WEAVATRIX_ALLOW_SOURCE_EDITS=1`.
-3. The call carries a valid, unexpired `confirm_token` bound to the exact file hashes of the plan
-   (5-minute TTL, issued by a core preview tool, stored outside the repository).
+3. For `apply_edit_plan` (mode="apply") only: a valid, unexpired `confirm_token` bound to the exact
+   file hashes of the plan (5-minute TTL, issued by apply_edit_plan's own preview step, stored
+   outside the repository). `rollback_last_apply` takes no token.
 
 A missing gate is a normal state, not an error to work around: fall back to applying the plan's
 edits with your own editor, then run `verified_change phase=verify` as usual.
 
 ## Tools
 
-- **`apply_edit_plan confirm_token=<token>`** — re-verifies every planned file's sha256 and the
-  exact `before` text at every range under the core file lock, writes a rollback bundle, applies
-  edits bottom-up, refreshes the graph, and reports `applied` / `STALE` (hash drift — nothing
-  written) / `ROLLED_BACK` (mid-apply failure — originals restored). It never applies a subset
-  silently.
+- **`apply_edit_plan plan=<envelope> [mode] [confirm_token]`** — two modes over the same plan.
+  `mode="preview"` (default) re-verifies every planned file's sha256 and the exact `before` text
+  and, on a clean match, issues a single-use `confirm_token`. `mode="apply" confirm_token=<token>`
+  consumes it under the core file lock, writes a rollback bundle, applies edits bottom-up, and
+  reports `APPLIED` / `STALE` (hash drift — nothing written) / `ROLLED_BACK` (mid-apply failure —
+  originals restored). It never applies a subset silently.
 - **`rollback_last_apply`** — restores the pre-apply state from the most recent rollback bundle.
 
 ## The refactoring loop
 
-1. **Plan (core, read-only)**: call a core preview tool — `rename_symbol`, `move_symbol` /
-   `move_file`, `delete_readiness`, `change_signature` — or take a `plan_refactor` plan from
-   `weavatrix-online`. The result is a `weavatrix.edit-plan.v1` envelope with per-edit provenance,
-   `uncertainReferences`, `notModified` reasons, and a `confirm_token`.
-2. **Review before confirming**: read `completeness`, `uncertainReferences`, `notModified`, and
+1. **Plan (read-only)**: call a weavatrix-refactor plan producer — `rename_symbol`,
+   `rename_related_symbols`, `change_signature`, `edit_symbol`, `bulk_replace`, `organize_imports`
+   (each emits a `weavatrix.edit-plan.v1` envelope), or `move_file` / `move_symbol` /
+   `delete_readiness` (a review plan / dry-run / verdict you apply yourself) — or take a
+   `plan_refactor` plan from `weavatrix-online`. An envelope carries per-edit provenance,
+   `uncertainReferences`, and `notModified` reasons.
+2. **Review before applying**: read `completeness`, `uncertainReferences`, `notModified`, and
    warnings such as `PUBLIC_API_SYMBOL` / `DYNAMIC_CODE_PRESENT`. A `PARTIAL` plan is applyable
    but finishes nothing by itself — the uncertain sites remain your responsibility.
-3. **Apply**: `apply_edit_plan confirm_token=<exact token>`. Tokens are single-use and expire in
-   5 minutes; a stale working tree fails closed as `STALE` — re-run the preview, do not retry the
-   token.
+3. **Preview → apply**: `apply_edit_plan plan=<envelope>` (mode="preview", the default) re-checks
+   the working tree and issues a single-use `confirm_token`; then `apply_edit_plan plan=<envelope>
+   mode="apply" confirm_token=<token>` writes. Tokens expire in 5 minutes and a stale tree fails
+   closed as `STALE` — re-preview, do not retry the token.
 4. **Prove**: `verified_change task=<task> phase=verify base_ref=<merge-base>` runs automatically
    after apply when available; read its PASS/BLOCKED/UNKNOWN verdict and the graph/architecture/
    duplicate ratchets before considering the refactor done.
@@ -62,18 +65,19 @@ edits with your own editor, then run `verified_change phase=verify` as usual.
 
 ## Ground rules
 
-- **This package never decides what to edit.** Plans come from the read-only core with evidence;
-  `renamed: 18, uncertainReferences: 3` is a correct outcome, a silent full success claim is not.
+- **This package never decides what to edit.** Plans come from its own read-only producers that
+  prove against the core, with evidence; `renamed: 18, uncertainReferences: 3` is a correct
+  outcome, a silent full success claim is not.
 - **Fail closed, always**: hash drift, `before`-text mismatch, expired token, or any mid-apply
   error ends in `STALE` or `ROLLED_BACK`, never a partially edited tree without a report.
-- **Only `EXACT_LSP` / `RESOLVED` provenance is ever applied.** `INFERRED` sites appear as review
-  evidence, not edits.
+- **Only proven-provenance edits are applied** — `EXACT_LSP`, `RESOLVED`, `EXTRACTED`, or the
+  byte-exact `LEXICAL_EXACT`. `INFERRED` / `CONFLICT` sites appear as review evidence, not edits.
 - **The repository owner's tests remain the final proof.** `verified_change` ratchets are
   structural evidence; they are not a substitute for running the repo's own test suite.
 
 ## Troubleshooting
 
-- `STALE` → the working tree changed after preview; re-run the core preview tool for a fresh plan.
+- `STALE` → the working tree changed after preview; re-run the weavatrix-refactor plan producer for a fresh plan.
 - `TOKEN_EXPIRED` / `TOKEN_UNKNOWN` → previews are single-use and short-lived by design; re-preview.
 - `WRITE_GATE_CLOSED` → set `WEAVATRIX_ALLOW_SOURCE_EDITS=1` on the server (a deliberate,
   user-visible choice) or apply the plan manually with your editor.

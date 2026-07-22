@@ -1,11 +1,11 @@
-# Edit plan schema — DRAFT v1
+# Edit plan schema — v1
 
-Status: draft for review. This schema is the frozen contract between the
-read-only `weavatrix` core (which computes and proves plans) and
-`weavatrix-refactor` (which applies them). The core-side ADR reversing the
-"symbol rename is editor behavior" stance must be accepted before this
-freezes. Once frozen, changes require a `schemaVersion` bump and a
-compatible-pair release.
+Status: frozen and shipping (weavatrix-refactor 0.1.0; this doc is in the package
+`files`). `weavatrix.edit-plan.v1` is the contract between weavatrix-refactor's
+read-only plan-producer tools — which compute and prove plans against the core's
+read-only `weavatrix/analysis-kit` surface — and its apply tools, which consume
+and apply them. Changes require a `schemaVersion` bump and a compatible-pair
+release.
 
 ## Envelope
 
@@ -16,7 +16,6 @@ compatible-pair release.
   "createdAt": "2026-07-21T12:00:00Z",
   "repoRoot": "C:/repo",
   "graphRevision": "<git rev the plan was computed against>",
-  "confirmToken": "<one-time token, 5-minute TTL, bound to repoRoot + graphRevision + file hashes>",
   "completeness": "COMPLETE | PARTIAL",
   "files": [
     {
@@ -27,7 +26,7 @@ compatible-pair release.
           "startLine": 10, "startChar": 8, "endLine": 10, "endChar": 15,
           "before": "getUser",
           "after": "getCustomer",
-          "provenance": "EXACT_LSP | RESOLVED | EXTRACTED"
+          "provenance": "EXACT_LSP | RESOLVED | EXTRACTED | LEXICAL_EXACT"
         }
       ]
     }
@@ -78,11 +77,16 @@ compatible-pair release.
 
 | Producer (read-only) | Package |
 | --- | --- |
-| `rename_symbol` preview | weavatrix (core) |
-| `move_symbol` / `move_file` preview | weavatrix (core) |
-| `delete_readiness` preview | weavatrix (core) |
-| `change_signature` preview | weavatrix (core) |
+| `rename_symbol` / `rename_related_symbols` | weavatrix-refactor |
+| `move_file` / `move_symbol` | weavatrix-refactor |
+| `delete_readiness` | weavatrix-refactor |
+| `change_signature` | weavatrix-refactor |
+| `edit_symbol` / `bulk_replace` / `organize_imports` | weavatrix-refactor |
 | `plan_refactor` | weavatrix-online (paid) |
+
+`move_file`, `move_symbol`, and `delete_readiness` return a review plan /
+dry-run / verdict — **not** an applyable `weavatrix.edit-plan.v1` envelope. Apply
+the mechanical change yourself, then re-verify with `verified_change`.
 
 | Consumer (writes) | Package |
 | --- | --- |

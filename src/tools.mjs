@@ -75,7 +75,7 @@ function applyRun(plan, args, ctx) {
 const applyEditPlanTool = {
     name: 'apply_edit_plan',
     cap: 'edit',
-    description: 'Apply a weavatrix.edit-plan.v1 envelope (from a core preview tool or weavatrix-online plan_refactor) to the active repository. mode="preview" (default) verifies hashes and before-texts and issues a single-use confirm_token; mode="apply" consumes the token and writes atomically with an automatic rollback bundle. Requires WEAVATRIX_ALLOW_SOURCE_EDITS=1 to write. Only EXACT_LSP/RESOLVED/EXTRACTED edits are ever applied; uncertain references are reported, never guessed.',
+    description: 'Apply a weavatrix.edit-plan.v1 envelope (from a weavatrix-refactor plan producer or weavatrix-online plan_refactor) to the active repository. mode="preview" (default) verifies hashes and before-texts and issues a single-use confirm_token; mode="apply" consumes the token and writes atomically with an automatic rollback bundle. Requires WEAVATRIX_ALLOW_SOURCE_EDITS=1 to write. Only EXACT_LSP/RESOLVED/EXTRACTED/LEXICAL_EXACT edits are ever applied; uncertain references are reported, never guessed.',
     inputSchema: {
         type: 'object',
         properties: {
