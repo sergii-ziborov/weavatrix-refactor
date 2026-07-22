@@ -20,6 +20,10 @@
   "bin": {
     "weavatrix-refactor-mcp": "bin/weavatrix-refactor-mcp.mjs"
   },
+  "exports": {
+    "./extension": "./src/extension.mjs",
+    "./package.json": "./package.json"
+  },
   "files": [
     "bin",
     "src",
