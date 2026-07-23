@@ -12,7 +12,7 @@ const releaseNotes = new URL(`../docs/releases/v${own.version}.md`, import.meta.
 
 if (own.private) failures.push('package.json private must be false or absent')
 if (own.license !== 'Apache-2.0') failures.push('package.json license must be Apache-2.0')
-if (own.dependencies?.weavatrix !== '^0.3.13') failures.push(`Weavatrix dependency must be ^0.3.13, found ${own.dependencies?.weavatrix || '(missing)'}`)
+if (own.dependencies?.weavatrix !== '^0.3.14') failures.push(`Weavatrix dependency must be ^0.3.14, found ${own.dependencies?.weavatrix || '(missing)'}`)
 if (!String(core.version).startsWith('0.3.')) failures.push(`Weavatrix core must be 0.3.x, found ${core.version}`)
 if (lock.packages?.['']?.version !== own.version) failures.push('package-lock root version does not match package.json')
 if (lock.packages?.['node_modules/weavatrix']?.version !== core.version) failures.push('package-lock core version does not match the installed core')

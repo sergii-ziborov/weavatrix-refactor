@@ -3,13 +3,13 @@
   "name": "io.github.sergii-ziborov/weavatrix-refactor",
   "description": "The refactoring layer of Weavatrix: hash-verified, always-reversible edit plans.",
   "repository": {"url": "https://github.com/sergii-ziborov/weavatrix-refactor", "source": "github"},
-  "version": "0.1.1",
+  "version": "0.1.2",
   "websiteUrl": "https://weavatrix.com",
   "packages": [{
     "registryType": "npm",
     "registryBaseUrl": "https://registry.npmjs.org",
     "identifier": "weavatrix-refactor",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "runtimeHint": "npx",
     "transport": {"type": "stdio"},
     "packageArguments": [{
