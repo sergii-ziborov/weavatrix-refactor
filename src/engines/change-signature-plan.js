@@ -54,8 +54,7 @@ function callSitesByFile(rawGraph, symbolId) {
     return byFile
 }
 
-async function planCallSite({content, name, line, operation, edits, uncertain, file}) {
-    const tree = await parseJsTs(content, grammarForFile(file))
+function planCallSite({tree, content, name, line, operation, edits, uncertain, file}) {
     const sites = findCallSites(tree, name, line)
     if (!sites.length) { uncertain.push({file, line, reason: 'CALL_SITE_NOT_LOCATED'}); return }
     for (const site of sites) {
@@ -126,7 +125,8 @@ export async function buildChangeSignaturePlan({repoRoot, rawGraph, symbolId, op
             content = source.content
             contentCache.set(file, content)
         }
-        for (const line of lines) await planCallSite({content, name, line, operation, edits: callEdits, uncertain, file})
+        const tree = await parseJsTs(content, grammarForFile(file))
+        for (const line of lines) planCallSite({tree, content, name, line, operation, edits: callEdits, uncertain, file})
     }
     for (const edit of callEdits) pushEdit(edit)
 

@@ -1,11 +1,17 @@
 ﻿import {test} from 'node:test'
 import assert from 'node:assert/strict'
+import {readFileSync} from 'node:fs'
 import {buildMoveSymbolDryRun} from '../../src/engines/move-symbol-dryrun.js'
 import {normalizeArchitectureContract} from 'weavatrix-js/analysis-kit'
 
 const fileNode = (path) => ({id: path, source_file: path, label: path})
 const symNode = (id, label) => ({id, source_file: id.slice(0, id.indexOf('#')), label})
 const link = (source, target, relation) => ({source, target, relation, confidence: 'EXTRACTED'})
+
+test('the runtime source remains text-scannable repository evidence', () => {
+    const source = readFileSync(new URL('../../src/engines/move-symbol-dryrun.js', import.meta.url))
+    assert.equal(source.includes(0), false, 'escape NUL separators in source instead of storing literal NUL bytes')
+})
 
 test('predicts a runtime cycle when the moved symbol depends on a sibling it leaves behind', () => {
     // config.ts#parse uses config.ts#defaults (sibling). utils.ts already imports config.ts.

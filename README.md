@@ -7,6 +7,12 @@ combines the complete read-only `weavatrix-js` code-intelligence MCP with 11
 refactoring tools that can prove a change, preview it against the current
 working tree, apply it atomically, refresh the graph, and roll it back.
 
+> **Current 0.1.x boundary:** this package still hosts the legacy
+> `weavatrix-js` engine. It does not yet use the native `weavatrix-rust`
+> engine shipped by the current `weavatrix` npm package. Installing both
+> packages does not silently upgrade Refactor's analysis layer; that requires
+> the explicit [Rust migration](docs/rust-migration.md).
+
 It is substantially more than a rename wrapper:
 
 - semantic JS/TS rename through the bundled language server;

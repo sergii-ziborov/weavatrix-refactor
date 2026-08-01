@@ -127,7 +127,7 @@ async function requestRename({repoRoot, declaringFile, node, newName, clientFact
     let client = null
     try {
         client = await clientFactory({repoRoot, timeoutMs})
-        for (const file of sessionFiles) await client.openDocument(file, loadedByPath.get(file).content)
+        await Promise.all(sessionFiles.map((file) => client.openDocument(file, loadedByPath.get(file).content)))
         return {renamed: await client.rename(declaringFile, node.selection_start, newName, timeoutMs)}
     } catch (error) {
         return {result: {status: 'LSP_FAILED', reason: error?.message || 'textDocument/rename failed'}}
