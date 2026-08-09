@@ -12,7 +12,7 @@ const releaseNotes = new URL(`../docs/releases/v${own.version}.md`, import.meta.
 
 if (own.private) failures.push('package.json private must be false or absent')
 if (own.license !== 'MIT') failures.push('package.json license must be MIT')
-if (own.dependencies?.['weavatrix-js'] !== '^0.3.16') failures.push(`weavatrix-js dependency must be ^0.3.16, found ${own.dependencies?.['weavatrix-js'] || '(missing)'}`)
+if (own.dependencies?.['weavatrix-js'] !== '^0.3.15') failures.push(`weavatrix-js dependency must be ^0.3.15, found ${own.dependencies?.['weavatrix-js'] || '(missing)'}`)
 if (!String(core.version).startsWith('0.3.')) failures.push(`weavatrix-js must be 0.3.x, found ${core.version}`)
 if (lock.packages?.['']?.version !== own.version) failures.push('package-lock root version does not match package.json')
 if (lock.packages?.['']?.license !== own.license) failures.push('package-lock root license does not match package.json')
