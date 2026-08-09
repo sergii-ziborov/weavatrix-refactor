@@ -9,11 +9,11 @@
 // name, shrunken same-name declaration counts surface as warnings, and a baseline this
 // matcher could not fully index is reported as such instead of silently blessed.
 
+import {bareName} from './engine-kit.js'
+
 const STRUCTURAL_TYPES = new Set(['contains', 'member_of', 'defines', 'declares'])
 const MAX_REPORTED = 200
 const MAX_MOVE_HOPS = 8
-
-const bareName = (value) => String(value || '').replace(/\s*\(.*$/, '').replace(/[()]/g, '').trim()
 
 // name from a file#name@line id when the node has no label; the @line suffix must never
 // leak into the identity or pure line churn would report false losses

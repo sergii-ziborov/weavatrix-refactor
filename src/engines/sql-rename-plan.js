@@ -8,57 +8,15 @@
 // definition confidently — the graph carries no column-level usage edges, so column usages are
 // reported UNPROVEN, never guessed. Output is a real weavatrix.edit-plan.v1 (pure text edits).
 
-import {readFileSync} from 'node:fs'
-import {createHash} from 'node:crypto'
-import {resolve} from 'node:path'
 import {graphEndpointId, fileOfId} from 'weavatrix-js/analysis-kit'
+import {lineOfId, linkLinesByFile, occurrencesOnLine, readFile, sha256Hex} from './engine-kit.js'
 
-const sha256Hex = (data) => createHash('sha256').update(data).digest('hex')
 const SQL_IDENT_RE = /^[A-Za-z_][\w$]*$/
+// SQL-specific: strips quoting and takes the last dotted part, so schema.table resolves to the
+// table. This is NOT the graph bareName in engine-kit and must not be merged into it.
 const bareName = (value) => String(value || '').replace(/[`"[\]]/g, '').split('.').pop().trim()
-const lineOfId = (id) => { const match = /@(\d+)$/.exec(String(id)); return match ? Number(match[1]) : 0 }
 
-function readFile(repoRoot, file) {
-    try {
-        const buffer = readFileSync(resolve(repoRoot, file))
-        const content = buffer.toString('utf8')
-        return Buffer.from(content, 'utf8').equals(buffer) ? {content, buffer} : null
-    } catch {
-        return null
-    }
-}
-
-// Word-boundary occurrences of `name` on a 1-based line, where a word char is [A-Za-z0-9_$]
-// (SQL identifiers include $). Quotes/backticks/brackets are boundaries, so a quoted "users"
-// is matched and only the inner name is rewritten. Returns [{startChar, endChar}].
-function occurrencesOnLine(content, line, name) {
-    const text = content.split('\n')[line - 1]
-    if (text === undefined) return []
-    const hits = []
-    let index = text.indexOf(name)
-    while (index !== -1) {
-        const before = text[index - 1]
-        const after = text[index + name.length]
-        const boundaryBefore = before === undefined || !/[A-Za-z0-9_$]/.test(before)
-        const boundaryAfter = after === undefined || !/[A-Za-z0-9_$]/.test(after)
-        if (boundaryBefore && boundaryAfter) hits.push({startChar: index, endChar: index + name.length})
-        index = text.indexOf(name, index + 1)
-    }
-    return hits
-}
-
-function referenceLines(rawGraph, symbolId) {
-    const byFile = new Map()
-    for (const link of rawGraph.links || []) {
-        if (String(link.relation) !== 'references' || link.usage !== 'sql') continue
-        if (graphEndpointId(link.target) !== symbolId) continue
-        const file = fileOfId(graphEndpointId(link.source))
-        if (!file || !Number.isInteger(Number(link.line))) continue
-        const lines = byFile.get(file) || byFile.set(file, new Set()).get(file)
-        lines.add(Number(link.line))
-    }
-    return byFile
-}
+const referenceLines = (rawGraph, symbolId) => linkLinesByFile(rawGraph, symbolId, (link) => String(link.relation) === 'references' && link.usage === 'sql')
 
 export function buildSqlRenamePlan({repoRoot, rawGraph, symbolId, newName} = {}) {
     if (!repoRoot || !rawGraph || !symbolId || !newName) throw new Error('sql rename requires repoRoot, rawGraph, symbolId, and newName')

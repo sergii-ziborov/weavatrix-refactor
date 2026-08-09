@@ -6,15 +6,14 @@
 // For JS/TS the resulting file is additionally parse-checked before a plan is issued.
 
 import {readFileSync} from 'node:fs'
-import {createHash} from 'node:crypto'
 import {resolve} from 'node:path'
+import {sha256Hex} from './engine-kit.js'
 
 export const SYMBOL_EDIT_OPERATIONS = ['replace_symbol_body', 'insert_before_symbol', 'insert_after_symbol']
 
 const JS_TS_FILE_RE = /\.(?:[cm]?[jt]sx?)$/i
 const MAX_CONTENT_BYTES = 1024 * 1024
 
-const sha256Hex = (data) => createHash('sha256').update(data).digest('hex')
 
 // Absolute string offset for a 0-based LSP position; fails closed outside the content.
 // Non-integer positions and characters that spill past the line terminator are rejected —

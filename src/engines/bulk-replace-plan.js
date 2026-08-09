@@ -9,8 +9,8 @@
 // graph does not know are reported as a limitation, never silently skipped.
 
 import {readFileSync} from 'node:fs'
-import {createHash} from 'node:crypto'
 import {resolve} from 'node:path'
+import {sha256Hex} from './engine-kit.js'
 
 const MAX_PATTERN_LENGTH = 512
 const MAX_FILES_SCANNED = 2000
@@ -19,7 +19,6 @@ const MAX_TOTAL_MATCHES = 5000
 const MAX_FILE_BYTES = 4 * 1024 * 1024
 const ALLOWED_FLAGS = /^[imsu]*$/
 
-const sha256Hex = (data) => createHash('sha256').update(data).digest('hex')
 
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 

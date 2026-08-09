@@ -6,10 +6,8 @@
 // agent applies (rename + edits), not a weavatrix.edit-plan.v1 envelope. Every specifier the
 // arithmetic cannot prove is reported UNCERTAIN, never rewritten wrongly.
 
-import {readFileSync} from 'node:fs'
-import {resolve} from 'node:path'
-import {verifyArchitecture} from 'weavatrix-js/analysis-kit'
 import {isRelativeSpecifier, rewriteRelativeSpecifier, specifierDirOf} from './import-specifier.js'
+import {architectureDelta, readFile} from './engine-kit.js'
 
 const IMPORT_RELATIONS = new Set(['imports', 're_exports'])
 const JS_TS_FILE_RE = /\.(?:[cm]?[jt]sx?)$/i
@@ -42,23 +40,9 @@ export function simulateFileMove(graph, oldPath, newPath) {
     return {...graph, nodes, links}
 }
 
-function architectureDryRun(graph, simulated, contract) {
-    if (!contract) return {status: 'NOT_CONFIGURED', reason: 'no architecture contract is active; the move has no architecture verdict'}
-    let before
-    let after
-    try {
-        before = verifyArchitecture({graph, contract})
-        after = verifyArchitecture({graph: simulated, contract})
-    } catch (error) {
-        return {status: 'UNAVAILABLE', reason: error?.message || 'architecture verification failed'}
-    }
-    const beforeActive = new Map([...before.new, ...before.existing].map((item) => [item.fingerprint, item]))
-    const afterActive = new Map([...after.new, ...after.existing].map((item) => [item.fingerprint, item]))
-    const wouldIntroduce = [...afterActive].filter(([fingerprint]) => !beforeActive.has(fingerprint)).map(([, item]) => item)
-    const wouldFix = [...beforeActive].filter(([fingerprint]) => !afterActive.has(fingerprint)).map(([, item]) => item)
-    const status = wouldIntroduce.length ? 'WOULD_VIOLATE' : wouldFix.length ? 'WOULD_IMPROVE' : 'NO_ARCHITECTURE_CHANGE'
-    return {status, wouldIntroduce, wouldFix, violationsBefore: beforeActive.size, violationsAfter: afterActive.size}
-}
+const architectureDryRun = (graph, simulated, contract) => (contract
+    ? architectureDelta(graph, simulated, contract)
+    : {status: 'NOT_CONFIGURED', reason: 'no architecture contract is active; the move has no architecture verdict'})
 
 // Exactly-one quoted occurrence of the raw specifier on a 1-based line, or null when the
 // occurrence is absent or ambiguous (the caller then reports UNCERTAIN rather than guess).
@@ -77,15 +61,9 @@ function locateSpecifier(content, line, specifier) {
     return hits.length === 1 ? hits[0] : null
 }
 
-function readFile(repoRoot, file) {
-    try {
-        const buffer = readFileSync(resolve(repoRoot, file))
-        const content = buffer.toString('utf8')
-        return Buffer.from(content, 'utf8').equals(buffer) ? content : null
-    } catch {
-        return null
-    }
-}
+// This engine rewrites specifiers in text and never hashes, so it keeps the content-or-null
+// contract that specifierEdit checks; the shared reader also returns the buffer.
+const readContent = (repoRoot, file) => readFile(repoRoot, file)?.content ?? null
 
 function specifierEdit({content, file, line, specifier, newSpecifier, role}) {
     if (newSpecifier === specifier) return {skip: true}
@@ -121,7 +99,7 @@ export function buildMoveFilePlan({repoRoot, rawGraph, fromPath, toPath, contrac
         edits.push(result.edit)
     }
 
-    const movedContent = readFile(repoRoot, oldPath)
+    const movedContent = readContent(repoRoot, oldPath)
     for (const link of rawGraph.links || []) {
         if (!IMPORT_RELATIONS.has(String(link.relation))) continue
         const source = endpointId(link.source)
@@ -133,7 +111,7 @@ export function buildMoveFilePlan({repoRoot, rawGraph, fromPath, toPath, contrac
             if (!isRelativeSpecifier(specifier)) { uncertain.push({file: source, specifier, reason: 'NON_RELATIVE_IMPORTER'}); continue }
             const rewrite = rewriteRelativeSpecifier({specifier, targetFile: newPath, newImporterDir: specifierDirOf(source)})
             if (rewrite.uncertain) { uncertain.push({file: source, specifier, reason: rewrite.reason}); continue }
-            record(specifierEdit({content: readFile(repoRoot, source), file: source, line: Number(link.line), specifier, newSpecifier: rewrite.specifier, role: 'importer'}))
+            record(specifierEdit({content: readContent(repoRoot, source), file: source, line: Number(link.line), specifier, newSpecifier: rewrite.specifier, role: 'importer'}))
         } else if (source === oldPath) {
             // the moved file's own import: its directory changes, the target stays put
             if (!specifier || !isRelativeSpecifier(specifier)) continue

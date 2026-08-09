@@ -7,52 +7,16 @@
 // type errors catch any missed site. Spread/apply and value-requiring adds are reported
 // UNCERTAIN, never guessed.
 
-import {readFileSync} from 'node:fs'
-import {createHash} from 'node:crypto'
-import {resolve} from 'node:path'
 import {graphEndpointId, fileOfId} from 'weavatrix-js/analysis-kit'
 import {findCallSites, findParameterList, grammarForFile, parseJsTs} from './js-call-sites.js'
+import {bareName, lineOfId, linkLinesByFile, readFile, removalRange, sha256Hex} from './engine-kit.js'
 
-const sha256Hex = (data) => createHash('sha256').update(data).digest('hex')
 const IDENTIFIER_RE = /^[A-Za-z_$][A-Za-z0-9_$]*$/
-const bareName = (value) => String(value || '').replace(/\s*\(.*$/, '').replace(/[()]/g, '').trim()
-const lineOfId = (id) => { const match = /@(\d+)$/.exec(String(id)); return match ? Number(match[1]) : 0 }
-
-function readFile(repoRoot, file) {
-    try {
-        const buffer = readFileSync(resolve(repoRoot, file))
-        const content = buffer.toString('utf8')
-        return Buffer.from(content, 'utf8').equals(buffer) ? {content, buffer} : null
-    } catch {
-        return null
-    }
-}
 
 // Byte-exact deletion range for the item at `index` (a parameter or an argument), consuming
 // exactly one separating comma so the list stays well-formed.
-function removalRange(items, index, content) {
-    const count = items.length
-    const item = items[index]
-    let from
-    let to
-    if (count === 1) { from = item.start; to = item.end }
-    else if (index < count - 1) { from = item.start; to = items[index + 1].start }
-    else { from = items[index - 1].end; to = item.end }
-    return {startLine: from.line, startChar: from.char, endLine: to.line, endChar: to.char, before: content.slice(from.index, to.index), after: ''}
-}
 
-function callSitesByFile(rawGraph, symbolId) {
-    const byFile = new Map()
-    for (const link of rawGraph.links || []) {
-        if (String(link.relation) !== 'calls') continue
-        if (graphEndpointId(link.target) !== symbolId) continue
-        const file = fileOfId(graphEndpointId(link.source))
-        if (!file || !Number.isInteger(Number(link.line))) continue
-        const lines = byFile.get(file) || byFile.set(file, new Set()).get(file)
-        lines.add(Number(link.line))
-    }
-    return byFile
-}
+const callSitesByFile = (rawGraph, symbolId) => linkLinesByFile(rawGraph, symbolId, (link) => String(link.relation) === 'calls')
 
 function planCallSite({tree, content, name, line, operation, edits, uncertain, file}) {
     const sites = findCallSites(tree, name, line)

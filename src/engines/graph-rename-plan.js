@@ -7,44 +7,13 @@
 // (method/function names collide, so an ambiguous line is reported UNCERTAIN, never guessed).
 // JS/TS keeps its EXACT_LSP rename; SQL keeps its table-aware backend.
 
-import {readFileSync} from 'node:fs'
-import {createHash} from 'node:crypto'
-import {resolve, extname} from 'node:path'
+import {extname} from 'node:path'
 import {graphEndpointId, fileOfId} from 'weavatrix-js/analysis-kit'
+import {bareName, lineOfId, occurrencesOnLine, readFile, sha256Hex} from './engine-kit.js'
 
-const sha256Hex = (data) => createHash('sha256').update(data).digest('hex')
 const GRAPH_RENAME_EXT = new Set(['.rs', '.py', '.go', '.java', '.cs', '.sol'])
 const USE_RELATIONS = new Set(['calls', 'references'])
 const IDENT_RE = /^[A-Za-z_][A-Za-z0-9_$]*$/
-const bareName = (value) => String(value || '').replace(/\s*\(.*$/, '').replace(/[()]/g, '').trim()
-const lineOfId = (id) => { const match = /@(\d+)$/.exec(String(id)); return match ? Number(match[1]) : 0 }
-
-function readFile(repoRoot, file) {
-    try {
-        const buffer = readFileSync(resolve(repoRoot, file))
-        const content = buffer.toString('utf8')
-        return Buffer.from(content, 'utf8').equals(buffer) ? {content, buffer} : null
-    } catch {
-        return null
-    }
-}
-
-// Word-boundary occurrences of `name` on a 1-based line (word char = [A-Za-z0-9_$]).
-function occurrencesOnLine(content, line, name) {
-    const text = content.split('\n')[line - 1]
-    if (text === undefined) return []
-    const hits = []
-    let index = text.indexOf(name)
-    while (index !== -1) {
-        const before = text[index - 1]
-        const after = text[index + name.length]
-        if ((before === undefined || !/[A-Za-z0-9_$]/.test(before)) && (after === undefined || !/[A-Za-z0-9_$]/.test(after))) {
-            hits.push({startChar: index, endChar: index + name.length})
-        }
-        index = text.indexOf(name, index + 1)
-    }
-    return hits
-}
 
 function referenceEdges(rawGraph, symbolId) {
     const byFileLine = new Map()

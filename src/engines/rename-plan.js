@@ -4,15 +4,14 @@
 // applying a plan is owned by the separate weavatrix-refactor package (ADR 0002).
 
 import {readFileSync} from 'node:fs'
-import {createHash} from 'node:crypto'
 import {resolve} from 'node:path'
 import {createRenameClient} from './lsp-rename.js'
+import {sha256Hex} from './engine-kit.js'
 
 const JS_TS_FILE_RE = /\.(?:[cm]?[jt]sx?)$/i
 const IDENTIFIER_RE = /^[A-Za-z_$][A-Za-z0-9_$]*$/
 const MAX_UNCERTAIN = 200
-
-const sha256Hex = (data) => createHash('sha256').update(data).digest('hex')
+const MAX_SESSION_FILES = 64
 
 // Absolute string offset for a 0-based LSP position; fails closed outside the content.
 function offsetAtLsp(content, line, character) {
@@ -109,18 +108,48 @@ function prepareRename({repoRoot, rawGraph, targetId, newName}) {
     return {id, node, declaringFile, declaring, oldName}
 }
 
-function collectSessionFiles({repoRoot, rawGraph, id, declaringFile, declaring}) {
+// Every indexed JS/TS file, graph-known referencing files first. Seeding the language server
+// from graph reach alone was the rename's blind spot: a reference that produces no graph edge
+// (a call at module top level has no containing symbol) left its file out of the session, so
+// the server never saw it, and the graph-remainder check consulted that same inventory and
+// also stayed silent. Text containment does not depend on an edge existing.
+function candidateFiles({rawGraph, id, declaringFile}) {
+    const usable = (path) => path && path !== declaringFile && !path.includes('#') && JS_TS_FILE_RE.test(path)
+    // Graph-declared references are explicit evidence and are always seeded, whatever their text
+    // looks like. The indexed remainder is the widening, and only it needs a containment filter.
+    const declared = graphReferenceInventory(rawGraph, id, declaringFile)
+        .map((reference) => reference.path)
+        .filter(usable)
+    const declaredSet = new Set(declared)
+    const indexed = []
+    for (const node of rawGraph.nodes || []) {
+        const path = String(node?.source_file || node?.id || '')
+        if (usable(path) && !declaredSet.has(path)) indexed.push(path)
+    }
+    return {declared, indexed: [...new Set(indexed)]}
+}
+
+// A file without a word-boundary occurrence of the identifier cannot reference the symbol, so
+// text containment is a cheap superset of the true reference set.
+const mentions = (content, name) => new RegExp(`(?<![A-Za-z0-9_$])${name.replace(/[$]/g, '\\$&')}(?![A-Za-z0-9_$])`).test(content)
+
+function collectSessionFiles({repoRoot, rawGraph, id, declaringFile, declaring, oldName}) {
     const loadedByPath = new Map([[declaringFile, declaring]])
     const sessionFiles = [declaringFile]
-    for (const reference of graphReferenceInventory(rawGraph, id, declaringFile)) {
-        if (sessionFiles.length >= 64) break
-        if (!JS_TS_FILE_RE.test(reference.path) || loadedByPath.has(reference.path)) continue
-        const loaded = loadPlanFile(repoRoot, reference.path)
-        if (loaded.error) continue
-        loadedByPath.set(reference.path, loaded)
-        sessionFiles.push(reference.path)
+    const unseeded = []
+    const {declared, indexed} = candidateFiles({rawGraph, id, declaringFile})
+    const seed = (path, filterByText) => {
+        if (loadedByPath.has(path)) return
+        if (sessionFiles.length >= MAX_SESSION_FILES) { unseeded.push({path, reason: 'SESSION_FILE_CAP'}); return }
+        const loaded = loadPlanFile(repoRoot, path)
+        if (loaded.error) { unseeded.push({path, reason: loaded.error}); return }
+        if (filterByText && !mentions(loaded.content, oldName)) return
+        loadedByPath.set(path, loaded)
+        sessionFiles.push(path)
     }
-    return {loadedByPath, sessionFiles}
+    for (const path of declared) seed(path, false)
+    for (const path of indexed) seed(path, true)
+    return {loadedByPath, sessionFiles, unseeded}
 }
 
 async function requestRename({repoRoot, declaringFile, node, newName, clientFactory, timeoutMs, loadedByPath, sessionFiles}) {
@@ -217,7 +246,7 @@ export async function buildRenamePlan({
     const prepared = prepareRename({repoRoot, rawGraph, targetId, newName})
     if (prepared.result) return prepared.result
     const {id, node, declaringFile, declaring, oldName} = prepared
-    const session = collectSessionFiles({repoRoot, rawGraph, id, declaringFile, declaring})
+    const session = collectSessionFiles({repoRoot, rawGraph, id, declaringFile, declaring, oldName})
     const response = await requestRename({
         repoRoot, declaringFile, node, newName, clientFactory, timeoutMs, ...session,
     })
@@ -230,6 +259,13 @@ export async function buildRenamePlan({
     if (!planFiles.length) return {status: 'NO_EDITS', reason: 'every proposed edit target was unreadable or stale', notModified}
     appendGraphRemainder({rawGraph, id, declaringFile, planFiles, uncertainReferences})
     if (node.exported === true) warnings.push('PUBLIC_API_SYMBOL')
+    // A candidate the language server never opened is a file this rename cannot speak for.
+    // COMPLETE has to mean "every file that could mention the symbol was proven", not "the two
+    // sources that share a blind spot both stayed quiet".
+    for (const skipped of session.unseeded) {
+        notModified.push({path: skipped.path, reason: `not opened in the rename session (${skipped.reason}); its occurrences are unproven`})
+    }
+    if (session.unseeded.length) warnings.push('SESSION_INCOMPLETE')
 
     const completeness = uncertainReferences.length || notModified.length ? 'PARTIAL' : 'COMPLETE'
     return {

@@ -4,13 +4,9 @@
 // the whole file (the import itself) — so a used import (including type positions, JSX, and
 // shorthand) can never be removed. Anything ambiguous is left for the caller to report.
 
-const IDENTIFIER_TYPES = new Set(['identifier', 'type_identifier', 'shorthand_property_identifier', 'property_identifier'])
+import {point as pos} from './js-call-sites.js'
 
-const pos = (node, which) => {
-    const position = which === 'start' ? node.startPosition : node.endPosition
-    const index = which === 'start' ? node.startIndex : node.endIndex
-    return {line: position.row + 1, char: position.column, index}
-}
+const IDENTIFIER_TYPES = new Set(['identifier', 'type_identifier', 'shorthand_property_identifier', 'property_identifier'])
 
 // name -> count of every identifier-like token in the file (import bindings INCLUDED), so
 // count === 1 for a binding means its sole occurrence is the import declaration.

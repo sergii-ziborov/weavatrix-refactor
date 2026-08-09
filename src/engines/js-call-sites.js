@@ -27,7 +27,7 @@ export async function parseJsTs(code, grammar) {
     }
 }
 
-const point = (node, which) => {
+export const point = (node, which) => {
     const position = which === 'start' ? node.startPosition : node.endPosition
     const index = which === 'start' ? node.startIndex : node.endIndex
     return {line: position.row + 1, char: position.column, index}

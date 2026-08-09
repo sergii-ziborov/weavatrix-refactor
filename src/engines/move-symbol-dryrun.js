@@ -11,7 +11,7 @@
 
 import {buildFileImportGraph, findSccs} from 'weavatrix-js/analysis-kit'
 import {fileOfId, graphEndpointId} from 'weavatrix-js/analysis-kit'
-import {verifyArchitecture} from 'weavatrix-js/analysis-kit'
+import {architectureDelta} from './engine-kit.js'
 
 const USE_RELATIONS = new Set(['calls', 'references'])
 
@@ -96,23 +96,12 @@ function simulateSymbolGraph(graph, symbolId, sourceFile, toFile, projected) {
     return {...graph, nodes, links}
 }
 
-function architectureDelta(graph, simulated, contract) {
+// This dry-run reports the delta only; the violation counts the shared helper also returns are
+// move_file's contract, not this one.
+function architectureVerdict(graph, simulated, contract) {
     if (!contract) return {status: 'NOT_CONFIGURED'}
-    let before
-    let after
-    try {
-        before = verifyArchitecture({graph, contract})
-        after = verifyArchitecture({graph: simulated, contract})
-    } catch (error) {
-        return {status: 'UNAVAILABLE', reason: error?.message || 'architecture verification failed'}
-    }
-    const beforeActive = new Set([...before.new, ...before.existing].map((item) => item.fingerprint))
-    const afterActive = [...after.new, ...after.existing]
-    const wouldIntroduce = afterActive.filter((item) => !beforeActive.has(item.fingerprint))
-    const afterSet = new Set(afterActive.map((item) => item.fingerprint))
-    const wouldFix = [...before.new, ...before.existing].filter((item) => !afterSet.has(item.fingerprint))
-    const status = wouldIntroduce.length ? 'WOULD_VIOLATE' : wouldFix.length ? 'WOULD_IMPROVE' : 'NO_ARCHITECTURE_CHANGE'
-    return {status, wouldIntroduce, wouldFix}
+    const {violationsBefore, violationsAfter, ...delta} = architectureDelta(graph, simulated, contract)
+    return delta
 }
 
 export function buildMoveSymbolDryRun({rawGraph, symbolId, toFile, contract = null} = {}) {
@@ -128,7 +117,7 @@ export function buildMoveSymbolDryRun({rawGraph, symbolId, toFile, contract = nu
     const projected = projectedImportEdges({sourceFile, toFile: String(toFile), outDepFiles, importerFiles})
     const cycles = cycleDelta(rawGraph, projected)
     const simulated = simulateSymbolGraph(rawGraph, id, sourceFile, String(toFile), projected)
-    const architecture = architectureDelta(rawGraph, simulated, contract)
+    const architecture = architectureVerdict(rawGraph, simulated, contract)
 
     const warnings = []
     if (cycles.introduced.length) warnings.push('WOULD_INTRODUCE_RUNTIME_CYCLE')

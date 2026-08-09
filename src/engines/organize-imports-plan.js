@@ -8,25 +8,14 @@
 // The graph+lexical backend pattern generalizes to other languages; JS/TS ships first.
 
 import {readFileSync} from 'node:fs'
-import {createHash} from 'node:crypto'
 import {resolve} from 'node:path'
 import {grammarForFile, parseJsTs} from './js-call-sites.js'
 import {collectImports, countIdentifierNames} from './js-imports.js'
-
-const sha256Hex = (data) => createHash('sha256').update(data).digest('hex')
+import {removalRange as listRemovalRange, sha256Hex} from './engine-kit.js'
 
 // Byte-exact removal of a named specifier at `index`, consuming exactly one comma so the
-// remaining `{ ... }` stays well-formed.
-function removalRange(specifiers, index, content) {
-    const count = specifiers.length
-    const item = specifiers[index]
-    let from
-    let to
-    if (count === 1) { from = item.start; to = item.end }
-    else if (index < count - 1) { from = item.start; to = specifiers[index + 1].start }
-    else { from = specifiers[index - 1].end; to = item.end }
-    return {startLine: from.line, startChar: from.char, endLine: to.line, endChar: to.char, before: content.slice(from.index, to.index), after: '', provenance: 'EXTRACTED'}
-}
+// remaining `{ ... }` stays well-formed. Removing an import binding is parser-proven.
+const removalRange = (specifiers, index, content) => ({...listRemovalRange(specifiers, index, content), provenance: 'EXTRACTED'})
 
 function statementRemoval(statement, content) {
     const newline = content.indexOf('\n', statement.end.index)
