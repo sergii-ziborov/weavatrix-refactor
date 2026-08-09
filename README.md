@@ -76,6 +76,7 @@ Weavatrix Refactor also answers:
 | Is this the exact symbol? | Stable graph symbol id plus parser/LSP selection range |
 | Which references are proven? | Per-edit provenance: `EXACT_LSP`, `RESOLVED`, `EXTRACTED`, or `LEXICAL_EXACT` |
 | What was not proven? | Explicit `uncertainReferences`, `notModified`, warnings, and `PARTIAL` completeness |
+| Which files were even looked at? | The rename session seeds every graph-declared reference plus every indexed file whose text contains the identifier; anything it could not open is named and forces `PARTIAL` |
 | Did the tree change after preview? | File sha256 plus exact `before` text rechecked under the write lock |
 | Can several renames partially succeed? | No. Related renames are conflict-checked and applied as one transaction |
 | What happens after a disk/write failure? | Already-written files are restored; a durable rollback bundle remains |
@@ -172,7 +173,7 @@ atomic-write, and rollback protocol as rename.
 
 | Surface | Backend | Applyable provenance | Completeness contract |
 | --- | --- | --- | --- |
-| JavaScript / TypeScript rename | Bundled TypeScript language server | `EXACT_LSP` | `COMPLETE` only when the language-server result and repository boundary are complete |
+| JavaScript / TypeScript rename | Bundled TypeScript language server | `EXACT_LSP` | `COMPLETE` only when every file that could mention the symbol was opened in the rename session and proven; any candidate left out forces `PARTIAL` |
 | SQL table rename | Schema-aware SQL scanner across SQL and host files | `EXTRACTED` / `LEXICAL_EXACT` | Reports every skipped or ambiguous reference |
 | SQL field rename | Definition-safe SQL backend | Proven definition edits only | Usages remain `UNPROVEN` rather than guessed |
 | Python / Rust / Go / Java / C# / Solidity rename | Indexed graph references plus exact lexical location on the recorded line | `EXTRACTED` / `LEXICAL_EXACT` | Always `PARTIAL`; ambiguous lines are never edited |
@@ -218,6 +219,7 @@ plan on its apply call; every executable field remains token-bound.
 | `ROLLED_BACK` | A failed apply or explicit rollback restored the original files. |
 | `ROLLBACK_INCOMPLETE` | Restoration was blocked for named files; the durable bundle remains retryable. |
 | `INVALID_PLAN` | Schema, path, range, encoding, overlap, or provenance validation failed before writing. |
+| `INVALID_ARGS` | A required argument was missing or the wrong type; the offending names are listed. Nothing was planned. |
 
 Planner-specific states such as `NOT_FOUND`, `NO_CHANGE`, `CONFLICT`,
 `BLOCKED`, `UNPROVEN`, and `NOT_SUPPORTED` remain visible instead of being
