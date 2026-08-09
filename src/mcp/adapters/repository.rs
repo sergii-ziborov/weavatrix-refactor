@@ -55,6 +55,9 @@ pub(crate) struct RefactorRepository {
     engine: Option<Weavatrix>,
     refactor_names: BTreeSet<String>,
     gate: WriteGate,
+    /// Confirmations live for the life of the server, not the call: a token issued by a preview
+    /// has to still be there when the apply arrives.
+    session: refactor::RefactorSession,
 }
 
 impl RefactorRepository {
@@ -69,6 +72,7 @@ impl RefactorRepository {
             engine: Some(engine),
             refactor_names,
             gate,
+            session: refactor::RefactorSession::new(gate.is_open()),
         })
     }
 
@@ -139,8 +143,13 @@ impl RepositoryPort for RefactorRepository {
             if let Some(refusal) = self.refuse_closed_gate(name) {
                 return Ok(refusal);
             }
-            let engine = self.engine().map_err(|error| error.to_string())?;
-            return refactor::call(engine.state(), name, &arguments);
+            self.ensure_loaded()?;
+            let state = self
+                .engine
+                .as_ref()
+                .ok_or_else(|| "repository graph is not initialized".to_owned())?
+                .state();
+            return self.session.call(state, name, &arguments);
         }
         let engine = self.engine().map_err(|error| error.to_string())?;
         let result = operations::call(engine, name, arguments);

@@ -825,6 +825,7 @@ version = "0.1.0"
 dependencies = [
  "blazingly-json",
  "weavatrix-graph",
+ "weavatrix-refactor-plan",
  "weavatrix-rust",
  "weavatrix-worktree",
 ]
