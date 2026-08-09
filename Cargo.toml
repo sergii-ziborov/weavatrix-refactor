@@ -1,0 +1,29 @@
+[package]
+name = "weavatrix-refactor"
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.89"
+description = "Native MCP server for Weavatrix refactoring: proven edit plans, transactional application, and rollback"
+license = "MIT"
+repository = "https://github.com/sergii-ziborov/weavatrix-refactor"
+homepage = "https://weavatrix.com"
+keywords = ["mcp", "refactoring", "rename", "transactional", "weavatrix"]
+categories = ["development-tools", "command-line-utilities"]
+readme = "README.md"
+
+[[bin]]
+name = "weavatrix-refactor"
+path = "src/main.rs"
+
+[dependencies]
+blazingly-json = "0.1.0"
+mcport = "0.3.0"
+notify = "8.2.0"
+weavatrix-rust = { version = "2.3.0", features = ["full", "lang-rust"] }
+weavatrix-rust-refactor = { version = "0.1.0", path = "../weavatrix-rust-refactor" }
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+pedantic = { level = "deny", priority = -1 }

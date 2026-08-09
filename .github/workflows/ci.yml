@@ -2,25 +2,93 @@ name: CI
 
 on:
   push:
-    branches: [main]
   pull_request:
 
 permissions:
   contents: read
 
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
-  verify:
-    runs-on: ubuntu-latest
+  quality:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c # 2026-07-29
+        with:
+          toolchain: 1.89.0
+          components: rustfmt, clippy
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+      - name: Run strict Clippy
+        run: cargo clippy --locked --all-targets -- -D warnings
+      - name: Verify the product architecture with its own engine
+        shell: bash
+        run: |
+          cargo run --quiet --locked -- tool verify_architecture . |
+            node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const r=JSON.parse(s);if(r.state!=='PASS'||r.new.length||r.existing.length||r.excepted.length){console.error(JSON.stringify(r,null,2));process.exit(1)}})"
+      - name: Verify product and engine identities
+        shell: bash
+        run: |
+          cargo metadata --locked --no-deps --format-version 1 |
+            node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const m=JSON.parse(s);const p=m.packages.find(x=>x.name==='weavatrix');const n=require('./npm/weavatrix/package.json');const e=p.dependencies.find(x=>x.name==='weavatrix-rust');if(!p||p.version!==n.version||!e||!e.req.includes(n.weavatrixEngineVersion)){console.error({cargo:p?.version,npm:n.version,engineRequirement:e?.req,engine:n.weavatrixEngineVersion});process.exit(1)}})"
+      - name: Verify zero-dependency npm manifest
+        run: node -e "const p=require('./npm/weavatrix/package.json');if(p.scripts||p.dependencies||p.optionalDependencies)process.exit(1);if(p.license!=='MIT')process.exit(1)"
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c # 2026-07-29
+        with:
+          toolchain: 1.89.0
+      - run: cargo test --locked --all-targets
+      - run: cargo run --quiet --locked -- --version
+
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           persist-credentials: false
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24
           package-manager-cache: false
-      - run: npm ci --ignore-scripts
-      - run: npm run verify:release
-      - run: npm test
-      - run: npm audit
-      - run: npm pack --dry-run --json
+      - name: Assemble npm package skeleton
+        run: node scripts/build-npm-packages.mjs main
+      - name: Inspect npm package contents
+        shell: bash
+        run: |
+          npm pack ./npm/dist/weavatrix --dry-run --json |
+            node scripts/npm-pack-json.mjs require-files README.md LICENSE server.json skill/SKILL.md bin/weavatrix.mjs bin/weavatrix-mcp.mjs
+          node --test scripts/npm-pack-json.test.mjs
+      - name: Reject lifecycle scripts and runtime dependencies
+        shell: bash
+        run: |
+          node -e "const p=require('./npm/dist/weavatrix/package.json');if(p.scripts||p.dependencies||p.optionalDependencies)process.exit(1)"
+          ! find npm/dist/weavatrix -type f -path '*node_modules*' -print -quit | grep .
+
+  security:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - uses: taiki-e/install-action@18b1216eba7f8039b0f8d131d5473787f0edce68 # v2
+        with:
+          tool: cargo-audit
+      - run: cargo audit --deny warnings
