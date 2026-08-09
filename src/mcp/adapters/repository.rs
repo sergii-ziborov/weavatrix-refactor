@@ -139,7 +139,8 @@ impl RepositoryPort for RefactorRepository {
             if let Some(refusal) = self.refuse_closed_gate(name) {
                 return Ok(refusal);
             }
-            return refactor::call(name, &arguments);
+            let engine = self.engine().map_err(|error| error.to_string())?;
+            return refactor::call(engine.state(), name, &arguments);
         }
         let engine = self.engine().map_err(|error| error.to_string())?;
         let result = operations::call(engine, name, arguments);
