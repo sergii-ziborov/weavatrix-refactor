@@ -91,6 +91,7 @@ fn call_tool(arguments: &[String]) -> Result<(), String> {
         )
         .map_err(|error| format!("invalid operation JSON: {error}"))?;
 
+    let mut engine = Weavatrix::open(repository).map_err(|error| error.to_string())?;
     let output = if refactor::Operation::from_name(name).is_some() {
         let writes = refactor::Operation::from_name(name).is_some_and(refactor::Operation::writes);
         if writes && !WriteGate::from_environment().is_open() {
@@ -101,10 +102,9 @@ fn call_tool(arguments: &[String]) -> Result<(), String> {
                 "reason": format!("set {}=1 to allow source edits", WriteGate::VARIABLE),
             })
         } else {
-            refactor::call(name, &input)?
+            refactor::call(engine.state(), name, &input)?
         }
     } else {
-        let mut engine = Weavatrix::open(repository).map_err(|error| error.to_string())?;
         operations::call(&mut engine, name, input)?
     };
     println!(
