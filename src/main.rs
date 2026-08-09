@@ -93,17 +93,11 @@ fn call_tool(arguments: &[String]) -> Result<(), String> {
 
     let mut engine = Weavatrix::open(repository).map_err(|error| error.to_string())?;
     let output = if refactor::Operation::from_name(name).is_some() {
-        let writes = refactor::Operation::from_name(name).is_some_and(refactor::Operation::writes);
-        if writes && !WriteGate::from_environment().is_open() {
-            blazingly_json::json!({
-                "status": "WRITE_GATE_CLOSED",
-                "operation": name,
-                "gate": WriteGate::VARIABLE,
-                "reason": format!("set {}=1 to allow source edits", WriteGate::VARIABLE),
-            })
-        } else {
-            refactor::call(engine.state(), name, &input)?
-        }
+        // The gate is passed into the session rather than checked beside it. Checking here and
+        // then handing the session a different answer is how a caller gets WRITE_GATE_CLOSED
+        // with the gate open.
+        let gate = WriteGate::from_environment();
+        refactor::RefactorSession::new(gate.is_open()).call(engine.state(), name, &input)?
     } else {
         operations::call(&mut engine, name, input)?
     };
