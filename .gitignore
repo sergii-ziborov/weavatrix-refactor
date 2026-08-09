@@ -1,5 +1,6 @@
-node_modules/
-.weavatrix/*
-!.weavatrix/architecture.json
-*.tgz
+/target/
+/npm/dist/
+*.tmp
+*.swp
 .DS_Store
+

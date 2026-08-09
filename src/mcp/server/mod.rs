@@ -1,0 +1,98 @@
+use crate::mcp::McpError;
+use crate::mcp::adapters::{NotifyMonitorFactory, RefactorRepository, ToolCatalog};
+use crate::mcp::application::RepositorySession;
+use crate::write_gate::WriteGate;
+use mcport::{ServerIdentity, ToolReply, ToolServer, Value};
+use std::path::Path;
+use std::sync::Arc;
+
+/// The refactor tool surface behind the shared `mcport` stdio runtime.
+///
+/// One process answers both halves: every read-only operation of the engine and the eleven
+/// refactor tools. That is the point of merging them here rather than proxying a second server —
+/// a refactor session stays in one evidence chain, on one graph revision, without a second
+/// process to keep in step.
+struct RefactorServer {
+    identity: ServerIdentity,
+    catalog: Value,
+    tool_names: std::collections::BTreeSet<String>,
+    session: RepositorySession,
+}
+
+impl RefactorServer {
+    fn new(root: impl AsRef<Path>, gate: WriteGate) -> Result<Self, McpError> {
+        let catalog = ToolCatalog::merged()?;
+        let repository = RefactorRepository::open(
+            root.as_ref().to_path_buf(),
+            catalog.refactor_names.clone(),
+            gate,
+        )?;
+        Ok(Self {
+            identity: ServerIdentity::new(
+                "weavatrix-refactor",
+                env!("CARGO_PKG_VERSION"),
+                "Local repository intelligence with proven refactoring. Writes require an explicit \
+                 gate and a plan-bound single-use token.",
+            ),
+            catalog: catalog.encoded,
+            tool_names: catalog.names,
+            session: RepositorySession::new(Box::new(repository), Arc::new(NotifyMonitorFactory)),
+        })
+    }
+}
+
+impl ToolServer for RefactorServer {
+    fn identity(&self) -> ServerIdentity {
+        self.identity.clone()
+    }
+
+    fn identity_ref(&self) -> Option<&ServerIdentity> {
+        Some(&self.identity)
+    }
+
+    fn catalog(&mut self) -> Value {
+        self.catalog.clone()
+    }
+
+    fn catalog_ref(&mut self) -> Option<&Value> {
+        Some(&self.catalog)
+    }
+
+    fn has_tool(&self, name: &str) -> Option<bool> {
+        Some(self.tool_names.contains(name))
+    }
+
+    fn call(&mut self, name: &str, arguments: Value) -> ToolReply {
+        let structured = arguments
+            .get("output_format")
+            .and_then(Value::as_str)
+            .is_none_or(|format| format == "json");
+        match self.session.call(name, arguments) {
+            Ok(value) => ToolReply::Success { value, structured },
+            Err(error) => ToolReply::error(error),
+        }
+    }
+}
+
+/// Serves the merged read-only and refactor surface over one stdio runtime.
+///
+/// The repository root and graph are validated eagerly so misconfiguration fails before the
+/// protocol handshake, and the write gate is read once at startup rather than per call.
+///
+/// # Errors
+///
+/// Returns stdio failures or a missing repository root.
+pub fn serve(root: impl AsRef<Path>, gate: WriteGate) -> Result<(), McpError> {
+    let root = root.as_ref();
+    if !root.is_dir() {
+        return Err(McpError::Io(std::io::Error::new(
+            std::io::ErrorKind::NotFound,
+            format!("repository root {} is not a directory", root.display()),
+        )));
+    }
+    let mut server = RefactorServer::new(root, gate)?;
+    mcport::serve(&mut server).map_err(McpError::Io)
+}
+
+#[cfg(test)]
+mod tests;
