@@ -3,8 +3,20 @@ use crate::write_gate::WriteGate;
 use mcport::{ToolReply, ToolServer};
 use std::fs;
 
+/// A repository of its own for each test.
+///
+/// Keyed on the process id alone this was one directory shared by every test in the binary, and
+/// the tests in a binary run in parallel: each call wiped the tree another test was still
+/// reading. It passed here and on Linux and failed on Windows and macOS, which is what that
+/// class of bug looks like from the outside. The counter is what makes them independent.
 fn fixture() -> std::path::PathBuf {
-    let root = std::env::temp_dir().join(format!("wvxr-host-{}", std::process::id()));
+    use std::sync::atomic::{AtomicU32, Ordering};
+    static NEXT: AtomicU32 = AtomicU32::new(0);
+    let root = std::env::temp_dir().join(format!(
+        "wvxr-host-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
     let _ = fs::remove_dir_all(&root);
     fs::create_dir_all(root.join("src")).expect("fixture root");
     fs::write(root.join("src/lib.rs"), "pub fn one() -> u32 { 1 }\n").expect("fixture source");

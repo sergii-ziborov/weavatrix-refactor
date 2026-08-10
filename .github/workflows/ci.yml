@@ -82,43 +82,12 @@ jobs:
       - run: cargo test --locked --all-targets
       - run: cargo run --quiet --locked -- --version
 
-  # This job used to ask node to assemble an npm skeleton from scripts/ and npm/, neither of
-  # which survived the Rust rewrite. What actually needs checking on a crate is that it packages
-  # and that the packaged copy carries the files the manifest promises.
-  package:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    defaults:
-      run:
-        working-directory: weavatrix-refactor
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          path: weavatrix-refactor
-          persist-credentials: false
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          repository: sergii-ziborov/weavatrix-rust-refactor
-          path: weavatrix-rust-refactor
-          persist-credentials: false
-      - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c # 2026-07-29
-        with:
-          toolchain: 1.89.0
-      # --no-verify because verification builds the packaged copy, which resolves
-      # weavatrix-rust-refactor from the registry where it does not exist yet. Drop this flag
-      # together with the path dependency.
-      - name: Package the crate as crates.io would receive it
-        run: cargo package --locked --no-verify
-      - name: Verify the packaged copy carries the files the manifest promises
-        shell: bash
-        run: |
-          set -euo pipefail
-          archive="$(find target/package -maxdepth 1 -name '*.crate' -print -quit)"
-          [[ -n "$archive" ]] || { echo "no .crate was produced" >&2; exit 1; }
-          for required in README.md LICENSE server.json contract/refactor-tools.v1.json; do
-            tar -tzf "$archive" | grep -q "/$required\$" \
-              || { echo "$required is missing from the package" >&2; exit 1; }
-          done
+  # There is no packaging job, and there cannot be one yet. `cargo package` rewrites the path
+  # dependency into a version dependency and then resolves that version against the index, so it
+  # fails on a crate that is not published — with or without --no-verify. The verify job in
+  # publish-crate.yml covers this the moment weavatrix-rust-refactor 0.1.0 lands; restore a
+  # packaging job here at the same time, checking that README.md, LICENSE, server.json and
+  # contract/refactor-tools.v1.json are inside the archive.
 
   security:
     runs-on: ubuntu-24.04
