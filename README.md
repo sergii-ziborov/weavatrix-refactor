@@ -70,19 +70,29 @@ JavaScript implementation into
 `weavatrix-rust-refactor` as the only source of the tool catalog. A client written against 0.1.x
 sees the same names, the same arguments and the same statuses here.
 
-## Migration status
+## The rewrite is finished
 
-The catalog is complete and live. Engines land one at a time, and an operation that has not been
-ported answers `NOT_SUPPORTED` — itself a contract status — naming `weavatrix-refactor-js` as the
-implementation to use meanwhile. Nothing is hidden behind a flag, so a client can always tell
-which half is native. See [docs/rust-migration.md](docs/rust-migration.md).
+All eleven refactor operations are native Rust. Dispatch has no fallback arm, so a
+tool added to the contract fails to compile rather than answering "not supported" at
+run time. See [docs/rust-migration.md](docs/rust-migration.md) for how it was done.
 
 | Area | State |
 | --- | --- |
 | MCP host, merged catalog, write gate | done |
 | Safety kernel (containment, UTF-16 ranges, fingerprints, tokens, locking, atomic write, rollback) | provided by `weavatrix-edit` / `weavatrix-worktree` |
-| Graph-native planners | pending |
-| JavaScript/TypeScript signature, imports and exact rename | pending, last by design |
+| Graph-native planners (rename, related rename, bulk replace, symbol edit, move, delete readiness) | done |
+| Signature change and import organisation | done |
+
+`NOT_SUPPORTED` survives only as a per-call answer where an engine cannot prove
+something about the input it was given. It is never the answer for a whole tool.
+
+### Every planner is `PARTIAL`, on purpose
+
+Call sites come from graph edges. That proves the sites a plan edits; it cannot prove
+the *absence* of other references, so nothing here claims `COMPLETE`. A same-named
+occurrence the graph does not vouch for is reported as an `UNPROVEN_OCCURRENCE`
+rather than edited — the difference between renaming a symbol and find-replacing a
+string, and the reason a second declaration sharing the name comes out untouched.
 
 ## License
 
