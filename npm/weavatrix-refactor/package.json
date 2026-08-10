@@ -1,8 +1,8 @@
 {
   "name": "weavatrix-refactor",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "weavatrixEngineVersion": "2.4.0",
-  "weavatrixRefactorVersion": "0.1.1",
+  "weavatrixRefactorVersion": "0.1.2",
   "description": "Transactional refactoring MCP for coding agents: 11 evidence-backed plan/apply tools, hash-bound previews, atomic writes, and rollback.",
   "author": "Sergii Ziborov <sergii.ziborov@gmail.com>",
   "license": "MIT",
