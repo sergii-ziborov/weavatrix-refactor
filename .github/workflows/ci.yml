@@ -10,13 +10,30 @@ permissions:
 env:
   CARGO_TERM_COLOR: always
 
+# INTERIM. weavatrix-rust-refactor is not on crates.io yet, so Cargo.toml holds it by path as
+# well as by version. Only this repository is checked out on a runner, so the sibling directory
+# does not exist and nothing builds — which is why every job here failed rather than just the
+# packaging one. Each job therefore checks out both repositories side by side.
+#
+# The moment weavatrix-rust-refactor 0.1.0 publishes: drop `path` from Cargo.toml, delete the
+# second checkout from every job below, and remove the `defaults` block and the nested `path`.
+
 jobs:
   quality:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: weavatrix-refactor
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
+          path: weavatrix-refactor
+          persist-credentials: false
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          repository: sergii-ziborov/weavatrix-rust-refactor
+          path: weavatrix-rust-refactor
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c # 2026-07-29
         with:
@@ -31,8 +48,8 @@ jobs:
         run: |
           cargo run --quiet --locked -- tool verify_architecture . |
             node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const r=JSON.parse(s);if(r.state!=='PASS'||r.new.length||r.existing.length||r.excepted.length){console.error(JSON.stringify(r,null,2));process.exit(1)}})"
-      # server.json is what an MCP registry reads. It named the 0.1.x npm package long after
-      # this became a Rust host, so the two are now checked against each other.
+      # server.json is what an MCP registry reads. It named the 0.1.x npm package long after this
+      # became a Rust host, so the two are now checked against each other.
       - name: Verify the crate and the MCP manifest agree on the version
         shell: bash
         run: |
@@ -46,9 +63,18 @@ jobs:
         os: [ubuntu-24.04, windows-2025, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: weavatrix-refactor
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
+          path: weavatrix-refactor
+          persist-credentials: false
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          repository: sergii-ziborov/weavatrix-rust-refactor
+          path: weavatrix-rust-refactor
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c # 2026-07-29
         with:
@@ -56,21 +82,33 @@ jobs:
       - run: cargo test --locked --all-targets
       - run: cargo run --quiet --locked -- --version
 
-  # This job asked node to assemble an npm skeleton from scripts/ and npm/, neither of which
-  # survived the Rust rewrite, so every push failed on a step that could not have passed. What
-  # actually needs checking on a crate is that it packages and that the packaged copy builds.
+  # This job used to ask node to assemble an npm skeleton from scripts/ and npm/, neither of
+  # which survived the Rust rewrite. What actually needs checking on a crate is that it packages
+  # and that the packaged copy carries the files the manifest promises.
   package:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: weavatrix-refactor
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
+          path: weavatrix-refactor
+          persist-credentials: false
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          repository: sergii-ziborov/weavatrix-rust-refactor
+          path: weavatrix-rust-refactor
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c # 2026-07-29
         with:
           toolchain: 1.89.0
+      # --no-verify because verification builds the packaged copy, which resolves
+      # weavatrix-rust-refactor from the registry where it does not exist yet. Drop this flag
+      # together with the path dependency.
       - name: Package the crate as crates.io would receive it
-        run: cargo package --locked
+        run: cargo package --locked --no-verify
       - name: Verify the packaged copy carries the files the manifest promises
         shell: bash
         run: |
@@ -85,9 +123,18 @@ jobs:
   security:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: weavatrix-refactor
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
+          path: weavatrix-refactor
+          persist-credentials: false
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          repository: sergii-ziborov/weavatrix-rust-refactor
+          path: weavatrix-rust-refactor
           persist-credentials: false
       - uses: taiki-e/install-action@18b1216eba7f8039b0f8d131d5473787f0edce68 # v2
         with:
