@@ -1,17 +1,15 @@
 name: Publish crate
 
-# INTERIM: dispatch only. This host holds weavatrix-rust-refactor by version and by path, and
-# cargo strips the path on publish — so the library has to reach crates.io before this crate can
-# be published at all. An automatic push trigger could only produce failures until then.
-#
-# Once weavatrix-rust-refactor 0.1.0 is published and the path is dropped from Cargo.toml,
-# restore the push trigger to match the library's workflow:
-#
-#   push:
-#     branches: [main]
-#     tags: ["v*"]
-#     paths: [Cargo.toml, Cargo.lock, .github/workflows/publish-crate.yml]
 on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+    paths:
+      - Cargo.toml
+      - Cargo.lock
+      - .github/workflows/publish-crate.yml
   workflow_dispatch:
     inputs:
       authentication:

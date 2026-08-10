@@ -834,6 +834,8 @@ dependencies = [
 [[package]]
 name = "weavatrix-rust-refactor"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6895f1181378ff5d7c39a81a1c63d5ff38e60bef8f7f0ab8a209188b2814a554"
 dependencies = [
  "blazingly-json",
  "regex",
