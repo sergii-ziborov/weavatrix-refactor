@@ -21,8 +21,9 @@ weavatrix-rust            reusable read-only evidence engine
 
 > **1.0 is the engine change.** Versions 0.1.x were a JavaScript package hosting the
 > `weavatrix-js` engine. That implementation continues as
-> [`weavatrix-refactor-js`](https://github.com/sergii-ziborov/weavatrix-refactor-js) — pin
-> `weavatrix-refactor@0.1.6` or install `weavatrix-refactor-js` to stay on it. The two keep
+> [`weavatrix-refactor-js`](https://github.com/sergii-ziborov/weavatrix-refactor-js), which
+> picks up the version line at 0.1.6 where `weavatrix-refactor@0.1.5` left off. Install
+> `weavatrix-refactor-js`, or pin `weavatrix-refactor@0.1.5`, to stay on it. The two keep
 > separate state directories on purpose, so they never share a lock, a token store, or a
 > rollback journal.
 

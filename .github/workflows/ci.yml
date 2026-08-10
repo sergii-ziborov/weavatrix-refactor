@@ -74,9 +74,13 @@ jobs:
           set -euo pipefail
           archive="$(find target/package -maxdepth 1 -name '*.crate' -print -quit)"
           [[ -n "$archive" ]] || { echo "no .crate was produced" >&2; exit 1; }
+          # Listed once into a variable rather than piped per file: `grep -q` exits at the first
+          # match and closes the pipe, tar takes SIGPIPE, and pipefail then fails the whole
+          # pipeline even though the file was found.
+          listing="$(tar -tzf "$archive")"
           for required in README.md LICENSE server.json contract/refactor-tools.v1.json; do
-            tar -tzf "$archive" | grep -q "/$required\$" \
-              || { echo "$required is missing from the package" >&2; exit 1; }
+            grep -qF "/$required" <<<"$listing" \
+              || { echo "$required is missing from the package" >&2; echo "$listing" >&2; exit 1; }
           done
 
   security:
