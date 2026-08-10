@@ -1,0 +1,270 @@
+name: Release native npm package
+
+on:
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: npm-release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    if: github.repository == 'sergii-ziborov/weavatrix-refactor'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: win32-x64
+            runner: windows-2025
+            target: x86_64-pc-windows-msvc
+            binary: target/x86_64-pc-windows-msvc/release/weavatrix-refactor.exe
+          - platform: win32-arm64
+            runner: windows-11-arm
+            target: aarch64-pc-windows-msvc
+            binary: target/aarch64-pc-windows-msvc/release/weavatrix-refactor.exe
+          - platform: darwin-x64
+            runner: macos-15-intel
+            target: x86_64-apple-darwin
+            binary: target/x86_64-apple-darwin/release/weavatrix-refactor
+          - platform: darwin-arm64
+            runner: macos-15
+            target: aarch64-apple-darwin
+            binary: target/aarch64-apple-darwin/release/weavatrix-refactor
+          - platform: linux-x64
+            runner: ubuntu-24.04
+            target: x86_64-unknown-linux-gnu
+            binary: target/x86_64-unknown-linux-gnu/release/weavatrix-refactor
+          - platform: linux-arm64
+            runner: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+            binary: target/aarch64-unknown-linux-gnu/release/weavatrix-refactor
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - name: Install the declared Rust toolchain and target
+        shell: bash
+        run: |
+          rustup toolchain install 1.89.0 --profile minimal
+          rustup target add --toolchain 1.89.0 "${{ matrix.target }}"
+      - name: Build the release binary
+        shell: bash
+        run: cargo +1.89.0 build --release --locked --target "${{ matrix.target }}"
+      # The binary states its own product, engine, refactor-library and contract versions. If any
+      # of them disagrees with the manifests, the artifact is wrong and must not reach a user.
+      - name: Verify the native binary identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          manifest() { node -p "require('./npm/weavatrix-refactor/package.json').$1"; }
+          crate() {
+            cargo +1.89.0 metadata --locked --format-version 1 |
+              node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>process.stdout.write(JSON.parse(s).packages.find(p=>p.name===process.argv[1]).version))" "$1"
+          }
+          PRODUCT_VERSION="$(manifest version)"
+          ENGINE_VERSION="$(manifest weavatrixEngineVersion)"
+          REFACTOR_VERSION="$(manifest weavatrixRefactorVersion)"
+          CONTRACT_VERSION="$(node -p "require('./contract/refactor-tools.v1.json').contractVersion")"
+          [[ "$PRODUCT_VERSION" == "$(crate weavatrix-refactor)" ]]
+          [[ "$ENGINE_VERSION" == "$(crate weavatrix-rust)" ]]
+          [[ "$REFACTOR_VERSION" == "$(crate weavatrix-rust-refactor)" ]]
+          EXPECTED="weavatrix-refactor $PRODUCT_VERSION (engine $ENGINE_VERSION, refactor $REFACTOR_VERSION, contract v$CONTRACT_VERSION)"
+          ACTUAL="$('${{ matrix.binary }}' --version)"
+          [[ "$ACTUAL" == "$EXPECTED" ]] || { echo "got: $ACTUAL"; echo "want: $EXPECTED"; exit 1; }
+      - name: Normalize the binary artifact layout
+        shell: bash
+        run: |
+          mkdir -p "artifacts/${{ matrix.platform }}"
+          cp "${{ matrix.binary }}" "artifacts/${{ matrix.platform }}/"
+      - name: Preserve the verified native binary
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: binary-${{ matrix.platform }}
+          path: artifacts
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    if: github.repository == 'sergii-ziborov/weavatrix-refactor'
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - name: Set up Node.js for npm trusted publishing
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Download all verified platform binaries
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: binary-*
+          path: binaries
+          merge-multiple: true
+      - name: Assemble and verify the universal package
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./npm/weavatrix-refactor/package.json').version")"
+          MCP_NAME="$(node -p "require('./npm/weavatrix-refactor/package.json').mcpName")"
+          SERVER_NAME="$(node -p "require('./server.json').name")"
+          SERVER_VERSION="$(node -p "require('./server.json').version")"
+          SERVER_DESCRIPTION_LENGTH="$(node -p "require('./server.json').description.length")"
+          SERVER_PACKAGE="$(node -p "require('./server.json').packages[0].identifier")"
+          SERVER_PACKAGE_VERSION="$(node -p "require('./server.json').packages[0].version")"
+          SERVER_COMMAND="$(node -p "require('./server.json').packages[0].packageArguments[0].value")"
+          [[ "$GITHUB_REF_NAME" == "v$VERSION" ]]
+          [[ "$SERVER_NAME" == "io.github.sergii-ziborov/weavatrix-refactor" ]]
+          [[ "$MCP_NAME" == "$SERVER_NAME" ]]
+          [[ "$SERVER_VERSION" == "$VERSION" ]]
+          [[ "$SERVER_PACKAGE" == "weavatrix-refactor" ]]
+          [[ "$SERVER_PACKAGE_VERSION" == "$VERSION" ]]
+          [[ "$SERVER_COMMAND" == "mcp" ]]
+          (( SERVER_DESCRIPTION_LENGTH > 0 && SERVER_DESCRIPTION_LENGTH <= 100 ))
+          node scripts/build-npm-packages.mjs universal binaries "$VERSION"
+          cmp server.json npm/dist/weavatrix-refactor/server.json
+          npm pack ./npm/dist/weavatrix-refactor --dry-run --json |
+            node scripts/npm-pack-json.mjs require-files README.md LICENSE server.json bin/weavatrix-refactor.mjs bin/weavatrix-refactor-mcp.mjs
+          node -e "const p=require('./npm/dist/weavatrix-refactor/package.json');if(p.scripts||p.dependencies||p.optionalDependencies)process.exit(1)"
+          ! find npm/dist/weavatrix-refactor -type f -path '*node_modules*' -print -quit | grep .
+      # Installing the tarball is the only check that covers what a user actually gets: the bin
+      # shims, the bundled binary lookup, and both halves of the catalog in one process.
+      - name: Smoke-test the installed package boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          PACKAGE="$(npm pack ./npm/dist/weavatrix-refactor --json | node scripts/npm-pack-json.mjs filename)"
+          ROOT="$(mktemp -d)"
+          trap 'rm -rf "$ROOT" "$PACKAGE"' EXIT
+          npm install --prefix "$ROOT" --ignore-scripts --no-audit --no-fund "./$PACKAGE"
+          VERSION="$(node -p "require('./npm/weavatrix-refactor/package.json').version")"
+          ENGINE_VERSION="$(node -p "require('./npm/weavatrix-refactor/package.json').weavatrixEngineVersion")"
+          REFACTOR_VERSION="$(node -p "require('./npm/weavatrix-refactor/package.json').weavatrixRefactorVersion")"
+          CONTRACT_VERSION="$(node -p "require('./contract/refactor-tools.v1.json').contractVersion")"
+          [[ "$("$ROOT/node_modules/.bin/weavatrix-refactor" --version)" \
+             == "weavatrix-refactor $VERSION (engine $ENGINE_VERSION, refactor $REFACTOR_VERSION, contract v$CONTRACT_VERSION)" ]]
+          CATALOG="$("$ROOT/node_modules/.bin/weavatrix-refactor" list-tools)"
+          for tool in graph_stats rename_symbol rename_related_symbols change_signature organize_imports \
+                      edit_symbol bulk_replace move_file move_symbol delete_readiness \
+                      apply_edit_plan rollback_last_apply; do
+            grep -qF "\"$tool\"" <<<"$CATALOG" || { echo "$tool is missing from the catalog" >&2; exit 1; }
+          done
+      - name: Publish with provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./npm/weavatrix-refactor/package.json').version")"
+          if npm view "weavatrix-refactor@$VERSION" version >/dev/null 2>&1; then
+            echo "weavatrix-refactor@$VERSION already exists; verifying registry metadata"
+          else
+            npm publish ./npm/dist/weavatrix-refactor --ignore-scripts --provenance --access public
+          fi
+
+          PUBLISHED_HEAD=""
+          PREDICATE=""
+          for attempt in $(seq 1 24); do
+            echo "npm provenance verification attempt $attempt/24"
+            PUBLISHED_HEAD="$(npm view "weavatrix-refactor@$VERSION" gitHead --json 2>/dev/null | tr -d '\"\r\n' || true)"
+            PREDICATE="$(npm view "weavatrix-refactor@$VERSION" dist.attestations.provenance.predicateType --json 2>/dev/null | tr -d '\"\r\n' || true)"
+            if [[ "$PUBLISHED_HEAD" == "$GITHUB_SHA" && "$PREDICATE" == "https://slsa.dev/provenance/v1" ]]; then
+              break
+            fi
+            sleep 5
+          done
+          [[ "$PUBLISHED_HEAD" == "$GITHUB_SHA" ]]
+          [[ "$PREDICATE" == "https://slsa.dev/provenance/v1" ]]
+      - name: Install verified MCP Registry publisher
+        shell: bash
+        run: |
+          curl --fail --location --proto '=https' --tlsv1.2 \
+            --output mcp-publisher.tar.gz \
+            https://github.com/modelcontextprotocol/registry/releases/download/v1.8.0/mcp-publisher_linux_amd64.tar.gz
+          echo "1370446bbe74d562608e8005a6ccce02d146a661fbd78674e11cc70b9618d6cf  mcp-publisher.tar.gz" | sha256sum --check
+          tar --extract --gzip --file mcp-publisher.tar.gz mcp-publisher
+          chmod +x mcp-publisher
+      - name: Publish server metadata to the official MCP Registry
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./npm/weavatrix-refactor/package.json').version")"
+          ./mcp-publisher validate server.json
+          REGISTRY_RESPONSE="$(curl --fail --silent --show-error 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.sergii-ziborov%2Fweavatrix-refactor')"
+          if jq --exit-status --arg version "$VERSION" \
+            '.servers[]?.server | select(.name == "io.github.sergii-ziborov/weavatrix-refactor" and .version == $version)' \
+            <<<"$REGISTRY_RESPONSE" >/dev/null; then
+            echo "MCP Registry already contains Weavatrix Refactor $VERSION; skipping publish"
+          else
+            ./mcp-publisher login github-oidc
+            ./mcp-publisher publish
+          fi
+      - name: Verify the official MCP Registry artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./npm/weavatrix-refactor/package.json').version")"
+          REGISTRY_URL="https://registry.modelcontextprotocol.io/v0.1/servers/io.github.sergii-ziborov%2Fweavatrix-refactor/versions/$VERSION"
+          for attempt in $(seq 1 24); do
+            echo "MCP Registry verification attempt $attempt/24"
+            if curl --fail --silent --show-error "$REGISTRY_URL" |
+              jq --exit-status --arg version "$VERSION" \
+                '.server.name == "io.github.sergii-ziborov/weavatrix-refactor" and
+                 .server.version == $version and
+                 .server.packages[0].identifier == "weavatrix-refactor" and
+                 .server.packages[0].version == $version' >/dev/null; then
+              break
+            fi
+            sleep 5
+          done
+          curl --fail --silent --show-error "$REGISTRY_URL" |
+            jq --exit-status --arg version "$VERSION" \
+              '.server.name == "io.github.sergii-ziborov/weavatrix-refactor" and
+               .server.version == $version and
+               .server.packages[0].identifier == "weavatrix-refactor" and
+               .server.packages[0].version == $version' >/dev/null
+
+  release:
+    if: github.repository == 'sergii-ziborov/weavatrix-refactor'
+    needs: publish
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Check out the verified tag
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./npm/weavatrix-refactor/package.json').version")"
+          [[ "$GITHUB_REF_NAME" == "v$VERSION" ]]
+          [[ "$(git rev-list -n 1 "$GITHUB_REF_NAME")" == "$GITHUB_SHA" ]]
+          if ! gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release create "$GITHUB_REF_NAME" \
+              --verify-tag \
+              --generate-notes \
+              --title "Weavatrix Refactor $GITHUB_REF_NAME"
+          fi
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/$GITHUB_REF_NAME" |
+            jq --exit-status --arg tag "$GITHUB_REF_NAME" \
+              '.tag_name == $tag and (.draft | not) and (.prerelease | not)' >/dev/null
