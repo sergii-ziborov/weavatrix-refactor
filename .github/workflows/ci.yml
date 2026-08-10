@@ -82,6 +82,37 @@ jobs:
             grep -qF "/$required" <<<"$listing" \
               || { echo "$required is missing from the package" >&2; echo "$listing" >&2; exit 1; }
           done
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+      # The npm package is a second artifact from the same source, so it is checked here rather
+      # than only at release time - a broken launcher would otherwise surface on a tag.
+      - name: Assemble the npm package around the release binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo build --release --locked
+          node scripts/build-npm-packages.mjs current linux-x64 target/release/weavatrix-refactor
+          npm pack ./npm/dist/weavatrix-refactor --dry-run --json |
+            node scripts/npm-pack-json.mjs require-files README.md LICENSE server.json bin/weavatrix-refactor.mjs bin/weavatrix-refactor-mcp.mjs
+          node --test scripts/npm-pack-json.test.mjs
+      - name: Reject lifecycle scripts and runtime dependencies
+        shell: bash
+        run: |
+          node -e "const p=require('./npm/dist/weavatrix-refactor/package.json');if(p.scripts||p.dependencies||p.optionalDependencies)process.exit(1)"
+          ! find npm/dist/weavatrix-refactor -type f -path '*node_modules*' -print -quit | grep .
+      - name: Verify the assembled launcher starts the native binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./npm/weavatrix-refactor/package.json').version")"
+          ENGINE="$(node -p "require('./npm/weavatrix-refactor/package.json').weavatrixEngineVersion")"
+          REFACTOR="$(node -p "require('./npm/weavatrix-refactor/package.json').weavatrixRefactorVersion")"
+          CONTRACT="$(node -p "require('./contract/refactor-tools.v1.json').contractVersion")"
+          ACTUAL="$(node npm/dist/weavatrix-refactor/bin/weavatrix-refactor.mjs --version)"
+          EXPECTED="weavatrix-refactor $VERSION (engine $ENGINE, refactor $REFACTOR, contract v$CONTRACT)"
+          [[ "$ACTUAL" == "$EXPECTED" ]] || { echo "got: $ACTUAL"; echo "want: $EXPECTED"; exit 1; }
 
   security:
     runs-on: ubuntu-24.04

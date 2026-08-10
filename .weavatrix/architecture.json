@@ -33,6 +33,11 @@
       "id": "cli",
       "name": "Process composition and diagnostics",
       "paths": ["src/main.rs"]
+    },
+    {
+      "id": "automation",
+      "name": "Native npm build and release harnesses",
+      "paths": ["scripts", "npm/weavatrix-refactor"]
     }
   ],
   "dependencyRules": [
