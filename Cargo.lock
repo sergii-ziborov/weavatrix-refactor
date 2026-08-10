@@ -408,9 +408,9 @@ checksum = "4facc753ae494aeb6e3c22f839b158aebd4f9270f55cd3c79906c45476c47ab4"
 
 [[package]]
 name = "mcport"
-version = "0.3.0"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e76648023b02c22e57922cf96b91e804b3448a99e64ad558ed205d6d08f83a9"
+checksum = "894dc9aabf47e2b7119d4eb22fc2d77df9664e264d96ad1c179d05889b6bf074"
 dependencies = [
  "blazingly-json",
  "serde",
