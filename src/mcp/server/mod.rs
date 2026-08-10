@@ -2,7 +2,7 @@ use crate::mcp::McpError;
 use crate::mcp::adapters::{NotifyMonitorFactory, RefactorRepository, ToolCatalog};
 use crate::mcp::application::RepositorySession;
 use crate::write_gate::WriteGate;
-use mcport::{ServerIdentity, ToolReply, ToolServer, Value};
+use mcport::{ServerIdentity, ToolPayload, ToolReply, ToolServer, Value};
 use std::path::Path;
 use std::sync::Arc;
 
@@ -63,12 +63,20 @@ impl ToolServer for RefactorServer {
     }
 
     fn call(&mut self, name: &str, arguments: Value) -> ToolReply {
-        let structured = arguments
+        // `Mirrored` rather than `Structured`: it carries structuredContent *and* the text
+        // mirror, which is what the old boolean did. Dropping the mirror would show an empty
+        // result to any client that reads only `content`.
+        let payload = if arguments
             .get("output_format")
             .and_then(Value::as_str)
-            .is_none_or(|format| format == "json");
+            .is_none_or(|format| format == "json")
+        {
+            ToolPayload::Mirrored
+        } else {
+            ToolPayload::Text
+        };
         match self.session.call(name, arguments) {
-            Ok(value) => ToolReply::Success { value, structured },
+            Ok(value) => ToolReply::Success { value, payload },
             Err(error) => ToolReply::error(error),
         }
     }
