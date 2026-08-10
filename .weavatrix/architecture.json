@@ -1,0 +1,91 @@
+{
+  "architectureContractV": 1,
+  "name": "Weavatrix Refactor MCP host",
+  "style": "ports-and-adapters",
+  "enforcement": "strict",
+  "components": [
+    {
+      "id": "write-gate",
+      "name": "The authorization boundary for source edits",
+      "paths": ["src/write_gate.rs"]
+    },
+    {
+      "id": "ports",
+      "name": "Repository and change-monitor ports",
+      "paths": ["src/mcp/ports"]
+    },
+    {
+      "id": "application",
+      "name": "Repository session use case",
+      "paths": ["src/mcp/application"]
+    },
+    {
+      "id": "outbound-adapters",
+      "name": "Engine and filesystem adapters",
+      "paths": ["src/mcp/adapters"]
+    },
+    {
+      "id": "inbound-mcp",
+      "name": "MCP server adapter",
+      "paths": ["src/mcp/server", "src/mcp/error.rs", "src/mcp/mod.rs"]
+    },
+    {
+      "id": "cli",
+      "name": "Process composition and diagnostics",
+      "paths": ["src/main.rs"]
+    }
+  ],
+  "dependencyRules": [
+    {
+      "id": "the-write-gate-answers-to-nothing",
+      "action": "forbid",
+      "from": ["write-gate"],
+      "to": ["ports", "application", "outbound-adapters", "inbound-mcp", "cli"],
+      "kinds": ["imports", "re_exports", "depends_on"]
+    },
+    {
+      "id": "ports-are-inward",
+      "action": "forbid",
+      "from": ["ports"],
+      "to": ["application", "outbound-adapters", "inbound-mcp", "cli"],
+      "kinds": ["imports", "re_exports", "depends_on"]
+    },
+    {
+      "id": "application-depends-only-on-ports",
+      "action": "forbid",
+      "from": ["application"],
+      "to": ["outbound-adapters", "inbound-mcp", "cli"],
+      "kinds": ["imports", "re_exports", "depends_on"]
+    },
+    {
+      "id": "outbound-adapters-do-not-depend-on-inbound",
+      "action": "forbid",
+      "from": ["outbound-adapters"],
+      "to": ["inbound-mcp", "cli"],
+      "kinds": ["imports", "re_exports", "depends_on"]
+    },
+    {
+      "id": "inbound-server-does-not-own-composition",
+      "action": "forbid",
+      "from": ["inbound-mcp"],
+      "to": ["cli"],
+      "kinds": ["imports", "re_exports", "depends_on"]
+    }
+  ],
+  "budgets": {
+    "runtimeCycles": 0,
+    "maxFileLoc": 300,
+    "maxFunctionLoc": 100
+  },
+  "technologies": {
+    "required": ["rust"],
+    "forbidden": ["unsafe-rust"]
+  },
+  "exceptions": [],
+  "ratchet": {
+    "baseline": {
+      "fingerprints": [],
+      "metrics": {}
+    }
+  }
+}
