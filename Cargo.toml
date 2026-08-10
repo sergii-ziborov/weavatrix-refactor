@@ -20,7 +20,7 @@ blazingly-json = "0.1.0"
 mcport = "0.3.0"
 notify = "8.2.0"
 weavatrix-rust = { version = "2.3.0", features = ["full", "lang-rust"] }
-weavatrix-rust-refactor = { version = "0.1.0", path = "../weavatrix-rust-refactor" }
+weavatrix-rust-refactor = "0.1.0"
 
 [lints.rust]
 unsafe_code = "forbid"
