@@ -1,7 +1,9 @@
 # Native Rust migration contract
 
-Status: proposed implementation sequence for replacing the 0.1.x JavaScript
-host without weakening the refactoring proof boundary.
+Status: **done**. This was the implementation sequence for replacing the 0.1.x
+JavaScript host without weakening the refactoring proof boundary; it is kept as
+the record of what was required and what the result actually is. The outcome is
+at the bottom.
 
 ## Current mismatch
 
@@ -64,3 +66,28 @@ not spawn the `weavatrix` executable or proxy a second MCP process.
 This is an incremental replacement, not a second greenfield protocol. The
 published JavaScript package remains the compatibility oracle until every
 load-bearing behavior above is covered by the Rust implementation.
+
+## Outcome
+
+One process exposes 53 tools: 42 read-only from `weavatrix-rust` and the 11
+refactor tools from `weavatrix-rust-refactor`. Every refactor operation is a
+native engine and dispatch has no fallback arm, so a tool added to the contract
+fails to compile rather than answering `NOT_SUPPORTED` at run time.
+
+Step 5 was met without a language server. The rename, signature and import
+engines read the graph and the tokenizer, which is why they cover Rust, Python,
+Go, Java and C# as well as JavaScript and TypeScript — and why none of them
+labels its evidence `EXACT_LSP` or `COMPLETE`. They prove the sites they edit,
+not the absence of others, so every planner answers `PARTIAL` and hands back the
+occurrences it refused to guess at. That is a weaker claim than a language
+server makes and a true one, which was the constraint step 5 actually imposed.
+
+Two limits are worth stating plainly, because they are the price of that choice:
+
+- A call the graph did not record is a call no operation touches. For a rename
+  that leaves an old name behind; for `change_signature` it leaves a call passing
+  an argument the function no longer takes.
+- `organize_imports` plans only for JavaScript and TypeScript. Elsewhere it
+  reports candidates and answers `UNPROVEN`, because `use std::io::Write` is used
+  by calling `write_all` and a Python import in `__init__.py` is often the public
+  API — both pass an occurrence count and both break on removal.
