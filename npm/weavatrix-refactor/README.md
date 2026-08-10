@@ -1,7 +1,7 @@
 # weavatrix-refactor
 
 Transactional refactoring MCP for coding agents: 11 evidence-backed plan/apply
-tools, hash-bound previews, atomic writes, and rollback — plus the 42 read-only
+tools, hash-bound previews, atomic writes, and rollback — plus the 43 read-only
 operations of the Weavatrix engine, in one process.
 
 ```bash
