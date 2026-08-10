@@ -31,13 +31,13 @@ jobs:
         run: |
           cargo run --quiet --locked -- tool verify_architecture . |
             node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const r=JSON.parse(s);if(r.state!=='PASS'||r.new.length||r.existing.length||r.excepted.length){console.error(JSON.stringify(r,null,2));process.exit(1)}})"
-      - name: Verify product and engine identities
+      # server.json is what an MCP registry reads. It named the 0.1.x npm package long after
+      # this became a Rust host, so the two are now checked against each other.
+      - name: Verify the crate and the MCP manifest agree on the version
         shell: bash
         run: |
           cargo metadata --locked --no-deps --format-version 1 |
-            node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const m=JSON.parse(s);const p=m.packages.find(x=>x.name==='weavatrix');const n=require('./npm/weavatrix/package.json');const e=p.dependencies.find(x=>x.name==='weavatrix-rust');if(!p||p.version!==n.version||!e||!e.req.includes(n.weavatrixEngineVersion)){console.error({cargo:p?.version,npm:n.version,engineRequirement:e?.req,engine:n.weavatrixEngineVersion});process.exit(1)}})"
-      - name: Verify zero-dependency npm manifest
-        run: node -e "const p=require('./npm/weavatrix/package.json');if(p.scripts||p.dependencies||p.optionalDependencies)process.exit(1);if(p.license!=='MIT')process.exit(1)"
+            node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const m=JSON.parse(s);const p=m.packages.find(x=>x.name==='weavatrix-refactor');const r=require('./server.json');const pkg=(r.packages||[])[0]||{};if(!p||p.version!==r.version||pkg.version!==r.version){console.error({cargo:p&&p.version,server:r.version,package:pkg.version});process.exit(1)}})"
 
   test:
     strategy:
@@ -56,30 +56,31 @@ jobs:
       - run: cargo test --locked --all-targets
       - run: cargo run --quiet --locked -- --version
 
+  # This job asked node to assemble an npm skeleton from scripts/ and npm/, neither of which
+  # survived the Rust rewrite, so every push failed on a step that could not have passed. What
+  # actually needs checking on a crate is that it packages and that the packaged copy builds.
   package:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           persist-credentials: false
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+      - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c # 2026-07-29
         with:
-          node-version: 24
-          package-manager-cache: false
-      - name: Assemble npm package skeleton
-        run: node scripts/build-npm-packages.mjs main
-      - name: Inspect npm package contents
+          toolchain: 1.89.0
+      - name: Package the crate as crates.io would receive it
+        run: cargo package --locked
+      - name: Verify the packaged copy carries the files the manifest promises
         shell: bash
         run: |
-          npm pack ./npm/dist/weavatrix --dry-run --json |
-            node scripts/npm-pack-json.mjs require-files README.md LICENSE server.json skill/SKILL.md bin/weavatrix.mjs bin/weavatrix-mcp.mjs
-          node --test scripts/npm-pack-json.test.mjs
-      - name: Reject lifecycle scripts and runtime dependencies
-        shell: bash
-        run: |
-          node -e "const p=require('./npm/dist/weavatrix/package.json');if(p.scripts||p.dependencies||p.optionalDependencies)process.exit(1)"
-          ! find npm/dist/weavatrix -type f -path '*node_modules*' -print -quit | grep .
+          set -euo pipefail
+          archive="$(find target/package -maxdepth 1 -name '*.crate' -print -quit)"
+          [[ -n "$archive" ]] || { echo "no .crate was produced" >&2; exit 1; }
+          for required in README.md LICENSE server.json contract/refactor-tools.v1.json; do
+            tar -tzf "$archive" | grep -q "/$required\$" \
+              || { echo "$required is missing from the package" >&2; exit 1; }
+          done
 
   security:
     runs-on: ubuntu-24.04
