@@ -1,0 +1,101 @@
+{
+  "name": "weavatrix-refactor-js-0.1.6",
+  "startupMs": 3405.8194,
+  "calls": [
+    {
+      "tool": "rename_symbol",
+      "label": "rename by bare name",
+      "ms": 12223.7,
+      "requestBytes": 168,
+      "responseBytes": 1524,
+      "isError": false,
+      "protocolError": null,
+      "requestText": "{\"name\":\"rename_symbol\",\"arguments\":{\"symbol\":\"resolveTarget\",\"new_name\":\"locateTarget\",\"output_format\":\"json\"}}",
+      "responseText": "{\"content\":[{\"type\":\"text\",\"text\":\"{\\n  \\\"schemaVersion\\\": \\\"weavatrix.tool.v1\\\",\\n  \\\"tool\\\": \\\"rename_symbol\\\",\\n  \\\"repo\\\": {\\n    \\\"name\\\": \\\"fixture\\\"\\n  },\\n  \\\"graph\\\": {\\n    \\\"revision\\\": \\\"82d6e8aba7a9fd2a9ca8d2c4fd03a5d49455a628281c1a5a27e589668654c125\\\",\\n    \\\"freshness\\\": \\\"fresh\\\",\\n    \\\"update\\\": \\\"full\\\",\\n    \\\"changedFiles\\\": 1\\n  },\\n  \\\"result\\\": {\\n    \\\"status\\\": \\\"NOT_A_SYMBOL\\\",\\n    \\\"reason\\\": \\\"graph rename operates on a symbol (file#name@line)\\\"\\n  },\\n  \\\"evidence\\\": [],\\n  \\\"warnings\\\": [\\n    {\\n      \\\"code\\\": \\\"GRAPH_AUTO_REFRESHED\\\",\\n      \\\"message\\\": \\\"Graph rebuilt before this answer (file-universe-changed).\\\"\\n    }\\n  ],\\n  \\\"page\\\": {}\\n}\"}],\"_meta\":{\"weavatrix/metrics\":{\"schemaVersion\":\"weavatrix.metrics.v1\",\"durationMs\":12174.4,\"textBytes\":576,\"structuredBytes\":463,\"estimatedOutputTokens\":260,\"graphFreshness\":\"fresh\",\"graphUpdate\":\"full\",\"graphRevision\":\"82d6e8aba7a9fd2a9ca8d2c4fd03a5d49455a628281c1a5a27e589668654c125\",\"cache\":\"graph-refreshed\"}},\"structuredContent\":{\"schemaVersion\":\"weavatrix.tool.v1\",\"tool\":\"rename_symbol\",\"repo\":{\"name\":\"fixture\"},\"graph\":{\"revision\":\"82d6e8aba7a9fd2a9ca8d2c4fd03a5d49455a628281c1a5a27e589668654c125\",\"freshness\":\"fresh\",\"update\":\"full\",\"changedFiles\":1},\"result\":{\"status\":\"NOT_A_SYMBOL\",\"reason\":\"graph rename operates on a symbol (file#name@line)\"},\"evidence\":[],\"warnings\":[{\"code\":\"GRAPH_AUTO_REFRESHED\",\"message\":\"Graph rebuilt before this answer (file-universe-changed).\"}],\"page\":{}}}",
+      "recorded": {
+        "status": "NOT_A_SYMBOL"
+      }
+    },
+    {
+      "tool": "rename_symbol",
+      "label": "rename by file#name@line (the refusal names the format)",
+      "ms": 4256.1,
+      "requestBytes": 182,
+      "responseBytes": 2368,
+      "isError": false,
+      "protocolError": null,
+      "requestText": "{\"name\":\"rename_symbol\",\"arguments\":{\"symbol\":\"src/core.ts#resolveTarget@2\",\"new_name\":\"locateTarget\",\"output_format\":\"json\"}}",
+      "responseText": "{\"content\":[{\"type\":\"text\",\"text\":\"{\\n  \\\"schemaVersion\\\": \\\"weavatrix.tool.v1\\\",\\n  \\\"tool\\\": \\\"rename_symbol\\\",\\n  \\\"repo\\\": {\\n    \\\"name\\\": \\\"fixture\\\"\\n  },\\n  \\\"graph\\\": {\\n    \\\"revision\\\": \\\"82d6e8aba7a9fd2a9ca8d2c4fd03a5d49455a628281c1a5a27e589668654c125\\\",\\n    \\\"freshness\\\": \\\"fresh\\\",\\n    \\\"update\\\": \\\"none\\\",\\n    \\\"changedFiles\\\": 0\\n  },\\n  \\\"result\\\": {\\n    \\\"status\\\": \\\"PREVIEW_OK\\\",\\n    \\\"files\\\": [\\n      {\\n        \\\"path\\\": \\\"src/core.ts\\\",\\n        \\\"status\\\": \\\"READY\\\",\\n        \\\"edits\\\": 3\\n      },\\n      {\\n        \\\"path\\\": \\\"src/caller.ts\\\",\\n        \\\"status\\\": \\\"READY\\\",\\n        \\\"edits\\\": 2\\n      },\\n      {\\n        \\\"path\\\": \\\"src/toplevel.ts\\\",\\n        \\\"status\\\": \\\"READY\\\",\\n        \\\"edits\\\": 2\\n      }\\n    ],\\n    \\\"confirmToken\\\": \\\"a50488113f8e2e378e73b7de9396923fbfbbf1c7421e7835\\\",\\n    \\\"expiresAt\\\": 1786432949117,\\n    \\\"uncertainReferences\\\": 3,\\n    \\\"operation\\\": \\\"rename_symbol\\\",\\n    \\\"planning\\\": {\\n      \\\"completeness\\\": \\\"PARTIAL\\\",\\n      \\\"oldName\\\": \\\"resolveTarget\\\",\\n      \\\"newName\\\": \\\"locateTarget\\\",\\n      \\\"warnings\\\": [\\n        \\\"POSSIBLE_SHADOWING\\\",\\n        \\\"PUBLIC_API_SYMBOL\\\"\\n      ]\\n    }\\n  },\\n  \\\"evidence\\\": [],\\n  \\\"warnings\\\": [],\\n  \\\"page\\\": {}\\n}\"}],\"_meta\":{\"weavatrix/metrics\":{\"schemaVersion\":\"weavatrix.metrics.v1\",\"durationMs\":4246,\"textBytes\":1064,\"structuredBytes\":751,\"estimatedOutputTokens\":454,\"graphFreshness\":\"fresh\",\"graphUpdate\":\"none\",\"graphRevision\":\"82d6e8aba7a9fd2a9ca8d2c4fd03a5d49455a628281c1a5a27e589668654c125\",\"cache\":\"graph-hit\"}},\"structuredContent\":{\"schemaVersion\":\"weavatrix.tool.v1\",\"tool\":\"rename_symbol\",\"repo\":{\"name\":\"fixture\"},\"graph\":{\"revision\":\"82d6e8aba7a9fd2a9ca8d2c4fd03a5d49455a628281c1a5a27e589668654c125\",\"freshness\":\"fresh\",\"update\":\"none\",\"changedFiles\":0},\"result\":{\"status\":\"PREVIEW_OK\",\"files\":[{\"path\":\"src/core.ts\",\"status\":\"READY\",\"edits\":3},{\"path\":\"src/caller.ts\",\"status\":\"READY\",\"edits\":2},{\"path\":\"src/toplevel.ts\",\"status\":\"READY\",\"edits\":2}],\"confirmToken\":\"a50488113f8e2e378e73b7de9396923fbfbbf1c7421e7835\",\"expiresAt\":1786432949117,\"uncertainReferences\":3,\"operation\":\"rename_symbol\",\"planning\":{\"completeness\":\"PARTIAL\",\"oldName\":\"resolveTarget\",\"newName\":\"locateTarget\",\"warnings\":[\"POSSIBLE_SHADOWING\",\"PUBLIC_API_SYMBOL\"]}},\"evidence\":[],\"warnings\":[],\"page\":{}}}",
+      "recorded": {
+        "status": "PREVIEW_OK",
+        "completeness": "PARTIAL",
+        "warnings": [
+          "POSSIBLE_SHADOWING",
+          "PUBLIC_API_SYMBOL"
+        ]
+      }
+    },
+    {
+      "tool": "rename_symbol",
+      "label": "apply with the token",
+      "ms": 1502.4,
+      "requestBytes": 264,
+      "responseBytes": 2511,
+      "isError": false,
+      "protocolError": null,
+      "requestText": "{\"name\":\"rename_symbol\",\"arguments\":{\"symbol\":\"src/core.ts#resolveTarget@2\",\"new_name\":\"locateTarget\",\"mode\":\"apply\",\"confirm_token\":\"a50488113f8e2e378e73b7de9396923fbfbbf1c7421e7835\",\"output_format\":\"json\"}}",
+      "responseText": "{\"content\":[{\"type\":\"text\",\"text\":\"{\\n  \\\"schemaVersion\\\": \\\"weavatrix.tool.v1\\\",\\n  \\\"tool\\\": \\\"rename_symbol\\\",\\n  \\\"repo\\\": {\\n    \\\"name\\\": \\\"fixture\\\"\\n  },\\n  \\\"graph\\\": {\\n    \\\"revision\\\": \\\"82d6e8aba7a9fd2a9ca8d2c4fd03a5d49455a628281c1a5a27e589668654c125\\\",\\n    \\\"freshness\\\": \\\"fresh\\\",\\n    \\\"update\\\": \\\"none\\\",\\n    \\\"changedFiles\\\": 0\\n  },\\n  \\\"result\\\": {\\n    \\\"status\\\": \\\"APPLIED\\\",\\n    \\\"applied\\\": 3,\\n    \\\"totalEdits\\\": 7,\\n    \\\"rollbackBundle\\\": \\\"C:\\\\\\\\Users\\\\\\\\SergiiZiborov\\\\\\\\.weavatrix-refactor-js\\\\\\\\rollback\\\\\\\\c8f12253f4b75e162c570d02\\\\\\\\1786432650452-69d12ae8\\\",\\n    \\\"files\\\": [\\n      {\\n        \\\"path\\\": \\\"src/core.ts\\\",\\n        \\\"status\\\": \\\"READY\\\",\\n        \\\"edits\\\": 3\\n      },\\n      {\\n        \\\"path\\\": \\\"src/caller.ts\\\",\\n        \\\"status\\\": \\\"READY\\\",\\n        \\\"edits\\\": 2\\n      },\\n      {\\n        \\\"path\\\": \\\"src/toplevel.ts\\\",\\n        \\\"status\\\": \\\"READY\\\",\\n        \\\"edits\\\": 2\\n      }\\n    ],\\n    \\\"uncertainReferences\\\": 3,\\n    \\\"operation\\\": \\\"rename_symbol\\\",\\n    \\\"planning\\\": {\\n      \\\"completeness\\\": \\\"PARTIAL\\\",\\n      \\\"oldName\\\": \\\"resolveTarget\\\",\\n      \\\"newName\\\": \\\"locateTarget\\\",\\n      \\\"warnings\\\": [\\n        \\\"POSSIBLE_SHADOWING\\\",\\n        \\\"PUBLIC_API_SYMBOL\\\"\\n      ]\\n    }\\n  },\\n  \\\"evidence\\\": [],\\n  \\\"warnings\\\": [],\\n  \\\"page\\\": {}\\n}\"}],\"_meta\":{\"weavatrix/metrics\":{\"schemaVersion\":\"weavatrix.metrics.v1\",\"durationMs\":1492.7,\"textBytes\":1130,\"structuredBytes\":811,\"estimatedOutputTokens\":486,\"graphFreshness\":\"fresh\",\"graphUpdate\":\"none\",\"graphRevision\":\"82d6e8aba7a9fd2a9ca8d2c4fd03a5d49455a628281c1a5a27e589668654c125\",\"cache\":\"graph-hit\"}},\"structuredContent\":{\"schemaVersion\":\"weavatrix.tool.v1\",\"tool\":\"rename_symbol\",\"repo\":{\"name\":\"fixture\"},\"graph\":{\"revision\":\"82d6e8aba7a9fd2a9ca8d2c4fd03a5d49455a628281c1a5a27e589668654c125\",\"freshness\":\"fresh\",\"update\":\"none\",\"changedFiles\":0},\"result\":{\"status\":\"APPLIED\",\"applied\":3,\"totalEdits\":7,\"rollbackBundle\":\"C:\\\\Users\\\\SergiiZiborov\\\\.weavatrix-refactor-js\\\\rollback\\\\c8f12253f4b75e162c570d02\\\\1786432650452-69d12ae8\",\"files\":[{\"path\":\"src/core.ts\",\"status\":\"READY\",\"edits\":3},{\"path\":\"src/caller.ts\",\"status\":\"READY\",\"edits\":2},{\"path\":\"src/toplevel.ts\",\"status\":\"READY\",\"edits\":2}],\"uncertainReferences\":3,\"operation\":\"rename_symbol\",\"planning\":{\"completeness\":\"PARTIAL\",\"oldName\":\"resolveTarget\",\"newName\":\"locateTarget\",\"warnings\":[\"POSSIBLE_SHADOWING\",\"PUBLIC_API_SYMBOL\"]}},\"evidence\":[],\"warnings\":[],\"page\":{}}}",
+      "recorded": "APPLIED"
+    }
+  ],
+  "toolCount": 45,
+  "error": null,
+  "toolNames": [
+    "graph_stats",
+    "get_node",
+    "get_neighbors",
+    "query_graph",
+    "god_nodes",
+    "shortest_path",
+    "get_dependents",
+    "change_impact",
+    "git_history",
+    "verified_change",
+    "trace_api_contract",
+    "get_community",
+    "search_code",
+    "read_source",
+    "inspect_symbol",
+    "context_bundle",
+    "find_duplicates",
+    "find_dead_code",
+    "run_audit",
+    "coverage_map",
+    "hot_path_review",
+    "list_communities",
+    "module_map",
+    "list_endpoints",
+    "trace_endpoint",
+    "rebuild_graph",
+    "graph_diff",
+    "get_architecture_contract",
+    "prepare_change",
+    "verify_architecture",
+    "explain_architecture_violation",
+    "propose_architecture_exception",
+    "open_repo",
+    "list_known_repos",
+    "apply_edit_plan",
+    "rollback_last_apply",
+    "rename_symbol",
+    "rename_related_symbols",
+    "move_file",
+    "move_symbol",
+    "delete_readiness",
+    "change_signature",
+    "edit_symbol",
+    "bulk_replace",
+    "organize_imports"
+  ],
+  "listBytes": 48277
+}

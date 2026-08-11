@@ -1,0 +1,8 @@
+{
+  "name": "naked-agent",
+  "mechanicalMs": 13.11,
+  "inputTokens": 523,
+  "outputTokens": 241,
+  "filesRead": 4,
+  "filesRewritten": 3
+}

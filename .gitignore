@@ -1,6 +1,7 @@
 /target/
 /npm/dist/
+/benchmarks/rename-agent/node_modules/
+/benchmarks/rename-agent/results/local-codex/
 *.tmp
 *.swp
 .DS_Store
-

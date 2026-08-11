@@ -1,0 +1,29 @@
+{
+  "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+  "model": "CLI default with --ignore-user-config (the JSON event stream does not expose the model id)",
+  "prompt": "Rename the exported function resolveTarget declared in src/core.ts to locateTarget. Update every reference and import that refers to that exported symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Make the edits, run the TypeScript build check, and report the result concisely.",
+  "flags": [
+    "--json",
+    "--ephemeral",
+    "--ignore-user-config",
+    "--ignore-rules",
+    "--dangerously-bypass-approvals-and-sandbox"
+  ],
+  "runs": [
+    {
+      "events": "raw/codex-naked-run1.jsonl",
+      "wallMs": 33638,
+      "score": "12/12"
+    },
+    {
+      "events": "raw/codex-naked-run2.jsonl",
+      "wallMs": 38913,
+      "score": "12/12"
+    },
+    {
+      "events": "raw/codex-naked-run3.jsonl",
+      "wallMs": 38475,
+      "score": "12/12"
+    }
+  ]
+}

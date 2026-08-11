@@ -1,0 +1,52 @@
+{
+  "name": "serena",
+  "startupMs": 8816.2254,
+  "calls": [
+    {
+      "tool": "find_symbol",
+      "label": "disambiguate the symbol",
+      "ms": 1277.8,
+      "requestBytes": 120,
+      "responseBytes": 403,
+      "isError": false,
+      "protocolError": null,
+      "recorded": "[{\"name_path\": \"resolveTarget\", \"kind\": \"Function\", \"relative_path\": \"src\\\\core.ts\", \"body_location\": {\"start_line\": 1, \"end_line\": 6}}, {\"name_path\": \"resolveT"
+    },
+    {
+      "tool": "rename_symbol",
+      "label": "LSP rename",
+      "ms": 189.6,
+      "requestBytes": 178,
+      "responseBytes": 163,
+      "isError": false,
+      "protocolError": null,
+      "recorded": "Successfully renamed 'resolveTarget' to 'locateTarget' (1 changes applied)"
+    }
+  ],
+  "toolCount": 21,
+  "error": null,
+  "toolNames": [
+    "replace_content",
+    "replace_in_files",
+    "replace_symbol_body",
+    "insert_after_symbol",
+    "insert_before_symbol",
+    "get_symbols_overview",
+    "find_symbol",
+    "find_referencing_symbols",
+    "find_implementations",
+    "find_declaration",
+    "get_diagnostics_for_file",
+    "rename_symbol",
+    "safe_delete_symbol",
+    "write_memory",
+    "read_memory",
+    "list_memories",
+    "delete_memory",
+    "rename_memory",
+    "edit_memory",
+    "onboarding",
+    "initial_instructions"
+  ],
+  "listBytes": 25168
+}

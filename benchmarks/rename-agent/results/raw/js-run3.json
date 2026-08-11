@@ -1,0 +1,95 @@
+{
+  "name": "weavatrix-refactor-js-0.1.6",
+  "startupMs": 522.495,
+  "calls": [
+    {
+      "tool": "rename_symbol",
+      "label": "rename by bare name",
+      "ms": 158.7,
+      "requestBytes": 168,
+      "responseBytes": 1272,
+      "isError": false,
+      "protocolError": null,
+      "recorded": {
+        "status": "NOT_A_SYMBOL"
+      }
+    },
+    {
+      "tool": "rename_symbol",
+      "label": "rename by file#name@line (the refusal names the format)",
+      "ms": 776.6,
+      "requestBytes": 182,
+      "responseBytes": 2369,
+      "isError": false,
+      "protocolError": null,
+      "recorded": {
+        "status": "PREVIEW_OK",
+        "completeness": "PARTIAL",
+        "warnings": [
+          "POSSIBLE_SHADOWING",
+          "PUBLIC_API_SYMBOL"
+        ]
+      }
+    },
+    {
+      "tool": "rename_symbol",
+      "label": "apply with the token",
+      "ms": 53.5,
+      "requestBytes": 264,
+      "responseBytes": 2509,
+      "isError": false,
+      "protocolError": null,
+      "recorded": "APPLIED"
+    }
+  ],
+  "toolCount": 45,
+  "error": null,
+  "toolNames": [
+    "graph_stats",
+    "get_node",
+    "get_neighbors",
+    "query_graph",
+    "god_nodes",
+    "shortest_path",
+    "get_dependents",
+    "change_impact",
+    "git_history",
+    "verified_change",
+    "trace_api_contract",
+    "get_community",
+    "search_code",
+    "read_source",
+    "inspect_symbol",
+    "context_bundle",
+    "find_duplicates",
+    "find_dead_code",
+    "run_audit",
+    "coverage_map",
+    "hot_path_review",
+    "list_communities",
+    "module_map",
+    "list_endpoints",
+    "trace_endpoint",
+    "rebuild_graph",
+    "graph_diff",
+    "get_architecture_contract",
+    "prepare_change",
+    "verify_architecture",
+    "explain_architecture_violation",
+    "propose_architecture_exception",
+    "open_repo",
+    "list_known_repos",
+    "apply_edit_plan",
+    "rollback_last_apply",
+    "rename_symbol",
+    "rename_related_symbols",
+    "move_file",
+    "move_symbol",
+    "delete_readiness",
+    "change_signature",
+    "edit_symbol",
+    "bulk_replace",
+    "organize_imports"
+  ],
+  "listBytes": 48277
+}

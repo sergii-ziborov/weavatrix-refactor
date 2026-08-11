@@ -1,0 +1,177 @@
+{
+  "schema": "weavatrix.rename-agent-benchmark.v1",
+  "date": "2026-08-11",
+  "tokenizer": "o200k_base via gpt-tokenizer 3.4.0",
+  "mcpProtocolLayer": [
+    {
+      "name": "weavatrix-refactor 1.0.4",
+      "correctness": "12/12 x3",
+      "sessionFixedContextTokens": 9170,
+      "initializeTokens": 79,
+      "instructionsTokensWithinInitialize": 21,
+      "catalogTokens": 9091,
+      "taskTokens": {
+        "context": 2521,
+        "toolCalls": 574
+      },
+      "timing": {
+        "runs": [
+          {
+            "startupMs": 658,
+            "taskMs": 607
+          },
+          {
+            "startupMs": 235,
+            "taskMs": 1001
+          },
+          {
+            "startupMs": 55,
+            "taskMs": 744
+          }
+        ],
+        "medianStartupMs": 235,
+        "medianTaskMs": 744,
+        "medianTransportMs": 1236
+      }
+    },
+    {
+      "name": "weavatrix-refactor-js 0.1.6",
+      "correctness": "12/12 x3",
+      "sessionFixedContextTokens": 10489,
+      "initializeTokens": 230,
+      "instructionsTokensWithinInitialize": 68,
+      "catalogTokens": 10259,
+      "taskTokens": {
+        "context": 2096,
+        "toolCalls": 124
+      },
+      "timing": {
+        "runs": [
+          {
+            "startupMs": 761,
+            "taskMs": 1243
+          },
+          {
+            "startupMs": 650,
+            "taskMs": 955
+          },
+          {
+            "startupMs": 522,
+            "taskMs": 989
+          }
+        ],
+        "medianStartupMs": 650,
+        "medianTaskMs": 989,
+        "medianTransportMs": 1605
+      }
+    },
+    {
+      "name": "Serena suggested flow",
+      "correctness": "7/12 x3; silent half-rename",
+      "sessionFixedContextTokens": 5682,
+      "initializeTokens": 122,
+      "instructionsTokensWithinInitialize": 29,
+      "catalogTokens": 5560,
+      "taskTokens": {
+        "context": 140,
+        "toolCalls": 42
+      },
+      "timing": {
+        "runs": [
+          {
+            "startupMs": 10778,
+            "taskMs": 1877
+          },
+          {
+            "startupMs": 9938,
+            "taskMs": 1277
+          },
+          {
+            "startupMs": 8816,
+            "taskMs": 1467
+          }
+        ],
+        "medianStartupMs": 9938,
+        "medianTaskMs": 1467,
+        "medianTransportMs": 11215
+      }
+    },
+    {
+      "name": "Serena warmed by hand",
+      "correctness": "12/12 x1",
+      "sessionFixedContextTokens": 5682,
+      "initializeTokens": 122,
+      "instructionsTokensWithinInitialize": 29,
+      "catalogTokens": 5560,
+      "taskTokens": {
+        "context": 674,
+        "toolCalls": 103
+      },
+      "timing": {
+        "runs": [
+          {
+            "startupMs": 18816,
+            "taskMs": 16989
+          }
+        ],
+        "medianStartupMs": 18816,
+        "medianTaskMs": 16989,
+        "medianTransportMs": 35805
+      },
+      "limitation": "single capture; includes three manual language-server warm-up calls"
+    }
+  ],
+  "nakedCodexAgent": {
+    "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+    "model": "CLI default with --ignore-user-config (the JSON event stream does not expose the model id)",
+    "prompt": "Rename the exported function resolveTarget declared in src/core.ts to locateTarget. Update every reference and import that refers to that exported symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Make the edits, run the TypeScript build check, and report the result concisely.",
+    "runs": [
+      {
+        "wallMs": 33638,
+        "score": "12/12",
+        "input_tokens": 71363,
+        "cached_input_tokens": 52224,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 927,
+        "reasoning_output_tokens": 67
+      },
+      {
+        "wallMs": 38913,
+        "score": "12/12",
+        "input_tokens": 71779,
+        "cached_input_tokens": 46080,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 886,
+        "reasoning_output_tokens": 73
+      },
+      {
+        "wallMs": 38475,
+        "score": "12/12",
+        "input_tokens": 70566,
+        "cached_input_tokens": 52224,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 886,
+        "reasoning_output_tokens": 49
+      }
+    ],
+    "medianWallMs": 38475,
+    "medianInputTokens": 71363,
+    "medianCachedInputTokens": 52224,
+    "medianOutputTokens": 886,
+    "medianReasoningOutputTokens": 67,
+    "correctness": "12/12 x3"
+  },
+  "deterministicNakedOracle": {
+    "name": "naked-agent",
+    "mechanicalMs": 13.11,
+    "inputTokens": 523,
+    "outputTokens": 241,
+    "filesRead": 4,
+    "filesRewritten": 3
+  },
+  "comparability": {
+    "mcpProtocolLayer": "scripted server wall time and exact MCP-visible tokens; excludes model planning and common host context",
+    "nakedCodexAgent": "measured full agent wall time and cumulative model usage; includes common host context, repeated model steps, tool use, and build verification",
+    "warning": "Do not add a modeled token latency to MCP server time or rank it directly against the real agent wall time."
+  }
+}
