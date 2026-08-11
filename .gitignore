@@ -2,6 +2,7 @@
 /npm/dist/
 /benchmarks/rename-agent/node_modules/
 /benchmarks/rename-agent/results/local-codex/
+/docs/superpowers/
 *.tmp
 *.swp
 .DS_Store
