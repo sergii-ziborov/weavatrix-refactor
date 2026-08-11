@@ -19,8 +19,8 @@ path = "src/main.rs"
 blazingly-json = "0.1.0"
 mcport = "0.5.0"
 notify = "8.2.0"
-weavatrix-rust = { version = "2.5.1", path = "../weavatrix-rust", features = ["full", "lang-rust"] }
-weavatrix-rust-refactor = { version = "0.1.6", path = "../weavatrix-rust-refactor" }
+weavatrix-rust = { version = "2.5.1", git = "https://github.com/sergii-ziborov/weavatrix-rust.git", rev = "6f4b130761d1e5bdfa599b72a76324e13db0b018", features = ["full", "lang-rust"] }
+weavatrix-rust-refactor = { version = "0.1.6", git = "https://github.com/sergii-ziborov/weavatrix-rust-refactor.git", rev = "4b8d9e1b02d3d4219e938fe98029a6a61de4e534" }
 
 [lints.rust]
 unsafe_code = "forbid"
