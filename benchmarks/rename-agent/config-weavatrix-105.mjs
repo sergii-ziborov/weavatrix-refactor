@@ -3,6 +3,14 @@
 // preview and token; repeating rename_symbol with that token applies the plan.
 const FIXTURE = process.env.REFBENCH_FIXTURE
 const EXE = process.env.REFBENCH_WEAVATRIX_EXE
+const LANGUAGE = process.env.REFBENCH_LANGUAGE ?? 'typescript'
+const SPEC = {
+  typescript: { oldName: 'resolveTarget', newName: 'locateTarget', declaringFile: 'src/core.ts' },
+  rust: { oldName: 'resolve_target', newName: 'locate_target', declaringFile: 'src/core.rs' },
+  python: { oldName: 'resolve_target', newName: 'locate_target', declaringFile: 'src/core.py' },
+}[LANGUAGE]
+
+if (!SPEC) throw new Error(`unsupported REFBENCH_LANGUAGE: ${LANGUAGE}`)
 
 function parsedResult(text) {
   const start = text.indexOf('{')
@@ -11,7 +19,7 @@ function parsedResult(text) {
 }
 
 export default {
-  name: 'weavatrix-refactor-1.0.5',
+  name: `weavatrix-refactor-1.0.5-${LANGUAGE}`,
   command: EXE,
   args: ['mcp', FIXTURE],
   cwd: FIXTURE,
@@ -20,11 +28,11 @@ export default {
     {
       tool: 'rename_symbol',
       label: 'rename by bare name (refusal carries candidates)',
-      arguments: { symbol: 'resolveTarget', new_name: 'locateTarget', output_format: 'json' },
+      arguments: { symbol: SPEC.oldName, new_name: SPEC.newName, output_format: 'json' },
       capture: (state, result, text) => {
         const parsed = parsedResult(text)
         const ids = parsed?.candidates ?? []
-        state.id = ids.find((id) => id.includes('core.ts')) ?? null
+        state.id = ids.find((id) => id.includes(SPEC.declaringFile)) ?? null
       },
       record: (state) => (state.id ? `candidate: ${state.id}` : 'NO CANDIDATES'),
     },
@@ -32,7 +40,7 @@ export default {
       tool: 'rename_symbol',
       label: 'preview exact rename',
       arguments: (state) => state.id
-        ? { symbol: state.id, new_name: 'locateTarget', output_format: 'json' }
+        ? { symbol: state.id, new_name: SPEC.newName, output_format: 'json' }
         : null,
       capture: (state, result, text) => {
         const parsed = parsedResult(text)
@@ -54,7 +62,7 @@ export default {
       arguments: (state) => state.id && state.token
         ? {
             symbol: state.id,
-            new_name: 'locateTarget',
+            new_name: SPEC.newName,
             mode: 'apply',
             confirm_token: state.token,
             output_format: 'json',
