@@ -783,7 +783,7 @@ version = "0.3.1"
 
 [[package]]
 name = "weavatrix-refactor"
-version = "1.0.5"
+version = "1.0.6"
 dependencies = [
  "blazingly-json",
  "mcport",

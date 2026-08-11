@@ -17,9 +17,23 @@ pub(crate) struct ToolCatalog {
     pub(crate) refactor_names: BTreeSet<String>,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum ToolSurface {
+    Full,
+    Rename,
+}
+
 impl ToolCatalog {
+    #[cfg(test)]
     pub(crate) fn merged() -> io::Result<Self> {
-        let read_only = operations::catalog_for_profile(operations::ToolProfile::All);
+        Self::for_surface(ToolSurface::Full)
+    }
+
+    pub(crate) fn for_surface(surface: ToolSurface) -> io::Result<Self> {
+        let read_only = match surface {
+            ToolSurface::Full => operations::catalog_for_profile(operations::ToolProfile::All),
+            ToolSurface::Rename => Vec::new(),
+        };
         let mut names = read_only
             .iter()
             .map(|definition| definition.name.to_owned())
@@ -30,16 +44,39 @@ impl ToolCatalog {
             .cloned()
             .unwrap_or_default();
 
-        let refactor_names = refactor::catalog_names()
+        let all_refactor_names = refactor::catalog_names()
             .into_iter()
             .collect::<BTreeSet<_>>();
+        let refactor_names = match surface {
+            ToolSurface::Full => all_refactor_names.clone(),
+            ToolSurface::Rename => ["rename_symbol", "rollback_last_apply"]
+                .into_iter()
+                .map(str::to_owned)
+                .collect(),
+        };
         if let Some(clash) = refactor_names.iter().find(|name| names.contains(*name)) {
             return Err(io::Error::other(format!(
                 "tool {clash} is declared by both the read-only engine and the refactor contract"
             )));
         }
         if let Some(tools) = refactor::catalog().as_array() {
-            encoded.extend(tools.iter().cloned());
+            encoded.extend(
+                tools
+                    .iter()
+                    .filter(|tool| {
+                        tool.get("name")
+                            .and_then(Value::as_str)
+                            .is_some_and(|name| refactor_names.contains(name))
+                    })
+                    .cloned(),
+            );
+        }
+        if !refactor_names.is_subset(&all_refactor_names)
+            || encoded.len() != names.len() + refactor_names.len()
+        {
+            return Err(io::Error::other(
+                "requested tool surface is not present in the refactor contract",
+            ));
         }
         names.extend(refactor_names.iter().cloned());
         Ok(Self {
@@ -143,7 +180,7 @@ impl RepositoryPort for RefactorRepository {
 
 #[cfg(test)]
 mod tests {
-    use super::ToolCatalog;
+    use super::{ToolCatalog, ToolSurface};
     use weavatrix_rust_refactor::operations as refactor;
 
     #[test]
@@ -168,5 +205,18 @@ mod tests {
     fn the_refactor_half_is_exactly_eleven_tools() {
         let catalog = ToolCatalog::merged().expect("catalogs must merge");
         assert_eq!(catalog.refactor_names.len(), 11);
+    }
+
+    #[test]
+    fn the_rename_surface_exposes_only_the_safe_workflow_and_recovery() {
+        let catalog = ToolCatalog::for_surface(ToolSurface::Rename).expect("rename catalog");
+        assert_eq!(
+            catalog.names,
+            ["rename_symbol".to_owned(), "rollback_last_apply".to_owned()]
+                .into_iter()
+                .collect()
+        );
+        assert_eq!(catalog.refactor_names, catalog.names);
+        assert_eq!(catalog.encoded.as_array().map(Vec::len), Some(2));
     }
 }

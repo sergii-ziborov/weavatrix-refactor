@@ -5,11 +5,11 @@
     "version": "0.1.7",
     "engine": "^0.3.15"
   },
-  "note": "Recorded from the shipping JavaScript implementation. A Rust host is conformant when it exposes exactly these tool names with these schemas, and never emits a status outside resultStates. Additions require a contract version bump.",
+  "note": "Recorded from the shipping JavaScript implementation. A Rust host is conformant when it exposes exactly these tool names with these schemas, and never emits a status outside resultStates. The status vocabulary retains legacy producer states and does not imply that every host implements every evidence backend. Additions require a contract version bump.",
   "tools": [
     {
       "name": "rename_symbol",
-      "description": "Complete cross-language rename workflow: EXACT LSP backend for JS/TS, SQL schema backend for .sql, graph+lexical backend for Rust/Python/Go/Java/C#/Solidity. Default mode=\"preview\" proves the byte-exact edits and returns a single-use confirm_token; repeat the same call with mode=\"apply\" and that token for an atomic write with rollback. Requires WEAVATRIX_ALLOW_SOURCE_EDITS=1 only for apply.",
+      "description": "Cross-language rename workflow using the evidence available to the active host. Default mode=\"preview\" proves the byte-exact edits and returns a single-use confirm_token; repeat the same call with mode=\"apply\" and that token for journaled writes with crash recovery and rollback. Requires WEAVATRIX_ALLOW_SOURCE_EDITS=1 only for apply.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -52,7 +52,7 @@
     },
     {
       "name": "rename_related_symbols",
-      "description": "Complete coordinated JS/TS multi-symbol rename as ONE atomic workflow with conflict/chain/swap detection. Default mode=\"preview\" returns a plan-bound confirm_token; repeat with identical renames, mode=\"apply\", and that token to write atomically with rollback. Blocks entirely if any sub-rename fails.",
+      "description": "Coordinated JS/TS multi-symbol rename with conflict/chain/swap detection. Default mode=\"preview\" returns a plan-bound confirm_token; repeat with identical renames, mode=\"apply\", and that token for journaled writes with crash recovery and rollback. Planning blocks if any sub-rename fails.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -107,7 +107,7 @@
     },
     {
       "name": "apply_edit_plan",
-      "description": "Apply a weavatrix.edit-plan.v1 envelope (from a weavatrix-refactor-js plan producer or weavatrix-online plan_refactor) to the active repository. mode=\"preview\" (default) verifies hashes and before-texts and issues a single-use confirm_token; mode=\"apply\" consumes the token and writes atomically with an automatic rollback bundle. Requires WEAVATRIX_ALLOW_SOURCE_EDITS=1 to write. Only EXACT_LSP/RESOLVED/EXTRACTED/LEXICAL_EXACT edits are ever applied; uncertain references are reported, never guessed.",
+      "description": "Apply a weavatrix.edit-plan.v1 envelope (from a compatible plan producer) to the active repository. mode=\"preview\" (default) verifies hashes and before-texts and issues a single-use confirm_token; mode=\"apply\" consumes the token and performs journaled writes with crash recovery and rollback. Requires WEAVATRIX_ALLOW_SOURCE_EDITS=1 to write. Only edits carrying an accepted evidence state are applied; uncertain references are reported, never guessed.",
       "inputSchema": {
         "type": "object",
         "properties": {

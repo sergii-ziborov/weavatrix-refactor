@@ -1,0 +1,342 @@
+{
+  "schema": "weavatrix.rename-agent-benchmark.summary.v2",
+  "generatedAt": "2026-08-11T12:10:49.320Z",
+  "tokenizer": "o200k_base via gpt-tokenizer 3.4.0 for protocol; cumulative turn.completed usage for agents",
+  "model": "gpt-5.6-sol",
+  "reasoningEffort": "medium",
+  "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+  "serenaCommit": "f1d78a88cec2031d6b699c9944839979e9a0175d",
+  "protocol": [
+    {
+      "arm": "weavatrix",
+      "language": "typescript",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianStartupMs": 34,
+      "medianTaskMs": 83,
+      "medianTransportMs": 117,
+      "medianFixedContextTokens": 9331,
+      "medianTaskRequestTokens": 124,
+      "medianTaskResponseTokens": 2295,
+      "medianTotalProtocolTokens": 11752
+    },
+    {
+      "arm": "weavatrix",
+      "language": "rust",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianStartupMs": 21,
+      "medianTaskMs": 59,
+      "medianTransportMs": 81,
+      "medianFixedContextTokens": 9331,
+      "medianTaskRequestTokens": 128,
+      "medianTaskResponseTokens": 2295,
+      "medianTotalProtocolTokens": 11752
+    },
+    {
+      "arm": "weavatrix",
+      "language": "python",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianStartupMs": 32,
+      "medianTaskMs": 101,
+      "medianTransportMs": 133,
+      "medianFixedContextTokens": 9331,
+      "medianTaskRequestTokens": 126,
+      "medianTaskResponseTokens": 2275,
+      "medianTotalProtocolTokens": 11732
+    },
+    {
+      "arm": "serena",
+      "language": "typescript",
+      "runs": 3,
+      "correctRuns": 0,
+      "operationallySuccessfulRuns": 0,
+      "scores": [
+        "7/12",
+        "7/12",
+        "7/12"
+      ],
+      "medianStartupMs": 6062,
+      "medianTaskMs": 830,
+      "medianTransportMs": 6890,
+      "medianFixedContextTokens": 5682,
+      "medianTaskRequestTokens": 42,
+      "medianTaskResponseTokens": 140,
+      "medianTotalProtocolTokens": 5864
+    },
+    {
+      "arm": "serena",
+      "language": "rust",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianStartupMs": 5938,
+      "medianTaskMs": 6339,
+      "medianTransportMs": 13539,
+      "medianFixedContextTokens": 5682,
+      "medianTaskRequestTokens": 42,
+      "medianTaskResponseTokens": 140,
+      "medianTotalProtocolTokens": 5864
+    },
+    {
+      "arm": "serena",
+      "language": "python",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianStartupMs": 10797,
+      "medianTaskMs": 6050,
+      "medianTransportMs": 17477,
+      "medianFixedContextTokens": 5682,
+      "medianTaskRequestTokens": 42,
+      "medianTaskResponseTokens": 140,
+      "medianTotalProtocolTokens": 5864
+    },
+    {
+      "arm": "serena-warm",
+      "language": "typescript",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianStartupMs": 5864,
+      "medianTaskMs": 15707,
+      "medianTransportMs": 21571,
+      "medianFixedContextTokens": 5682,
+      "medianTaskRequestTokens": 103,
+      "medianTaskResponseTokens": 674,
+      "medianTotalProtocolTokens": 6459
+    },
+    {
+      "arm": "serena-warm",
+      "language": "rust",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianStartupMs": 5973,
+      "medianTaskMs": 29276,
+      "medianTransportMs": 35249,
+      "medianFixedContextTokens": 5682,
+      "medianTaskRequestTokens": 103,
+      "medianTaskResponseTokens": 677,
+      "medianTotalProtocolTokens": 6462
+    },
+    {
+      "arm": "serena-warm",
+      "language": "python",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianStartupMs": 7214,
+      "medianTaskMs": 8955,
+      "medianTransportMs": 16169,
+      "medianFixedContextTokens": 5682,
+      "medianTaskRequestTokens": 103,
+      "medianTaskResponseTokens": 646,
+      "medianTotalProtocolTokens": 6431
+    }
+  ],
+  "agents": [
+    {
+      "arm": "weavatrix",
+      "language": "typescript",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianWallMs": 58719,
+      "medianInputTokens": 275784,
+      "medianCachedInputTokens": 236288,
+      "medianOutputTokens": 1255,
+      "medianReasoningOutputTokens": 315
+    },
+    {
+      "arm": "weavatrix",
+      "language": "rust",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianWallMs": 65088,
+      "medianInputTokens": 395712,
+      "medianCachedInputTokens": 349184,
+      "medianOutputTokens": 2013,
+      "medianReasoningOutputTokens": 514
+    },
+    {
+      "arm": "weavatrix",
+      "language": "python",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianWallMs": 96633,
+      "medianInputTokens": 459029,
+      "medianCachedInputTokens": 415232,
+      "medianOutputTokens": 2520,
+      "medianReasoningOutputTokens": 678
+    },
+    {
+      "arm": "serena",
+      "language": "typescript",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianWallMs": 68728,
+      "medianInputTokens": 388271,
+      "medianCachedInputTokens": 340480,
+      "medianOutputTokens": 1387,
+      "medianReasoningOutputTokens": 381
+    },
+    {
+      "arm": "serena",
+      "language": "rust",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianWallMs": 84204,
+      "medianInputTokens": 283041,
+      "medianCachedInputTokens": 245248,
+      "medianOutputTokens": 1362,
+      "medianReasoningOutputTokens": 460
+    },
+    {
+      "arm": "serena",
+      "language": "python",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianWallMs": 121888,
+      "medianInputTokens": 601627,
+      "medianCachedInputTokens": 530432,
+      "medianOutputTokens": 2165,
+      "medianReasoningOutputTokens": 658
+    },
+    {
+      "arm": "naked",
+      "language": "typescript",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianWallMs": 42602,
+      "medianInputTokens": 72169,
+      "medianCachedInputTokens": 56064,
+      "medianOutputTokens": 1043,
+      "medianReasoningOutputTokens": 64
+    },
+    {
+      "arm": "naked",
+      "language": "rust",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianWallMs": 38502,
+      "medianInputTokens": 71912,
+      "medianCachedInputTokens": 65280,
+      "medianOutputTokens": 1009,
+      "medianReasoningOutputTokens": 71
+    },
+    {
+      "arm": "naked",
+      "language": "python",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianWallMs": 98780,
+      "medianInputTokens": 237239,
+      "medianCachedInputTokens": 207360,
+      "medianOutputTokens": 2943,
+      "medianReasoningOutputTokens": 436
+    }
+  ],
+  "accounting": {
+    "protocol": "Fixed initialize/catalog context, tool-call arguments, and tool results are exact and separate. Timings contain only server startup plus tool calls.",
+    "agents": "Input, cached input, output, and reasoning output are reported by Codex. MCP catalog and instructions are already inside agent input usage and are never added again.",
+    "comparison": "Protocol-only timings exclude model planning. Agent wall time includes model planning, tool calls, edits, and verification."
+  }
+}

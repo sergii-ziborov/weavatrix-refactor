@@ -1,83 +1,111 @@
 # Rename agent benchmark
 
-This directory is the reproducible evidence behind
+This directory contains the reproducible evidence behind
 [`docs/benchmarks/refactor-vs-competitors-2026-08.md`](../../docs/benchmarks/refactor-vs-competitors-2026-08.md).
-It deliberately keeps two measurements separate:
 
-1. **MCP protocol layer:** scripted, deterministic calls; exact o200k tokens for
-   server initialization, tool catalogs, requests, and responses; measured
-   server wall time in milliseconds.
-2. **Naked Codex agent:** a real model-driven coding-agent run with no MCP
-   server; cumulative usage from `turn.completed`, end-to-end wall time in
-   milliseconds, and the same 12-check grader.
+## What is measured
 
-The first excludes model planning and the common coding-agent host. The second
-includes both. They answer different questions and must not be merged by adding
-an assumed tokens-per-second conversion to the MCP times.
-
-## Fixture and correctness
-
-The TypeScript fixture contains seven required edits, four traps, and one build
-gate. Run the grader against any edited fixture with:
+The TypeScript, Rust, and Python fixtures have the same ground truth: seven
+required edits, four untouched traps, and one build/test gate. The unified
+grader reports a score out of 12:
 
 ```powershell
-npm.cmd install --ignore-scripts --no-audit --no-fund --prefix fixture
-node verify.mjs fixture
+node verify.mjs typescript fixture
+node verify.mjs rust fixtures\rust
+node verify.mjs python fixtures\python
 ```
 
-A valid result is `score: 12/12`.
+The harness keeps two evidence layers separate:
 
-## MCP protocol runs
+1. Protocol runs execute fixed MCP flows without a model. `driver.mjs` records
+   real startup/tool time in milliseconds and exact `o200k_base` tokens for
+   initialization, the catalog, requests, and responses.
+2. Agent runs execute Codex end to end. `turn.completed` supplies cumulative
+   input, cached input, output, and reasoning-output tokens. MCP catalog and
+   instructions are already inside that usage and are not added again.
 
-Install this harness once:
+Tool arms fail closed unless their sanitized event audit contains the expected
+MCP `rename_symbol` call and contains neither a manual file-change event nor a
+source-writing command. Checked-in reports retain only server/tool names and
+counts; arguments, results, paths, event streams, and patches stay local.
+
+Byte fields in raw protocol JSON are transport diagnostics only.
+
+## Install the harness
 
 ```powershell
 npm.cmd ci
+npm.cmd test
 ```
 
-Set the fixture and contender paths, then capture three clean copies per
-contender. `REFBENCH_CAPTURE=1` is required for token counting:
+## Protocol matrix
+
+Each run gets a clean fixture. Serena is pinned to commit
+`f1d78a88cec2031d6b699c9944839979e9a0175d`.
 
 ```powershell
-$env:REFBENCH_CAPTURE = '1'
-$env:REFBENCH_FIXTURE = (Resolve-Path fixture).Path
-$env:REFBENCH_WEAVATRIX_EXE = 'C:\path\to\weavatrix-refactor.exe'
-$env:REFBENCH_JS_BIN = 'C:\path\to\weavatrix-refactor-js\src\index.js'
-node driver.mjs (Resolve-Path config-weavatrix-104.mjs) results\raw\wvxr104-run1.json
+.\run-protocol-matrix.ps1 `
+  -Runs 3 `
+  -WeavatrixExecutable C:\path\to\weavatrix-refactor-1.0.5.exe
 ```
 
-Restore the fixture before each run. `config-js.mjs`, `config-serena.mjs`, and
-`config-serena-warm.mjs` define the other exact flows. Measure the one-time MCP
-cost with `fixed-cost.mjs`; it counts the complete initialize response (whose
-instructions are also reported as a subset) plus `tools/list`:
+To measure the 1.0.6 rename-only surface:
 
 ```powershell
-$env:REFBENCH_FIXTURE = (Resolve-Path fixture).Path
-node fixed-cost.mjs weavatrix results\raw\fixed-wvxr.json $env:REFBENCH_WEAVATRIX_EXE mcp $env:REFBENCH_FIXTURE
+.\run-protocol-matrix.ps1 `
+  -Runs 3 `
+  -Arms weavatrix `
+  -WeavatrixExecutable C:\path\to\weavatrix-refactor-1.0.6.exe `
+  -WeavatrixConfig (Resolve-Path .\config-weavatrix-106-rename.mjs) `
+  -OutputDirectory results\2026-08-11-v2\protocol-rename-profile
 ```
 
-## Real naked Codex runs
+`config-serena.mjs` is the suggested lookup/rename flow.
+`config-serena-warm.mjs` deliberately performs diagnostics and reference
+warm-up first; it is a generous comparator, not Serena's two-call baseline.
 
-`run-codex-naked.ps1` copies the bundled CLI and its command host out of the
-WindowsApps directory because direct execution is blocked on this Windows
-installation. Each run uses a fresh temporary Git repository and invokes
-Codex with no user config, rules, or MCP servers:
+## Real agent matrix
+
+The runner copies the bundled Codex CLI and companion command host out of the
+WindowsApps directory, creates a fresh temporary Git repository per run, and
+pins `gpt-5.6-sol` with medium reasoning by default:
 
 ```powershell
-.\run-codex-naked.ps1 -Runs 3 -OutputDirectory results\local-codex
+.\run-agent-matrix.ps1 `
+  -Runs 3 `
+  -WeavatrixExecutable C:\path\to\weavatrix-refactor-1.0.5.exe
 ```
 
-The script uses `--dangerously-bypass-approvals-and-sandbox` only inside the
-new temporary fixture directory; do not point it at a real repository. Pass
-`-Model <id>` when model pinning is required. The captured 2026-08-11 CLI event
-stream did not expose its default model id, so the checked-in result names the
-CLI version and that limitation instead of guessing.
+The three arms are `naked`, `weavatrix`, and `serena`; the three languages are
+`typescript`, `rust`, and `python`. The bypass flag is used only inside those
+new temporary fixtures. Do not point the script at a real repository.
 
-## Rebuild the checked-in summary
+The rename-profile A/B is:
+
+```powershell
+.\run-agent-matrix.ps1 `
+  -Runs 3 `
+  -Arms weavatrix `
+  -Languages typescript `
+  -WeavatrixExecutable C:\path\to\weavatrix-refactor-1.0.6.exe `
+  -WeavatrixProfile rename `
+  -WeavatrixVersion 1.0.6 `
+  -OutputDirectory results\2026-08-11-v2\agent-rename-profile-guided
+```
+
+Each checked-in JSON report contains the exact prompt, model, effort, wall
+time, usage, and grader checks. Full event streams and working-tree patches
+remain local and are ignored.
+
+## Rebuild summaries
 
 ```powershell
 npm.cmd run summarize
+node summarize-v2.mjs `
+  results\2026-08-11-v2\protocol-rename-profile `
+  results\2026-08-11-v2\agent-rename-profile-guided `
+  results\2026-08-11-v2\rename-profile-summary.json
 ```
 
-The output is `results/2026-08-11-summary.json`. Raw captures are retained under
-`results/raw/`; byte fields there are transport diagnostics, not token proxies.
+The checked-in full matrix contains 27 protocol and 27 agent runs. The profile
+addendum contains nine protocol and three guided agent runs.

@@ -1,0 +1,92 @@
+{
+  "schema": "weavatrix.rename-agent-benchmark.summary.v2",
+  "generatedAt": "2026-08-11T12:10:50.654Z",
+  "tokenizer": "o200k_base via gpt-tokenizer 3.4.0 for protocol; cumulative turn.completed usage for agents",
+  "model": "gpt-5.6-sol",
+  "reasoningEffort": "medium",
+  "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+  "serenaCommit": "f1d78a88cec2031d6b699c9944839979e9a0175d",
+  "protocol": [
+    {
+      "arm": "weavatrix",
+      "language": "typescript",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianStartupMs": 57,
+      "medianTaskMs": 160,
+      "medianTransportMs": 223,
+      "medianFixedContextTokens": 485,
+      "medianTaskRequestTokens": 126,
+      "medianTaskResponseTokens": 2303,
+      "medianTotalProtocolTokens": 2914
+    },
+    {
+      "arm": "weavatrix",
+      "language": "rust",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianStartupMs": 60,
+      "medianTaskMs": 289,
+      "medianTransportMs": 333,
+      "medianFixedContextTokens": 485,
+      "medianTaskRequestTokens": 128,
+      "medianTaskResponseTokens": 2299,
+      "medianTotalProtocolTokens": 2908
+    },
+    {
+      "arm": "weavatrix",
+      "language": "python",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianStartupMs": 205,
+      "medianTaskMs": 224,
+      "medianTransportMs": 459,
+      "medianFixedContextTokens": 485,
+      "medianTaskRequestTokens": 127,
+      "medianTaskResponseTokens": 2273,
+      "medianTotalProtocolTokens": 2885
+    }
+  ],
+  "agents": [
+    {
+      "arm": "weavatrix",
+      "language": "typescript",
+      "runs": 3,
+      "correctRuns": 3,
+      "operationallySuccessfulRuns": 3,
+      "scores": [
+        "12/12",
+        "12/12",
+        "12/12"
+      ],
+      "medianWallMs": 48389,
+      "medianInputTokens": 108155,
+      "medianCachedInputTokens": 83456,
+      "medianOutputTokens": 799,
+      "medianReasoningOutputTokens": 117
+    }
+  ],
+  "accounting": {
+    "protocol": "Fixed initialize/catalog context, tool-call arguments, and tool results are exact and separate. Timings contain only server startup plus tool calls.",
+    "agents": "Input, cached input, output, and reasoning output are reported by Codex. MCP catalog and instructions are already inside agent input usage and are never added again.",
+    "comparison": "Protocol-only timings exclude model planning. Agent wall time includes model planning, tool calls, edits, and verification."
+  }
+}

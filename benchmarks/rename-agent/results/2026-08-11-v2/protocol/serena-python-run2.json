@@ -1,0 +1,137 @@
+﻿{
+    "name":  "serena-f1d78a88-python",
+    "tokenizer":  "o200k_base via gpt-tokenizer 3.4.0",
+    "startupMs":  11427.3072,
+    "calls":  [
+                  {
+                      "tool":  "find_symbol",
+                      "label":  "disambiguate the symbol",
+                      "ms":  5907.8,
+                      "requestBytes":  121,
+                      "responseBytes":  405,
+                      "requestTokens":  14,
+                      "responseTokens":  106,
+                      "taskTokens":  120,
+                      "isError":  false,
+                      "protocolError":  null,
+                      "requestText":  "{\"name\":\"find_symbol\",\"arguments\":{\"name_path\":\"resolve_target\"}}",
+                      "responseText":  "{\"content\":[{\"type\":\"text\",\"text\":\"[{\\\"name_path\\\": \\\"resolve_target\\\", \\\"kind\\\": \\\"Function\\\", \\\"relative_path\\\": \\\"src\\\\\\\\core.py\\\", \\\"body_location\\\": {\\\"start_line\\\": 1, \\\"end_line\\\": 4}}, {\\\"name_path\\\": \\\"resolve_target\\\", \\\"kind\\\": \\\"Function\\\", \\\"relative_path\\\": \\\"src\\\\\\\\shadow.py\\\", \\\"body_location\\\": {\\\"start_line\\\": 1, \\\"end_line\\\": 2}}]\"}],\"isError\":false}",
+                      "recorded":  "[{\"name_path\": \"resolve_target\", \"kind\": \"Function\", \"relative_path\": \"src\\\\core.py\", \"body_location\": {\"start_line\": 1, \"end_line\": 4}}, {\"name_path\": \"resolve"
+                  },
+                  {
+                      "tool":  "rename_symbol",
+                      "label":  "LSP rename",
+                      "ms":  142.2,
+                      "requestBytes":  180,
+                      "responseBytes":  165,
+                      "requestTokens":  28,
+                      "responseTokens":  34,
+                      "taskTokens":  62,
+                      "isError":  false,
+                      "protocolError":  null,
+                      "requestText":  "{\"name\":\"rename_symbol\",\"arguments\":{\"name_path\":\"resolve_target\",\"relative_path\":\"src/core.py\",\"new_name\":\"locate_target\"}}",
+                      "responseText":  "{\"content\":[{\"type\":\"text\",\"text\":\"Successfully renamed \u0027resolve_target\u0027 to \u0027locate_target\u0027 (3 changes applied)\"}],\"isError\":false}",
+                      "recorded":  "Successfully renamed \u0027resolve_target\u0027 to \u0027locate_target\u0027 (3 changes applied)"
+                  }
+              ],
+    "toolCount":  21,
+    "error":  null,
+    "toolNames":  [
+                      "replace_content",
+                      "replace_in_files",
+                      "replace_symbol_body",
+                      "insert_after_symbol",
+                      "insert_before_symbol",
+                      "get_symbols_overview",
+                      "find_symbol",
+                      "find_referencing_symbols",
+                      "find_implementations",
+                      "find_declaration",
+                      "get_diagnostics_for_file",
+                      "rename_symbol",
+                      "safe_delete_symbol",
+                      "write_memory",
+                      "read_memory",
+                      "list_memories",
+                      "delete_memory",
+                      "rename_memory",
+                      "edit_memory",
+                      "onboarding",
+                      "initial_instructions"
+                  ],
+    "listBytes":  25168,
+    "sessionFixedTokens":  {
+                               "initialize":  122,
+                               "instructionsWithinInitialize":  29,
+                               "catalog":  5560,
+                               "total":  5682
+                           },
+    "taskTokens":  {
+                       "requests":  42,
+                       "responses":  140,
+                       "total":  182
+                   },
+    "benchmark":  {
+                      "arm":  "serena",
+                      "language":  "python",
+                      "run":  2,
+                      "driverExitCode":  0,
+                      "gradeExitCode":  0,
+                      "grade":  {
+                                    "language":  "python",
+                                    "score":  "12/12",
+                                    "passed":  12,
+                                    "total":  12,
+                                    "checks":  [
+                                                   {
+                                                       "name":  "core: declaration renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "core: recursive call renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "core: call inside resolve_target_path renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "caller: import renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "caller: call renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "toplevel: import renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "toplevel: module-level call renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP prefix identifier untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP string literal untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP comment untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP shadow declaration untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "python unittest still passes",
+                                                       "passed":  true
+                                                   }
+                                               ]
+                                }
+                  }
+}

@@ -1,0 +1,2166 @@
+{
+  "schema": "weavatrix.rename-agent-benchmark.agent-matrix.v2",
+  "generatedAt": "2026-08-11T12:09:39.305Z",
+  "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+  "model": "gpt-5.6-sol",
+  "reasoningEffort": "medium",
+  "serenaCommit": "f1d78a88cec2031d6b699c9944839979e9a0175d",
+  "weavatrixVersion": "1.0.5",
+  "tokenizerNote": "Agent token counts are the cumulative usage reported by turn.completed; MCP catalog and instructions are already included and are not added again.",
+  "runs": [
+    {
+      "arm": "naked",
+      "language": "typescript",
+      "run": 1,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolveTarget declared in src/core.ts to locateTarget. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the TypeScript build check. Report the result concisely. Use the normal repository inspection and editing tools. No MCP refactoring server is available.",
+      "wallMs": 35413,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "typescript",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolveTargetPath renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: top-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "tsc --noEmit still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 71384,
+        "cached_input_tokens": 55040,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1038,
+        "reasoning_output_tokens": 64
+      },
+      "events": "naked-typescript-run1.jsonl",
+      "patch": "naked-typescript-run1.patch"
+    },
+    {
+      "arm": "naked",
+      "language": "typescript",
+      "run": 2,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolveTarget declared in src/core.ts to locateTarget. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the TypeScript build check. Report the result concisely. Use the normal repository inspection and editing tools. No MCP refactoring server is available.",
+      "wallMs": 45747,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "typescript",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolveTargetPath renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: top-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "tsc --noEmit still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 72169,
+        "cached_input_tokens": 56064,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1043,
+        "reasoning_output_tokens": 62
+      },
+      "events": "naked-typescript-run2.jsonl",
+      "patch": "naked-typescript-run2.patch"
+    },
+    {
+      "arm": "naked",
+      "language": "typescript",
+      "run": 3,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolveTarget declared in src/core.ts to locateTarget. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the TypeScript build check. Report the result concisely. Use the normal repository inspection and editing tools. No MCP refactoring server is available.",
+      "wallMs": 42602,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "typescript",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolveTargetPath renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: top-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "tsc --noEmit still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 72248,
+        "cached_input_tokens": 56064,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1109,
+        "reasoning_output_tokens": 123
+      },
+      "events": "naked-typescript-run3.jsonl",
+      "patch": "naked-typescript-run3.patch"
+    },
+    {
+      "arm": "weavatrix",
+      "language": "typescript",
+      "run": 1,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolveTarget declared in src/core.ts to locateTarget. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the TypeScript build check. Report the result concisely. Use the weavatrix_refactor MCP rename_symbol workflow for source edits; do not manually edit source files. Resolve any ambiguity, preview the exact rename, then apply that same preview with its confirmation token.",
+      "wallMs": 58719,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "typescript",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolveTargetPath renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: top-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "tsc --noEmit still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 281423,
+        "cached_input_tokens": 239872,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1255,
+        "reasoning_output_tokens": 315
+      },
+      "events": "weavatrix-typescript-run1.jsonl",
+      "patch": "weavatrix-typescript-run1.patch"
+    },
+    {
+      "arm": "weavatrix",
+      "language": "typescript",
+      "run": 2,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolveTarget declared in src/core.ts to locateTarget. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the TypeScript build check. Report the result concisely. Use the weavatrix_refactor MCP rename_symbol workflow for source edits; do not manually edit source files. Resolve any ambiguity, preview the exact rename, then apply that same preview with its confirmation token.",
+      "wallMs": 62429,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "typescript",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolveTargetPath renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: top-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "tsc --noEmit still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 237882,
+        "cached_input_tokens": 205568,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1561,
+        "reasoning_output_tokens": 367
+      },
+      "events": "weavatrix-typescript-run2.jsonl",
+      "patch": "weavatrix-typescript-run2.patch"
+    },
+    {
+      "arm": "weavatrix",
+      "language": "typescript",
+      "run": 3,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolveTarget declared in src/core.ts to locateTarget. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the TypeScript build check. Report the result concisely. Use the weavatrix_refactor MCP rename_symbol workflow for source edits; do not manually edit source files. Resolve any ambiguity, preview the exact rename, then apply that same preview with its confirmation token.",
+      "wallMs": 50807,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "typescript",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolveTargetPath renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: top-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "tsc --noEmit still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 275784,
+        "cached_input_tokens": 236288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1192,
+        "reasoning_output_tokens": 271
+      },
+      "events": "weavatrix-typescript-run3.jsonl",
+      "patch": "weavatrix-typescript-run3.patch"
+    },
+    {
+      "arm": "serena",
+      "language": "typescript",
+      "run": 1,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolveTarget declared in src/core.ts to locateTarget. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the TypeScript build check. Report the result concisely. Use the Serena MCP tools for source edits; do not manually edit source files. Follow the available symbol lookup and rename workflow.",
+      "wallMs": 78433,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "typescript",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolveTargetPath renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: top-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "tsc --noEmit still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 400996,
+        "cached_input_tokens": 356352,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1505,
+        "reasoning_output_tokens": 588
+      },
+      "events": "serena-typescript-run1.jsonl",
+      "patch": "serena-typescript-run1.patch"
+    },
+    {
+      "arm": "serena",
+      "language": "typescript",
+      "run": 2,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolveTarget declared in src/core.ts to locateTarget. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the TypeScript build check. Report the result concisely. Use the Serena MCP tools for source edits; do not manually edit source files. Follow the available symbol lookup and rename workflow.",
+      "wallMs": 65912,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "typescript",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolveTargetPath renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: top-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "tsc --noEmit still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 388271,
+        "cached_input_tokens": 340480,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1376,
+        "reasoning_output_tokens": 368
+      },
+      "events": "serena-typescript-run2.jsonl",
+      "patch": "serena-typescript-run2.patch"
+    },
+    {
+      "arm": "serena",
+      "language": "typescript",
+      "run": 3,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolveTarget declared in src/core.ts to locateTarget. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the TypeScript build check. Report the result concisely. Use the Serena MCP tools for source edits; do not manually edit source files. Follow the available symbol lookup and rename workflow.",
+      "wallMs": 68728,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "typescript",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolveTargetPath renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: top-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "tsc --noEmit still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 356817,
+        "cached_input_tokens": 319232,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1387,
+        "reasoning_output_tokens": 381
+      },
+      "events": "serena-typescript-run3.jsonl",
+      "patch": "serena-typescript-run3.patch"
+    },
+    {
+      "arm": "naked",
+      "language": "rust",
+      "run": 1,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.rs to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Rust test or check command. Report the result concisely. Use the normal repository inspection and editing tools. No MCP refactoring server is available.",
+      "wallMs": 56162,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "rust",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "cargo check still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 115383,
+        "cached_input_tokens": 93696,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1502,
+        "reasoning_output_tokens": 160
+      },
+      "events": "naked-rust-run1.jsonl",
+      "patch": "naked-rust-run1.patch"
+    },
+    {
+      "arm": "naked",
+      "language": "rust",
+      "run": 2,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.rs to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Rust test or check command. Report the result concisely. Use the normal repository inspection and editing tools. No MCP refactoring server is available.",
+      "wallMs": 38502,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "rust",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "cargo check still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 71912,
+        "cached_input_tokens": 65280,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1009,
+        "reasoning_output_tokens": 55
+      },
+      "events": "naked-rust-run2.jsonl",
+      "patch": "naked-rust-run2.patch"
+    },
+    {
+      "arm": "naked",
+      "language": "rust",
+      "run": 3,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.rs to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Rust test or check command. Report the result concisely. Use the normal repository inspection and editing tools. No MCP refactoring server is available.",
+      "wallMs": 37655,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "rust",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "cargo check still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 56681,
+        "cached_input_tokens": 41984,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 834,
+        "reasoning_output_tokens": 71
+      },
+      "events": "naked-rust-run3.jsonl",
+      "patch": "naked-rust-run3.patch"
+    },
+    {
+      "arm": "weavatrix",
+      "language": "rust",
+      "run": 1,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.rs to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Rust test or check command. Report the result concisely. Use the weavatrix_refactor MCP rename_symbol workflow for source edits; do not manually edit source files. Resolve any ambiguity, preview the exact rename, then apply that same preview with its confirmation token.",
+      "wallMs": 88829,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "rust",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "cargo check still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 434884,
+        "cached_input_tokens": 388608,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2282,
+        "reasoning_output_tokens": 577
+      },
+      "events": "weavatrix-rust-run1.jsonl",
+      "patch": "weavatrix-rust-run1.patch"
+    },
+    {
+      "arm": "weavatrix",
+      "language": "rust",
+      "run": 2,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.rs to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Rust test or check command. Report the result concisely. Use the weavatrix_refactor MCP rename_symbol workflow for source edits; do not manually edit source files. Resolve any ambiguity, preview the exact rename, then apply that same preview with its confirmation token.",
+      "wallMs": 65088,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "rust",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "cargo check still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 395712,
+        "cached_input_tokens": 349184,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2013,
+        "reasoning_output_tokens": 514
+      },
+      "events": "weavatrix-rust-run2.jsonl",
+      "patch": "weavatrix-rust-run2.patch"
+    },
+    {
+      "arm": "weavatrix",
+      "language": "rust",
+      "run": 3,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.rs to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Rust test or check command. Report the result concisely. Use the weavatrix_refactor MCP rename_symbol workflow for source edits; do not manually edit source files. Resolve any ambiguity, preview the exact rename, then apply that same preview with its confirmation token.",
+      "wallMs": 50192,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "rust",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "cargo check still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 228356,
+        "cached_input_tokens": 184320,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1095,
+        "reasoning_output_tokens": 246
+      },
+      "events": "weavatrix-rust-run3.jsonl",
+      "patch": "weavatrix-rust-run3.patch"
+    },
+    {
+      "arm": "serena",
+      "language": "rust",
+      "run": 1,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.rs to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Rust test or check command. Report the result concisely. Use the Serena MCP tools for source edits; do not manually edit source files. Follow the available symbol lookup and rename workflow.",
+      "wallMs": 104404,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "rust",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "cargo check still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 369853,
+        "cached_input_tokens": 326912,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1168,
+        "reasoning_output_tokens": 409
+      },
+      "events": "serena-rust-run1.jsonl",
+      "patch": "serena-rust-run1.patch"
+    },
+    {
+      "arm": "serena",
+      "language": "rust",
+      "run": 2,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.rs to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Rust test or check command. Report the result concisely. Use the Serena MCP tools for source edits; do not manually edit source files. Follow the available symbol lookup and rename workflow.",
+      "wallMs": 81915,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "rust",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "cargo check still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 206353,
+        "cached_input_tokens": 177664,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1362,
+        "reasoning_output_tokens": 538
+      },
+      "toolAudit": {
+        "expectedServer": "serena",
+        "expectedTool": "rename_symbol",
+        "completedMcpCalls": [
+          {
+            "server": "serena",
+            "tool": "find_referencing_symbols",
+            "count": 1
+          },
+          {
+            "server": "serena",
+            "tool": "find_symbol",
+            "count": 1
+          },
+          {
+            "server": "serena",
+            "tool": "initial_instructions",
+            "count": 1
+          },
+          {
+            "server": "serena",
+            "tool": "list_mcp_resource_templates",
+            "count": 1
+          },
+          {
+            "server": "serena",
+            "tool": "list_mcp_resources",
+            "count": 1
+          },
+          {
+            "server": "serena",
+            "tool": "rename_symbol",
+            "count": 1
+          }
+        ],
+        "fileChangeEvents": 0,
+        "sourceWriteCommandEvents": 0,
+        "compliant": true,
+        "issues": []
+      },
+      "events": "serena-rust-run2.jsonl",
+      "patch": "serena-rust-run2.patch"
+    },
+    {
+      "arm": "serena",
+      "language": "rust",
+      "run": 3,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.rs to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Rust test or check command. Report the result concisely. Use the Serena MCP tools for source edits; do not manually edit source files. Follow the available symbol lookup and rename workflow.",
+      "wallMs": 84204,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "rust",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "cargo check still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 283041,
+        "cached_input_tokens": 245248,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1632,
+        "reasoning_output_tokens": 460
+      },
+      "events": "serena-rust-run3.jsonl",
+      "patch": "serena-rust-run3.patch"
+    },
+    {
+      "arm": "naked",
+      "language": "python",
+      "run": 1,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.py to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Python unit tests. Report the result concisely. Use the normal repository inspection and editing tools. No MCP refactoring server is available.",
+      "wallMs": 85886,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "python",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: module-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "python unittest still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 237239,
+        "cached_input_tokens": 207360,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2372,
+        "reasoning_output_tokens": 436
+      },
+      "events": "naked-python-run1.jsonl",
+      "patch": "naked-python-run1.patch"
+    },
+    {
+      "arm": "naked",
+      "language": "python",
+      "run": 2,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.py to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Python unit tests. Report the result concisely. Use the normal repository inspection and editing tools. No MCP refactoring server is available.",
+      "wallMs": 98780,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "python",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: module-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "python unittest still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 221996,
+        "cached_input_tokens": 186624,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2943,
+        "reasoning_output_tokens": 384
+      },
+      "events": "naked-python-run2.jsonl",
+      "patch": "naked-python-run2.patch"
+    },
+    {
+      "arm": "naked",
+      "language": "python",
+      "run": 3,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.py to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Python unit tests. Report the result concisely. Use the normal repository inspection and editing tools. No MCP refactoring server is available.",
+      "wallMs": 117693,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "python",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: module-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "python unittest still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 365567,
+        "cached_input_tokens": 310784,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3517,
+        "reasoning_output_tokens": 841
+      },
+      "events": "naked-python-run3.jsonl",
+      "patch": "naked-python-run3.patch"
+    },
+    {
+      "arm": "weavatrix",
+      "language": "python",
+      "run": 1,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.py to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Python unit tests. Report the result concisely. Use the weavatrix_refactor MCP rename_symbol workflow for source edits; do not manually edit source files. Resolve any ambiguity, preview the exact rename, then apply that same preview with its confirmation token.",
+      "wallMs": 88381,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "python",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: module-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "python unittest still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 459029,
+        "cached_input_tokens": 415232,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2520,
+        "reasoning_output_tokens": 678
+      },
+      "events": "weavatrix-python-run1.jsonl",
+      "patch": "weavatrix-python-run1.patch"
+    },
+    {
+      "arm": "weavatrix",
+      "language": "python",
+      "run": 2,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.py to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Python unit tests. Report the result concisely. Use the weavatrix_refactor MCP rename_symbol workflow for source edits; do not manually edit source files. Resolve any ambiguity, preview the exact rename, then apply that same preview with its confirmation token.",
+      "wallMs": 135417,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "python",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: module-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "python unittest still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 597237,
+        "cached_input_tokens": 548352,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2884,
+        "reasoning_output_tokens": 710
+      },
+      "events": "weavatrix-python-run2.jsonl",
+      "patch": "weavatrix-python-run2.patch"
+    },
+    {
+      "arm": "weavatrix",
+      "language": "python",
+      "run": 3,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.py to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Python unit tests. Report the result concisely. Use the weavatrix_refactor MCP rename_symbol workflow for source edits; do not manually edit source files. Resolve any ambiguity, preview the exact rename, then apply that same preview with its confirmation token.",
+      "wallMs": 96633,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "python",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: module-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "python unittest still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 318623,
+        "cached_input_tokens": 282624,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1934,
+        "reasoning_output_tokens": 485
+      },
+      "events": "weavatrix-python-run3.jsonl",
+      "patch": "weavatrix-python-run3.patch"
+    },
+    {
+      "arm": "serena",
+      "language": "python",
+      "run": 1,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.py to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Python unit tests. Report the result concisely. Use the Serena MCP tools for source edits; do not manually edit source files. Follow the available symbol lookup and rename workflow.",
+      "wallMs": 107941,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "python",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: module-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "python unittest still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 458082,
+        "cached_input_tokens": 416256,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2165,
+        "reasoning_output_tokens": 700
+      },
+      "events": "serena-python-run1.jsonl",
+      "patch": "serena-python-run1.patch"
+    },
+    {
+      "arm": "serena",
+      "language": "python",
+      "run": 2,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.py to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Python unit tests. Report the result concisely. Use the Serena MCP tools for source edits; do not manually edit source files. Follow the available symbol lookup and rename workflow.",
+      "wallMs": 121888,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "python",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: module-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "python unittest still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 601627,
+        "cached_input_tokens": 530432,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1937,
+        "reasoning_output_tokens": 494
+      },
+      "toolAudit": {
+        "expectedServer": "serena",
+        "expectedTool": "rename_symbol",
+        "completedMcpCalls": [
+          {
+            "server": "serena",
+            "tool": "find_referencing_symbols",
+            "count": 1
+          },
+          {
+            "server": "serena",
+            "tool": "find_symbol",
+            "count": 1
+          },
+          {
+            "server": "serena",
+            "tool": "get_symbols_overview",
+            "count": 2
+          },
+          {
+            "server": "serena",
+            "tool": "initial_instructions",
+            "count": 1
+          },
+          {
+            "server": "serena",
+            "tool": "rename_symbol",
+            "count": 1
+          }
+        ],
+        "fileChangeEvents": 0,
+        "sourceWriteCommandEvents": 0,
+        "compliant": true,
+        "issues": []
+      },
+      "events": "serena-python-run2.jsonl",
+      "patch": "serena-python-run2.patch"
+    },
+    {
+      "arm": "serena",
+      "language": "python",
+      "run": 3,
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "cliVersion": "codex-cli 0.147.0-alpha.6.5",
+      "prompt": "Rename the function resolve_target declared in src/core.py to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Python unit tests. Report the result concisely. Use the Serena MCP tools for source edits; do not manually edit source files. Follow the available symbol lookup and rename workflow.",
+      "wallMs": 123145,
+      "exitCode": 0,
+      "gradeExitCode": 0,
+      "grade": {
+        "language": "python",
+        "score": "12/12",
+        "passed": 12,
+        "total": 12,
+        "checks": [
+          {
+            "name": "core: declaration renamed",
+            "passed": true
+          },
+          {
+            "name": "core: recursive call renamed",
+            "passed": true
+          },
+          {
+            "name": "core: call inside resolve_target_path renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: import renamed",
+            "passed": true
+          },
+          {
+            "name": "caller: call renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: import renamed",
+            "passed": true
+          },
+          {
+            "name": "toplevel: module-level call renamed",
+            "passed": true
+          },
+          {
+            "name": "TRAP prefix identifier untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP string literal untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP comment untouched",
+            "passed": true
+          },
+          {
+            "name": "TRAP shadow declaration untouched",
+            "passed": true
+          },
+          {
+            "name": "python unittest still passes",
+            "passed": true
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 815730,
+        "cached_input_tokens": 768256,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2317,
+        "reasoning_output_tokens": 658
+      },
+      "events": "serena-python-run3.jsonl",
+      "patch": "serena-python-run3.patch"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+﻿{
+    "arm":  "weavatrix",
+    "language":  "typescript",
+    "run":  2,
+    "model":  "gpt-5.6-sol",
+    "reasoningEffort":  "medium",
+    "cliVersion":  "codex-cli 0.147.0-alpha.6.5",
+    "prompt":  "Rename the function resolveTarget declared in src/core.ts to locateTarget. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the TypeScript build check. Report the result concisely. Use the weavatrix_refactor MCP rename_symbol workflow for source edits; do not manually edit source files. Resolve any ambiguity, preview the exact rename, then apply that same preview with its confirmation token.",
+    "wallMs":  48565,
+    "exitCode":  0,
+    "gradeExitCode":  0,
+    "grade":  {
+                  "language":  "typescript",
+                  "score":  "12/12",
+                  "passed":  12,
+                  "total":  12,
+                  "checks":  [
+                                 {
+                                     "name":  "core: declaration renamed",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "core: recursive call renamed",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "core: call inside resolveTargetPath renamed",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "caller: import renamed",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "caller: call renamed",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "toplevel: import renamed",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "toplevel: top-level call renamed",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "TRAP prefix identifier untouched",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "TRAP string literal untouched",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "TRAP comment untouched",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "TRAP shadow declaration untouched",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "tsc --noEmit still passes",
+                                     "passed":  true
+                                 }
+                             ]
+              },
+    "usage":  {
+                  "input_tokens":  124611,
+                  "cached_input_tokens":  101632,
+                  "cache_write_input_tokens":  0,
+                  "output_tokens":  986,
+                  "reasoning_output_tokens":  167
+              },
+    "events":  "weavatrix-typescript-run2.jsonl",
+    "patch":  "weavatrix-typescript-run2.patch",
+    "toolAudit":  {
+                      "expectedServer":  "weavatrix_refactor",
+                      "expectedTool":  "rename_symbol",
+                      "completedMcpCalls":  [
+                                                {
+                                                    "server":  "weavatrix_refactor",
+                                                    "tool":  "rename_symbol",
+                                                    "count":  3
+                                                }
+                                            ],
+                      "fileChangeEvents":  0,
+                      "sourceWriteCommandEvents":  0,
+                      "compliant":  true,
+                      "issues":  [
+
+                                 ]
+                  }
+}

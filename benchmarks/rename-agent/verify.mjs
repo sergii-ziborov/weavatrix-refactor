@@ -68,7 +68,7 @@ function gradePython() {
   const caller = read('src/caller.py')
   const shadow = read('src/shadow.py')
   const toplevel = read('src/toplevel.py')
-  const python = process.env.REFBENCH_PYTHON ?? (process.platform === 'win32' ? 'python' : 'python3')
+  const python = process.env.REFBENCH_PYTHON ?? 'python3'
   return [
     ['core: declaration renamed', /def locate_target\(/.test(core)],
     ['core: recursive call renamed', /return locate_target\(selector\[1:\]\)/.test(core)],

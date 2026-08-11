@@ -1,0 +1,182 @@
+﻿{
+    "name":  "serena-warm-f1d78a88-rust",
+    "tokenizer":  "o200k_base via gpt-tokenizer 3.4.0",
+    "startupMs":  5972.8502,
+    "calls":  [
+                  {
+                      "tool":  "get_diagnostics_for_file",
+                      "label":  "warm src/caller.rs",
+                      "ms":  18313.5,
+                      "requestBytes":  137,
+                      "responseBytes":  91,
+                      "requestTokens":  19,
+                      "responseTokens":  18,
+                      "taskTokens":  37,
+                      "isError":  false,
+                      "protocolError":  null,
+                      "requestText":  "{\"name\":\"get_diagnostics_for_file\",\"arguments\":{\"relative_path\":\"src/caller.rs\"}}",
+                      "responseText":  "{\"content\":[{\"type\":\"text\",\"text\":\"{}\"}],\"isError\":false}",
+                      "recorded":  "{}"
+                  },
+                  {
+                      "tool":  "get_diagnostics_for_file",
+                      "label":  "warm src/toplevel.rs",
+                      "ms":  8101,
+                      "requestBytes":  139,
+                      "responseBytes":  91,
+                      "requestTokens":  19,
+                      "responseTokens":  18,
+                      "taskTokens":  37,
+                      "isError":  false,
+                      "protocolError":  null,
+                      "requestText":  "{\"name\":\"get_diagnostics_for_file\",\"arguments\":{\"relative_path\":\"src/toplevel.rs\"}}",
+                      "responseText":  "{\"content\":[{\"type\":\"text\",\"text\":\"{}\"}],\"isError\":false}",
+                      "recorded":  "{}"
+                  },
+                  {
+                      "tool":  "find_symbol",
+                      "label":  "disambiguate the symbol",
+                      "ms":  225.8,
+                      "requestBytes":  121,
+                      "responseBytes":  405,
+                      "requestTokens":  14,
+                      "responseTokens":  106,
+                      "taskTokens":  120,
+                      "isError":  false,
+                      "protocolError":  null,
+                      "requestText":  "{\"name\":\"find_symbol\",\"arguments\":{\"name_path\":\"resolve_target\"}}",
+                      "responseText":  "{\"content\":[{\"type\":\"text\",\"text\":\"[{\\\"name_path\\\": \\\"resolve_target\\\", \\\"kind\\\": \\\"Function\\\", \\\"relative_path\\\": \\\"src\\\\\\\\core.rs\\\", \\\"body_location\\\": {\\\"start_line\\\": 0, \\\"end_line\\\": 6}}, {\\\"name_path\\\": \\\"resolve_target\\\", \\\"kind\\\": \\\"Function\\\", \\\"relative_path\\\": \\\"src\\\\\\\\shadow.rs\\\", \\\"body_location\\\": {\\\"start_line\\\": 0, \\\"end_line\\\": 3}}]\"}],\"isError\":false}",
+                      "recorded":  "[{\"name_path\": \"resolve_target\", \"kind\": \"Function\", \"relative_path\": \"src\\\\core.rs\", \"body_location\": {\"start_line\": 0,"
+                  },
+                  {
+                      "tool":  "find_referencing_symbols",
+                      "label":  "force cross-file reference index",
+                      "ms":  2514.4,
+                      "requestBytes":  164,
+                      "responseBytes":  1630,
+                      "requestTokens":  23,
+                      "responseTokens":  501,
+                      "taskTokens":  524,
+                      "isError":  false,
+                      "protocolError":  null,
+                      "requestText":  "{\"name\":\"find_referencing_symbols\",\"arguments\":{\"name_path\":\"resolve_target\",\"relative_path\":\"src/core.rs\"}}",
+                      "responseText":  "{\"content\":[{\"type\":\"text\",\"text\":\"{\\\"src\\\\\\\\toplevel.rs\\\": {\\\"File\\\": [{\\\"name_path\\\": \\\"toplevel\\\", \\\"body_location\\\": {\\\"start_line\\\": 0, \\\"end_line\\\": 6}, \\\"content_around_reference\\\": \\\"  \u003e   0:use crate::core::resolve_target;\\\\n...   1:\\\"}], \\\"Function\\\": [{\\\"name_path\\\": \\\"default_target\\\", \\\"body_location\\\": {\\\"start_line\\\": 2, \\\"end_line\\\": 4}, \\\"content_around_reference\\\": \\\"...   2:pub fn default_target() -\u003e String {\\\\n  \u003e   3:    resolve_target(\\\\\\\"#main\\\\\\\")\\\\n...   4:}\\\"}]}, \\\"src\\\\\\\\caller.rs\\\": {\\\"File\\\": [{\\\"name_path\\\": \\\"caller\\\", \\\"body_location\\\": {\\\"start_line\\\": 0, \\\"end_line\\\": 15}, \\\"content_around_reference\\\": \\\"  \u003e   0:use crate::core::{resolve_target, resolve_target_path};\\\\n...   1:\\\"}], \\\"Function\\\": [{\\\"name_path\\\": \\\"run\\\", \\\"body_location\\\": {\\\"start_line\\\": 2, \\\"end_line\\\": 5}, \\\"content_around_reference\\\": \\\"...   2:pub fn run(input: \u0026str) -\u003e String {\\\\n  \u003e   3:    let value = resolve_target(input);\\\\n...   4:    format!(\\\\\\\"{value}{}\\\\\\\", resolve_target_path(input))\\\"}]}, \\\"src\\\\\\\\core.rs\\\": {\\\"Function\\\": [{\\\"name_path\\\": \\\"resolve_target\\\", \\\"body_location\\\": {\\\"start_line\\\": 0, \\\"end_line\\\": 6}, \\\"content_around_reference\\\": \\\"...   2:    if selector.starts_with(\u0027#\u0027) {\\\\n  \u003e   3:        return resolve_target(\u0026selector[1..]);\\\\n...   4:    }\\\"}, {\\\"name_path\\\": \\\"resolve_target_path\\\", \\\"body_location\\\": {\\\"start_line\\\": 8, \\\"end_line\\\": 11}, \\\"content_around_reference\\\": \\\"...   9:pub fn resolve_target_path(selector: \u0026str) -\u003e String {\\\\n  \u003e  10:    format!(\\\\\\\"/{}\\\\\\\", resolve_target(selector))\\\\n...  11:}\\\"}]}}\"}],\"isError\":false}",
+                      "recorded":  "{\"src\\\\toplevel.rs\": {\"File\": [{\"name_path\": \"toplevel\", \"body_location\": {\"start_line\": 0, \"end_line\": 6}, \"content_around_reference\": \"  \u003e   0:use crate::core"
+                  },
+                  {
+                      "tool":  "rename_symbol",
+                      "label":  "LSP rename",
+                      "ms":  121.1,
+                      "requestBytes":  180,
+                      "responseBytes":  165,
+                      "requestTokens":  28,
+                      "responseTokens":  34,
+                      "taskTokens":  62,
+                      "isError":  false,
+                      "protocolError":  null,
+                      "requestText":  "{\"name\":\"rename_symbol\",\"arguments\":{\"name_path\":\"resolve_target\",\"relative_path\":\"src/core.rs\",\"new_name\":\"locate_target\"}}",
+                      "responseText":  "{\"content\":[{\"type\":\"text\",\"text\":\"Successfully renamed \u0027resolve_target\u0027 to \u0027locate_target\u0027 (3 changes applied)\"}],\"isError\":false}",
+                      "recorded":  "Successfully renamed \u0027resolve_target\u0027 to \u0027locate_target\u0027 (3 changes applied)"
+                  }
+              ],
+    "toolCount":  21,
+    "error":  null,
+    "toolNames":  [
+                      "replace_content",
+                      "replace_in_files",
+                      "replace_symbol_body",
+                      "insert_after_symbol",
+                      "insert_before_symbol",
+                      "get_symbols_overview",
+                      "find_symbol",
+                      "find_referencing_symbols",
+                      "find_implementations",
+                      "find_declaration",
+                      "get_diagnostics_for_file",
+                      "rename_symbol",
+                      "safe_delete_symbol",
+                      "write_memory",
+                      "read_memory",
+                      "list_memories",
+                      "delete_memory",
+                      "rename_memory",
+                      "edit_memory",
+                      "onboarding",
+                      "initial_instructions"
+                  ],
+    "listBytes":  25168,
+    "sessionFixedTokens":  {
+                               "initialize":  122,
+                               "instructionsWithinInitialize":  29,
+                               "catalog":  5560,
+                               "total":  5682
+                           },
+    "taskTokens":  {
+                       "requests":  103,
+                       "responses":  677,
+                       "total":  780
+                   },
+    "benchmark":  {
+                      "arm":  "serena-warm",
+                      "language":  "rust",
+                      "run":  1,
+                      "driverExitCode":  0,
+                      "gradeExitCode":  0,
+                      "grade":  {
+                                    "language":  "rust",
+                                    "score":  "12/12",
+                                    "passed":  12,
+                                    "total":  12,
+                                    "checks":  [
+                                                   {
+                                                       "name":  "core: declaration renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "core: recursive call renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "core: call inside resolve_target_path renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "caller: import renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "caller: call renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "toplevel: import renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "toplevel: call renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP prefix identifier untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP string literal untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP comment untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP shadow declaration untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "cargo check still passes",
+                                                       "passed":  true
+                                                   }
+                                               ]
+                                }
+                  }
+}

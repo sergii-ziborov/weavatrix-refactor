@@ -46,13 +46,23 @@ fn run(arguments: &[String]) -> Result<(), String> {
 
 fn serve_mcp(arguments: &[String]) -> Result<(), String> {
     let mut repository = ".";
+    let mut surface = mcp::ToolSurface::Full;
     for argument in arguments.iter().skip(1) {
+        if let Some(profile) = argument.strip_prefix("--profile=") {
+            surface = match profile {
+                "full" => mcp::ToolSurface::Full,
+                "rename" => mcp::ToolSurface::Rename,
+                _ => return Err(format!("unknown MCP profile: {profile}")),
+            };
+            continue;
+        }
         if argument.starts_with('-') {
             return Err(format!("unknown MCP option: {argument}"));
         }
         repository = argument;
     }
-    mcp::serve(repository, WriteGate::from_environment()).map_err(|error| error.to_string())
+    mcp::serve_with_surface(repository, WriteGate::from_environment(), surface)
+        .map_err(|error| error.to_string())
 }
 
 fn list_tools() -> Result<(), String> {
@@ -111,7 +121,7 @@ fn call_tool(arguments: &[String]) -> Result<(), String> {
 fn print_help() {
     println!(
         "Weavatrix Refactor: repository intelligence with proven, transactional refactoring\n\n\
-Usage:\n  weavatrix-refactor mcp [REPOSITORY]\n\
+Usage:\n  weavatrix-refactor mcp [REPOSITORY] [--profile=full|rename]\n\
   weavatrix-refactor list-tools\n\
   weavatrix-refactor tool NAME [REPOSITORY] ['{{\"argument\":\"value\"}}']\n\
   weavatrix-refactor --version\n\n\

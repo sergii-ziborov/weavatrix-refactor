@@ -41,6 +41,17 @@ An MCP client can start it directly:
 Leave `WEAVATRIX_ALLOW_SOURCE_EDITS` unset for preview-only sessions. Preview is a read; only a
 confirmed apply or rollback requires the gate.
 
+For a rename task, expose only the two tools the agent needs:
+
+```bash
+weavatrix-refactor mcp /absolute/path/to/repository --profile=rename
+```
+
+The `rename` profile keeps `rename_symbol` and `rollback_last_apply`; every unrelated graph and
+refactor tool is absent and cannot be called. Omit the option (or use `--profile=full`) for the
+complete repository-intelligence surface. The narrower catalog reduces repeated agent context;
+it does not weaken preview hashes, the write gate, the confirmation token, or rollback checks.
+
 ## A safe cross-file rename in three calls
 
 Suppose two files declare `resolveTarget`. A bare name is ambiguous, so the server refuses to
@@ -132,32 +143,40 @@ conservative than a language server and must not be read as a claim of full comp
 
 ## Measured benchmark, with unlike layers kept separate
 
-The checked-in August 2026 report uses one adversarial TypeScript rename fixture. Protocol rows
-measure real MCP startup/calls and all protocol-visible text with `o200k_base`. The naked Codex
-row measures an entire model-driven agent run and its reported model usage. Those are different
-layers, so the report does not combine them into a synthetic speedup.
+The checked-in August 2026 benchmark uses equivalent adversarial TypeScript, Rust, and Python
+fixtures. Each has seven required edits, four traps, and a build/test gate. Protocol runs count
+exact `o200k_base` initialization, catalog, request, and response tokens. Agent runs use the
+actual cumulative usage reported by Codex CLI with pinned `gpt-5.6-sol` / medium reasoning.
+No byte proxy or estimated tokens-per-second conversion is used.
 
-| Contender | Correctness | Measured time | Measured context |
+The new rename-only profile kept all nine protocol runs at 12/12 while reducing fixed MCP context
+from 9,331 to 485 tokens. Its guided TypeScript agent A/B is:
+
+| Arm | Correctness | Median end-to-end | Median input tokens |
 | --- | ---: | ---: | ---: |
-| Weavatrix Refactor 1.0.4 protocol flow | **12/12 x3** | 1,236 ms median total | 12,265 protocol-visible tokens |
-| Serena suggested protocol flow | **7/12 x3** | 11,215 ms median total | 5,864 protocol-visible tokens |
-| Serena manually warmed protocol flow | **12/12 x1** | 35,805 ms total | 6,478 protocol-visible tokens |
-| Naked Codex agent | **12/12 x3** | 38,475 ms median end-to-end | 71,363 median input tokens |
+| Naked Codex | **12/12 x3** | **42,602 ms** | **72,169** |
+| Weavatrix 1.0.6 `--profile=rename` | **12/12 x3** | 48,389 ms | 108,155 |
+| Weavatrix 1.0.5 full surface | **12/12 x3** | 58,719 ms | 275,784 |
+| Serena | **12/12 x3** | 68,728 ms | 388,271 |
 
-On this small fixture Serena's failed flow and a naked mechanical script can be cheaper. The
-product's demonstrated value is failure visibility, stale-plan refusal, and recovery—not a claim
-that every small repository costs fewer tokens. The next benchmark revision expands the same
-grader discipline to TypeScript, Rust, and Python and measures model-driven MCP runs separately.
+The full agent matrix is 12/12 in all 27 TypeScript/Rust/Python runs; every run also completed
+operationally and passed the sanitized edit-channel audit. The deterministic protocol
+matrix also exposed a language-specific Serena defect: its suggested `find_symbol` →
+`rename_symbol` flow scored 7/12 on TypeScript in all three runs, while Rust and Python passed.
+It also found and drove fixes for Rust macro calls and Python f-string/module-level call evidence.
 
-See the [full methodology, raw-result links, and limitations](docs/benchmarks/refactor-vs-competitors-2026-08.md).
+On this toy TypeScript repository naked Codex is still faster and cheaper than the narrowed
+profile. Weavatrix's demonstrated value is preview-before-write, named uncertainty, stale-plan
+refusal, explicit authorization, and rollback—not a universal small-repository token win.
 
-## Contract and architecture
+See the [full methodology, all language medians, raw-result links, and limitations](docs/benchmarks/refactor-vs-competitors-2026-08.md).
+
+## Contract
 
 The tool names, schemas, and result states are frozen in
 [`contract/refactor-tools.v1.json`](contract/refactor-tools.v1.json). All refactor operations are
 native Rust; the host merges them with the read-only
-[`weavatrix-rust`](https://github.com/sergii-ziborov/weavatrix-rust) engine. The migration record
-is in [docs/rust-migration.md](docs/rust-migration.md).
+[`weavatrix-rust`](https://github.com/sergii-ziborov/weavatrix-rust) engine.
 
 Versions 0.1.x used the JavaScript engine. That line continues as
 [`weavatrix-refactor-js`](https://github.com/sergii-ziborov/weavatrix-refactor-js) and keeps a

@@ -2,7 +2,10 @@
 /npm/dist/
 /benchmarks/rename-agent/node_modules/
 /benchmarks/rename-agent/results/local-codex/
+/benchmarks/rename-agent/results/**/*.jsonl
+/benchmarks/rename-agent/results/**/*.patch
 /docs/superpowers/
+/docs/rust-migration.md
 *.tmp
 *.swp
 .DS_Store

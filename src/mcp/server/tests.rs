@@ -1,4 +1,5 @@
 use super::RefactorServer;
+use crate::mcp::adapters::ToolSurface;
 use crate::write_gate::WriteGate;
 use mcport::{ToolReply, ToolServer};
 use std::fs;
@@ -47,6 +48,31 @@ fn the_catalog_exposes_the_read_only_engine_and_all_eleven_refactor_tools() {
     }
     assert_eq!(server.has_tool("graph_stats"), Some(true));
     assert_eq!(server.has_tool("reformat_universe"), Some(false));
+}
+
+#[test]
+fn the_rename_profile_hides_every_unrelated_tool() {
+    let mut server =
+        RefactorServer::new_for_surface(fixture(), WriteGate::closed(), ToolSurface::Rename)
+            .expect("server");
+    let tools = server
+        .catalog()
+        .as_array()
+        .expect("catalog is an array")
+        .clone();
+    let names = tools
+        .iter()
+        .filter_map(|tool| tool.get("name").and_then(blazingly_json::Value::as_str))
+        .collect::<Vec<_>>();
+    assert_eq!(names, ["rename_symbol", "rollback_last_apply"]);
+    assert_eq!(server.has_tool("graph_stats"), Some(false));
+    assert!(!matches!(
+        server.call("graph_stats", blazingly_json::json!({})),
+        ToolReply::Success { .. }
+    ));
+    let instructions = server.identity().instructions;
+    assert!(instructions.contains("Start with the bare symbol name"));
+    assert!(instructions.contains("Do not invent a symbol id"));
 }
 
 #[test]
@@ -151,4 +177,22 @@ fn identity_names_the_refactor_host_and_its_own_version() {
     let identity = server.identity();
     assert_eq!(identity.name, "weavatrix-refactor");
     assert_eq!(identity.version, env!("CARGO_PKG_VERSION"));
+}
+
+#[test]
+fn registry_manifest_advertises_only_environment_variables_the_native_host_reads() {
+    let manifest: blazingly_json::Value =
+        blazingly_json::from_str(include_str!("../../../server.json")).expect("server manifest");
+    let names = manifest
+        .get("packages")
+        .and_then(blazingly_json::Value::as_array)
+        .and_then(|packages| packages.first())
+        .and_then(|package| package.get("environmentVariables"))
+        .and_then(blazingly_json::Value::as_array)
+        .expect("environment variable declarations")
+        .iter()
+        .filter_map(|variable| variable.get("name"))
+        .filter_map(blazingly_json::Value::as_str)
+        .collect::<Vec<_>>();
+    assert_eq!(names, ["WEAVATRIX_ALLOW_SOURCE_EDITS"]);
 }

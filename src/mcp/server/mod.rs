@@ -1,5 +1,5 @@
 use crate::mcp::McpError;
-use crate::mcp::adapters::{NotifyMonitorFactory, RefactorRepository, ToolCatalog};
+use crate::mcp::adapters::{NotifyMonitorFactory, RefactorRepository, ToolCatalog, ToolSurface};
 use crate::mcp::application::RepositorySession;
 use crate::write_gate::WriteGate;
 use mcport::{ServerIdentity, ToolPayload, ToolReply, ToolServer, Value};
@@ -20,8 +20,29 @@ struct RefactorServer {
 }
 
 impl RefactorServer {
+    #[cfg(test)]
     fn new(root: impl AsRef<Path>, gate: WriteGate) -> Result<Self, McpError> {
-        let catalog = ToolCatalog::merged()?;
+        Self::new_for_surface(root, gate, ToolSurface::Full)
+    }
+
+    fn new_for_surface(
+        root: impl AsRef<Path>,
+        gate: WriteGate,
+        surface: ToolSurface,
+    ) -> Result<Self, McpError> {
+        let catalog = ToolCatalog::for_surface(surface)?;
+        let instructions = match surface {
+            ToolSurface::Full => {
+                "Local repository intelligence with proven refactoring. Writes require an explicit \
+                 gate and a plan-bound single-use token."
+            }
+            ToolSurface::Rename => {
+                "Rename-only workflow. Start with the bare symbol name; if it is ambiguous, retry \
+                 rename_symbol with one candidate id. Do not invent a symbol id. Preview the exact \
+                 candidate, then repeat the identical symbol and new_name with mode=apply and its \
+                 confirm_token. rollback_last_apply is the recovery tool."
+            }
+        };
         let repository = RefactorRepository::open(
             root.as_ref().to_path_buf(),
             catalog.refactor_names.clone(),
@@ -31,8 +52,7 @@ impl RefactorServer {
             identity: ServerIdentity::new(
                 "weavatrix-refactor",
                 env!("CARGO_PKG_VERSION"),
-                "Local repository intelligence with proven refactoring. Writes require an explicit \
-                 gate and a plan-bound single-use token.",
+                instructions,
             ),
             catalog: catalog.encoded,
             tool_names: catalog.names,
@@ -63,6 +83,9 @@ impl ToolServer for RefactorServer {
     }
 
     fn call(&mut self, name: &str, arguments: Value) -> ToolReply {
+        if !self.tool_names.contains(name) {
+            return ToolReply::error(format!("tool `{name}` is not exposed by this MCP profile"));
+        }
         // `Mirrored` rather than `Structured`: it carries structuredContent *and* the text
         // mirror, which is what the old boolean did. Dropping the mirror would show an empty
         // result to any client that reads only `content`.
@@ -90,7 +113,11 @@ impl ToolServer for RefactorServer {
 /// # Errors
 ///
 /// Returns stdio failures or a missing repository root.
-pub fn serve(root: impl AsRef<Path>, gate: WriteGate) -> Result<(), McpError> {
+pub(crate) fn serve_with_surface(
+    root: impl AsRef<Path>,
+    gate: WriteGate,
+    surface: ToolSurface,
+) -> Result<(), McpError> {
     let root = root.as_ref();
     if !root.is_dir() {
         return Err(McpError::Io(std::io::Error::new(
@@ -98,7 +125,7 @@ pub fn serve(root: impl AsRef<Path>, gate: WriteGate) -> Result<(), McpError> {
             format!("repository root {} is not a directory", root.display()),
         )));
     }
-    let mut server = RefactorServer::new(root, gate)?;
+    let mut server = RefactorServer::new_for_surface(root, gate, surface)?;
     mcport::serve(&mut server).map_err(McpError::Io)
 }
 

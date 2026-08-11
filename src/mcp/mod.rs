@@ -4,5 +4,6 @@ mod error;
 mod ports;
 mod server;
 
+pub(crate) use adapters::ToolSurface;
 pub use error::McpError;
-pub use server::serve;
+pub(crate) use server::serve_with_surface;

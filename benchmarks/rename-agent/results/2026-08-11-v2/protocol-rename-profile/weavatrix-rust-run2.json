@@ -1,0 +1,138 @@
+﻿{
+    "name":  "weavatrix-refactor-1.0.6-rename-profile-rust",
+    "tokenizer":  "o200k_base via gpt-tokenizer 3.4.0",
+    "startupMs":  43.3016,
+    "calls":  [
+                  {
+                      "tool":  "rename_symbol",
+                      "label":  "rename by bare name (refusal carries candidates)",
+                      "ms":  3.5,
+                      "requestBytes":  170,
+                      "responseBytes":  652,
+                      "requestTokens":  25,
+                      "responseTokens":  173,
+                      "taskTokens":  198,
+                      "isError":  false,
+                      "protocolError":  null,
+                      "requestText":  "{\"name\":\"rename_symbol\",\"arguments\":{\"symbol\":\"resolve_target\",\"new_name\":\"locate_target\",\"output_format\":\"json\"}}",
+                      "responseText":  "{\"content\":[{\"type\":\"text\",\"text\":\"{\\n  \\\"candidates\\\": [\\n    \\\"symbol:src/core.rs#function:resolve_target@2:8\\\",\\n    \\\"symbol:src/shadow.rs#function:resolve_target@2:4\\\"\\n  ],\\n  \\\"reason\\\": \\\"the name matches more than one symbol; pass one of the candidate ids\\\",\\n  \\\"status\\\": \\\"NOT_FOUND\\\",\\n  \\\"symbol\\\": \\\"resolve_target\\\"\\n}\"}],\"isError\":false,\"structuredContent\":{\"candidates\":[\"symbol:src/core.rs#function:resolve_target@2:8\",\"symbol:src/shadow.rs#function:resolve_target@2:4\"],\"reason\":\"the name matches more than one symbol; pass one of the candidate ids\",\"status\":\"NOT_FOUND\",\"symbol\":\"resolve_target\"}}",
+                      "recorded":  "candidate: symbol:src/core.rs#function:resolve_target@2:8"
+                  },
+                  {
+                      "tool":  "rename_symbol",
+                      "label":  "preview exact rename",
+                      "ms":  72.9,
+                      "requestBytes":  202,
+                      "responseBytes":  6290,
+                      "requestTokens":  37,
+                      "responseTokens":  1888,
+                      "taskTokens":  1925,
+                      "isError":  false,
+                      "protocolError":  null,
+                      "requestText":  "{\"name\":\"rename_symbol\",\"arguments\":{\"symbol\":\"symbol:src/core.rs#function:resolve_target@2:8\",\"new_name\":\"locate_target\",\"output_format\":\"json\"}}",
+                      "responseText":  "{\"content\":[{\"type\":\"text\",\"text\":\"{\\n  \\\"backend\\\": \\\"graph+lexical\\\",\\n  \\\"completeness\\\": \\\"PARTIAL\\\",\\n  \\\"confirmToken\\\": \\\"87e6efe281fb3e9f5501da421b6c7f5f\\\",\\n  \\\"expiresAt\\\": 1786447823,\\n  \\\"newName\\\": \\\"locate_target\\\",\\n  \\\"next\\\": \\\"call rename_symbol again with the identical symbol and new_name, mode=\\\\\\\"apply\\\\\\\", and this confirm_token. Every uncertainReference is a same-named occurrence this backend refused to guess at; review them yourself.\\\",\\n  \\\"oldName\\\": \\\"resolve_target\\\",\\n  \\\"plan\\\": {\\n    \\\"files\\\": [\\n      {\\n        \\\"edits\\\": [\\n          {\\n            \\\"after\\\": \\\"locate_target\\\",\\n            \\\"before\\\": \\\"resolve_target\\\",\\n            \\\"endChar\\\": 32,\\n            \\\"endLine\\\": 1,\\n            \\\"provenance\\\": \\\"RESOLVED\\\",\\n            \\\"startChar\\\": 18,\\n            \\\"startLine\\\": 1\\n          },\\n          {\\n            \\\"after\\\": \\\"locate_target\\\",\\n            \\\"before\\\": \\\"resolve_target\\\",\\n            \\\"endChar\\\": 30,\\n            \\\"endLine\\\": 4,\\n            \\\"provenance\\\": \\\"RESOLVED\\\",\\n            \\\"startChar\\\": 16,\\n            \\\"startLine\\\": 4\\n          }\\n        ],\\n        \\\"path\\\": \\\"src/caller.rs\\\",\\n        \\\"sha256\\\": \\\"966c648b7375010adf45fee5eb1e734d69bb44a2f6c898761d8e598803992399\\\"\\n      },\\n      {\\n        \\\"edits\\\": [\\n          {\\n            \\\"after\\\": \\\"locate_target\\\",\\n            \\\"before\\\": \\\"resolve_target\\\",\\n            \\\"endChar\\\": 21,\\n            \\\"endLine\\\": 2,\\n            \\\"provenance\\\": \\\"RESOLVED\\\",\\n            \\\"startChar\\\": 7,\\n            \\\"startLine\\\": 2\\n          },\\n          {\\n            \\\"after\\\": \\\"locate_target\\\",\\n            \\\"before\\\": \\\"resolve_target\\\",\\n            \\\"endChar\\\": 29,\\n            \\\"endLine\\\": 4,\\n            \\\"provenance\\\": \\\"RESOLVED\\\",\\n            \\\"startChar\\\": 15,\\n            \\\"startLine\\\": 4\\n          },\\n          {\\n            \\\"after\\\": \\\"locate_target\\\",\\n            \\\"before\\\": \\\"resolve_target\\\",\\n            \\\"endChar\\\": 33,\\n            \\\"endLine\\\": 11,\\n            \\\"provenance\\\": \\\"RESOLVED\\\",\\n            \\\"startChar\\\": 19,\\n            \\\"startLine\\\": 11\\n          }\\n        ],\\n        \\\"path\\\": \\\"src/core.rs\\\",\\n        \\\"sha256\\\": \\\"b27e26291ce8d92b0263fb208a46918514c39c84f781f78dca7b16841fb5cc41\\\"\\n      },\\n      {\\n        \\\"edits\\\": [\\n          {\\n            \\\"after\\\": \\\"locate_target\\\",\\n            \\\"before\\\": \\\"resolve_target\\\",\\n            \\\"endChar\\\": 31,\\n            \\\"endLine\\\": 1,\\n            \\\"provenance\\\": \\\"RESOLVED\\\",\\n            \\\"startChar\\\": 17,\\n            \\\"startLine\\\": 1\\n          },\\n          {\\n            \\\"after\\\": \\\"locate_target\\\",\\n            \\\"before\\\": \\\"resolve_target\\\",\\n            \\\"endChar\\\": 18,\\n            \\\"endLine\\\": 4,\\n            \\\"provenance\\\": \\\"RESOLVED\\\",\\n            \\\"startChar\\\": 4,\\n            \\\"startLine\\\": 4\\n          }\\n        ],\\n        \\\"path\\\": \\\"src/toplevel.rs\\\",\\n        \\\"sha256\\\": \\\"ca99a5f2773bc676c2e361f4e57ee766b06da6df97fcd3dc92d526bd5387363e\\\"\\n      }\\n    ],\\n    \\\"operation\\\": \\\"rename_symbol\\\",\\n    \\\"schemaVersion\\\": \\\"weavatrix.edit-plan.v1\\\"\\n  },\\n  \\\"previewed\\\": true,\\n  \\\"renamedEdits\\\": 7,\\n  \\\"status\\\": \\\"PLANNED\\\",\\n  \\\"uncertainReferences\\\": [\\n    {\\n      \\\"excerpt\\\": \\\"pub const HELP: \u0026str = \\\\\\\"call resolve_target with a selector\\\\\\\";\\\",\\n      \\\"file\\\": \\\"src/caller.rs\\\",\\n      \\\"kind\\\": \\\"UNPROVEN_OCCURRENCE\\\",\\n      \\\"line\\\": 9\\n    },\\n    {\\n      \\\"excerpt\\\": \\\"// Trap 3: the name inside a comment: resolve_target is documented here. Must NOT change.\\\",\\n      \\\"file\\\": \\\"src/caller.rs\\\",\\n      \\\"kind\\\": \\\"UNPROVEN_OCCURRENCE\\\",\\n      \\\"line\\\": 11\\n    },\\n    {\\n      \\\"excerpt\\\": \\\"// The symbol under rename: resolve_target -\u003e locate_target.\\\",\\n      \\\"file\\\": \\\"src/core.rs\\\",\\n      \\\"kind\\\": \\\"UNPROVEN_OCCURRENCE\\\",\\n      \\\"line\\\": 1\\n    }\\n  ],\\n  \\\"warnings\\\": [\\n    \\\"GRAPH_PROVEN_SITES_ONLY\\\"\\n  ]\\n}\"}],\"isError\":false,\"structuredContent\":{\"backend\":\"graph+lexical\",\"completeness\":\"PARTIAL\",\"confirmToken\":\"87e6efe281fb3e9f5501da421b6c7f5f\",\"expiresAt\":1786447823,\"newName\":\"locate_target\",\"next\":\"call rename_symbol again with the identical symbol and new_name, mode=\\\"apply\\\", and this confirm_token. Every uncertainReference is a same-named occurrence this backend refused to guess at; review them yourself.\",\"oldName\":\"resolve_target\",\"plan\":{\"files\":[{\"edits\":[{\"after\":\"locate_target\",\"before\":\"resolve_target\",\"endChar\":32,\"endLine\":1,\"provenance\":\"RESOLVED\",\"startChar\":18,\"startLine\":1},{\"after\":\"locate_target\",\"before\":\"resolve_target\",\"endChar\":30,\"endLine\":4,\"provenance\":\"RESOLVED\",\"startChar\":16,\"startLine\":4}],\"path\":\"src/caller.rs\",\"sha256\":\"966c648b7375010adf45fee5eb1e734d69bb44a2f6c898761d8e598803992399\"},{\"edits\":[{\"after\":\"locate_target\",\"before\":\"resolve_target\",\"endChar\":21,\"endLine\":2,\"provenance\":\"RESOLVED\",\"startChar\":7,\"startLine\":2},{\"after\":\"locate_target\",\"before\":\"resolve_target\",\"endChar\":29,\"endLine\":4,\"provenance\":\"RESOLVED\",\"startChar\":15,\"startLine\":4},{\"after\":\"locate_target\",\"before\":\"resolve_target\",\"endChar\":33,\"endLine\":11,\"provenance\":\"RESOLVED\",\"startChar\":19,\"startLine\":11}],\"path\":\"src/core.rs\",\"sha256\":\"b27e26291ce8d92b0263fb208a46918514c39c84f781f78dca7b16841fb5cc41\"},{\"edits\":[{\"after\":\"locate_target\",\"before\":\"resolve_target\",\"endChar\":31,\"endLine\":1,\"provenance\":\"RESOLVED\",\"startChar\":17,\"startLine\":1},{\"after\":\"locate_target\",\"before\":\"resolve_target\",\"endChar\":18,\"endLine\":4,\"provenance\":\"RESOLVED\",\"startChar\":4,\"startLine\":4}],\"path\":\"src/toplevel.rs\",\"sha256\":\"ca99a5f2773bc676c2e361f4e57ee766b06da6df97fcd3dc92d526bd5387363e\"}],\"operation\":\"rename_symbol\",\"schemaVersion\":\"weavatrix.edit-plan.v1\"},\"previewed\":true,\"renamedEdits\":7,\"status\":\"PLANNED\",\"uncertainReferences\":[{\"excerpt\":\"pub const HELP: \u0026str = \\\"call resolve_target with a selector\\\";\",\"file\":\"src/caller.rs\",\"kind\":\"UNPROVEN_OCCURRENCE\",\"line\":9},{\"excerpt\":\"// Trap 3: the name inside a comment: resolve_target is documented here. Must NOT change.\",\"file\":\"src/caller.rs\",\"kind\":\"UNPROVEN_OCCURRENCE\",\"line\":11},{\"excerpt\":\"// The symbol under rename: resolve_target -\u003e locate_target.\",\"file\":\"src/core.rs\",\"kind\":\"UNPROVEN_OCCURRENCE\",\"line\":1}],\"warnings\":[\"GRAPH_PROVEN_SITES_ONLY\"]}}",
+                      "recorded":  {
+                                       "status":  "PLANNED",
+                                       "edits":  7,
+                                       "uncertain":  3,
+                                       "tokenIssued":  true
+                                   }
+                  },
+                  {
+                      "tool":  "rename_symbol",
+                      "label":  "apply exact rename with preview token",
+                      "ms":  212.8,
+                      "requestBytes":  268,
+                      "responseBytes":  726,
+                      "requestTokens":  66,
+                      "responseTokens":  230,
+                      "taskTokens":  296,
+                      "isError":  false,
+                      "protocolError":  null,
+                      "requestText":  "{\"name\":\"rename_symbol\",\"arguments\":{\"symbol\":\"symbol:src/core.rs#function:resolve_target@2:8\",\"new_name\":\"locate_target\",\"mode\":\"apply\",\"confirm_token\":\"87e6efe281fb3e9f5501da421b6c7f5f\",\"output_format\":\"json\"}}",
+                      "responseText":  "{\"content\":[{\"type\":\"text\",\"text\":\"{\\n  \\\"files\\\": [\\n    \\\"src/caller.rs\\\",\\n    \\\"src/core.rs\\\",\\n    \\\"src/toplevel.rs\\\"\\n  ],\\n  \\\"next\\\": \\\"the previous contents are retained; rollback_last_apply restores them.\\\",\\n  \\\"status\\\": \\\"APPLIED\\\",\\n  \\\"totalEdits\\\": 7,\\n  \\\"transactionId\\\": \\\"68583e403b5c5ed4d849ca6504397044\\\",\\n  \\\"undoId\\\": \\\"68583e403b5c5ed4d849ca6504397044\\\"\\n}\"}],\"isError\":false,\"structuredContent\":{\"files\":[\"src/caller.rs\",\"src/core.rs\",\"src/toplevel.rs\"],\"next\":\"the previous contents are retained; rollback_last_apply restores them.\",\"status\":\"APPLIED\",\"totalEdits\":7,\"transactionId\":\"68583e403b5c5ed4d849ca6504397044\",\"undoId\":\"68583e403b5c5ed4d849ca6504397044\"}}",
+                      "recorded":  "APPLIED"
+                  }
+              ],
+    "toolCount":  2,
+    "error":  null,
+    "toolNames":  [
+                      "rename_symbol",
+                      "rollback_last_apply"
+                  ],
+    "listBytes":  1732,
+    "sessionFixedTokens":  {
+                               "initialize":  119,
+                               "instructionsWithinInitialize":  61,
+                               "catalog":  366,
+                               "total":  485
+                           },
+    "taskTokens":  {
+                       "requests":  128,
+                       "responses":  2291,
+                       "total":  2419
+                   },
+    "benchmark":  {
+                      "arm":  "weavatrix",
+                      "language":  "rust",
+                      "run":  2,
+                      "driverExitCode":  0,
+                      "gradeExitCode":  0,
+                      "grade":  {
+                                    "language":  "rust",
+                                    "score":  "12/12",
+                                    "passed":  12,
+                                    "total":  12,
+                                    "checks":  [
+                                                   {
+                                                       "name":  "core: declaration renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "core: recursive call renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "core: call inside resolve_target_path renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "caller: import renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "caller: call renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "toplevel: import renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "toplevel: call renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP prefix identifier untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP string literal untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP comment untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP shadow declaration untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "cargo check still passes",
+                                                       "passed":  true
+                                                   }
+                                               ]
+                                }
+                  }
+}

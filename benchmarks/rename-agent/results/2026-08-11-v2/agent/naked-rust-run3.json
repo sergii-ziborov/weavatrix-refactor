@@ -1,0 +1,90 @@
+﻿{
+    "arm":  "naked",
+    "language":  "rust",
+    "run":  3,
+    "model":  "gpt-5.6-sol",
+    "reasoningEffort":  "medium",
+    "cliVersion":  "codex-cli 0.147.0-alpha.6.5",
+    "prompt":  "Rename the function resolve_target declared in src/core.rs to locate_target. Update every reference and import that refers to that symbol across the repository. Preserve unrelated same-named symbols, longer identifiers, comments, and string literals. Run the Rust test or check command. Report the result concisely. Use the normal repository inspection and editing tools. No MCP refactoring server is available.",
+    "wallMs":  37655,
+    "exitCode":  0,
+    "gradeExitCode":  0,
+    "grade":  {
+                  "language":  "rust",
+                  "score":  "12/12",
+                  "passed":  12,
+                  "total":  12,
+                  "checks":  [
+                                 {
+                                     "name":  "core: declaration renamed",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "core: recursive call renamed",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "core: call inside resolve_target_path renamed",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "caller: import renamed",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "caller: call renamed",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "toplevel: import renamed",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "toplevel: call renamed",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "TRAP prefix identifier untouched",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "TRAP string literal untouched",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "TRAP comment untouched",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "TRAP shadow declaration untouched",
+                                     "passed":  true
+                                 },
+                                 {
+                                     "name":  "cargo check still passes",
+                                     "passed":  true
+                                 }
+                             ]
+              },
+    "usage":  {
+                  "input_tokens":  56681,
+                  "cached_input_tokens":  41984,
+                  "cache_write_input_tokens":  0,
+                  "output_tokens":  834,
+                  "reasoning_output_tokens":  71
+              },
+    "events":  "naked-rust-run3.jsonl",
+    "patch":  "naked-rust-run3.patch",
+    "toolAudit":  {
+                      "expectedServer":  null,
+                      "expectedTool":  null,
+                      "completedMcpCalls":  [
+
+                                            ],
+                      "fileChangeEvents":  1,
+                      "sourceWriteCommandEvents":  0,
+                      "compliant":  true,
+                      "issues":  [
+
+                                 ]
+                  }
+}

@@ -4,7 +4,8 @@
   "private": true,
   "description": "Reproducible rename benchmark for Weavatrix, Serena, and a naked Codex agent",
   "scripts": {
-    "summarize": "node summarize.mjs results/raw results/codex-naked-runs.json results/2026-08-11-summary.json",
+    "summarize": "node summarize-v2.mjs results/2026-08-11-v2/protocol results/2026-08-11-v2/agent results/2026-08-11-v2/summary.json",
+    "test": "node --test *.test.mjs",
     "verify:fixture": "node verify.mjs fixture"
   },
   "license": "MIT",

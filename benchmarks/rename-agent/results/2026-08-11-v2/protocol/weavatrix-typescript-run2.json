@@ -1,0 +1,190 @@
+﻿{
+    "name":  "weavatrix-refactor-1.0.5-typescript",
+    "tokenizer":  "o200k_base via gpt-tokenizer 3.4.0",
+    "startupMs":  33.6694,
+    "calls":  [
+                  {
+                      "tool":  "rename_symbol",
+                      "label":  "rename by bare name (refusal carries candidates)",
+                      "ms":  4.9,
+                      "requestBytes":  168,
+                      "responseBytes":  646,
+                      "requestTokens":  25,
+                      "responseTokens":  173,
+                      "taskTokens":  198,
+                      "isError":  false,
+                      "protocolError":  null,
+                      "requestText":  "{\"name\":\"rename_symbol\",\"arguments\":{\"symbol\":\"resolveTarget\",\"new_name\":\"locateTarget\",\"output_format\":\"json\"}}",
+                      "responseText":  "{\"content\":[{\"type\":\"text\",\"text\":\"{\\n  \\\"candidates\\\": [\\n    \\\"symbol:src/core.ts#function:resolveTarget@2:1\\\",\\n    \\\"symbol:src/shadow.ts#function:resolveTarget@3:1\\\"\\n  ],\\n  \\\"reason\\\": \\\"the name matches more than one symbol; pass one of the candidate ids\\\",\\n  \\\"status\\\": \\\"NOT_FOUND\\\",\\n  \\\"symbol\\\": \\\"resolveTarget\\\"\\n}\"}],\"isError\":false,\"structuredContent\":{\"candidates\":[\"symbol:src/core.ts#function:resolveTarget@2:1\",\"symbol:src/shadow.ts#function:resolveTarget@3:1\"],\"reason\":\"the name matches more than one symbol; pass one of the candidate ids\",\"status\":\"NOT_FOUND\",\"symbol\":\"resolveTarget\"}}",
+                      "recorded":  "candidate: symbol:src/core.ts#function:resolveTarget@2:1"
+                  },
+                  {
+                      "tool":  "rename_symbol",
+                      "label":  "preview exact rename",
+                      "ms":  9.4,
+                      "requestBytes":  200,
+                      "responseBytes":  6234,
+                      "requestTokens":  37,
+                      "responseTokens":  1890,
+                      "taskTokens":  1927,
+                      "isError":  false,
+                      "protocolError":  null,
+                      "requestText":  "{\"name\":\"rename_symbol\",\"arguments\":{\"symbol\":\"symbol:src/core.ts#function:resolveTarget@2:1\",\"new_name\":\"locateTarget\",\"output_format\":\"json\"}}",
+                      "responseText":  "{\"content\":[{\"type\":\"text\",\"text\":\"{\\n  \\\"backend\\\": \\\"graph+lexical\\\",\\n  \\\"completeness\\\": \\\"PARTIAL\\\",\\n  \\\"confirmToken\\\": \\\"a369a803ecbf4c83140219f54465012e\\\",\\n  \\\"expiresAt\\\": 1786442530,\\n  \\\"newName\\\": \\\"locateTarget\\\",\\n  \\\"next\\\": \\\"call rename_symbol again with the identical symbol and new_name, mode=\\\\\\\"apply\\\\\\\", and this confirm_token. Every uncertainReference is a same-named occurrence this backend refused to guess at; review them yourself.\\\",\\n  \\\"oldName\\\": \\\"resolveTarget\\\",\\n  \\\"plan\\\": {\\n    \\\"files\\\": [\\n      {\\n        \\\"edits\\\": [\\n          {\\n            \\\"after\\\": \\\"locateTarget\\\",\\n            \\\"before\\\": \\\"resolveTarget\\\",\\n            \\\"endChar\\\": 22,\\n            \\\"endLine\\\": 1,\\n            \\\"provenance\\\": \\\"RESOLVED\\\",\\n            \\\"startChar\\\": 9,\\n            \\\"startLine\\\": 1\\n          },\\n          {\\n            \\\"after\\\": \\\"locateTarget\\\",\\n            \\\"before\\\": \\\"resolveTarget\\\",\\n            \\\"endChar\\\": 22,\\n            \\\"endLine\\\": 4,\\n            \\\"provenance\\\": \\\"RESOLVED\\\",\\n            \\\"startChar\\\": 9,\\n            \\\"startLine\\\": 4\\n          }\\n        ],\\n        \\\"path\\\": \\\"src/caller.ts\\\",\\n        \\\"sha256\\\": \\\"8c3b4a850d5e5c12b18bc5207a3f6f763ae532503f4904466f8e4a7a223cf7d2\\\"\\n      },\\n      {\\n        \\\"edits\\\": [\\n          {\\n            \\\"after\\\": \\\"locateTarget\\\",\\n            \\\"before\\\": \\\"resolveTarget\\\",\\n            \\\"endChar\\\": 29,\\n            \\\"endLine\\\": 2,\\n            \\\"provenance\\\": \\\"RESOLVED\\\",\\n            \\\"startChar\\\": 16,\\n            \\\"startLine\\\": 2\\n          },\\n          {\\n            \\\"after\\\": \\\"locateTarget\\\",\\n            \\\"before\\\": \\\"resolveTarget\\\",\\n            \\\"endChar\\\": 24,\\n            \\\"endLine\\\": 4,\\n            \\\"provenance\\\": \\\"RESOLVED\\\",\\n            \\\"startChar\\\": 11,\\n            \\\"startLine\\\": 4\\n          },\\n          {\\n            \\\"after\\\": \\\"locateTarget\\\",\\n            \\\"before\\\": \\\"resolveTarget\\\",\\n            \\\"endChar\\\": 26,\\n            \\\"endLine\\\": 11,\\n            \\\"provenance\\\": \\\"RESOLVED\\\",\\n            \\\"startChar\\\": 13,\\n            \\\"startLine\\\": 11\\n          }\\n        ],\\n        \\\"path\\\": \\\"src/core.ts\\\",\\n        \\\"sha256\\\": \\\"01741a6f314d5d11e43c314d46c4959ccec00a18d465c2227d1425f0dec4ae4d\\\"\\n      },\\n      {\\n        \\\"edits\\\": [\\n          {\\n            \\\"after\\\": \\\"locateTarget\\\",\\n            \\\"before\\\": \\\"resolveTarget\\\",\\n            \\\"endChar\\\": 22,\\n            \\\"endLine\\\": 1,\\n            \\\"provenance\\\": \\\"RESOLVED\\\",\\n            \\\"startChar\\\": 9,\\n            \\\"startLine\\\": 1\\n          },\\n          {\\n            \\\"after\\\": \\\"locateTarget\\\",\\n            \\\"before\\\": \\\"resolveTarget\\\",\\n            \\\"endChar\\\": 43,\\n            \\\"endLine\\\": 5,\\n            \\\"provenance\\\": \\\"RESOLVED\\\",\\n            \\\"startChar\\\": 30,\\n            \\\"startLine\\\": 5\\n          }\\n        ],\\n        \\\"path\\\": \\\"src/toplevel.ts\\\",\\n        \\\"sha256\\\": \\\"8b47cdf568e826e8305e50c329d71d51ed6c3ef80cd8326693c1b74225317bff\\\"\\n      }\\n    ],\\n    \\\"operation\\\": \\\"rename_symbol\\\",\\n    \\\"schemaVersion\\\": \\\"weavatrix.edit-plan.v1\\\"\\n  },\\n  \\\"previewed\\\": true,\\n  \\\"renamedEdits\\\": 7,\\n  \\\"status\\\": \\\"PLANNED\\\",\\n  \\\"uncertainReferences\\\": [\\n    {\\n      \\\"excerpt\\\": \\\"export const HELP = \u0027call resolveTarget with a selector\u0027;\\\",\\n      \\\"file\\\": \\\"src/caller.ts\\\",\\n      \\\"kind\\\": \\\"UNPROVEN_OCCURRENCE\\\",\\n      \\\"line\\\": 8\\n    },\\n    {\\n      \\\"excerpt\\\": \\\"// Trap 3: the name inside a comment: resolveTarget is documented here. Must NOT change.\\\",\\n      \\\"file\\\": \\\"src/caller.ts\\\",\\n      \\\"kind\\\": \\\"UNPROVEN_OCCURRENCE\\\",\\n      \\\"line\\\": 10\\n    },\\n    {\\n      \\\"excerpt\\\": \\\"// The symbol under rename: resolveTarget -\u003e locateTarget.\\\",\\n      \\\"file\\\": \\\"src/core.ts\\\",\\n      \\\"kind\\\": \\\"UNPROVEN_OCCURRENCE\\\",\\n      \\\"line\\\": 1\\n    }\\n  ],\\n  \\\"warnings\\\": [\\n    \\\"GRAPH_PROVEN_SITES_ONLY\\\"\\n  ]\\n}\"}],\"isError\":false,\"structuredContent\":{\"backend\":\"graph+lexical\",\"completeness\":\"PARTIAL\",\"confirmToken\":\"a369a803ecbf4c83140219f54465012e\",\"expiresAt\":1786442530,\"newName\":\"locateTarget\",\"next\":\"call rename_symbol again with the identical symbol and new_name, mode=\\\"apply\\\", and this confirm_token. Every uncertainReference is a same-named occurrence this backend refused to guess at; review them yourself.\",\"oldName\":\"resolveTarget\",\"plan\":{\"files\":[{\"edits\":[{\"after\":\"locateTarget\",\"before\":\"resolveTarget\",\"endChar\":22,\"endLine\":1,\"provenance\":\"RESOLVED\",\"startChar\":9,\"startLine\":1},{\"after\":\"locateTarget\",\"before\":\"resolveTarget\",\"endChar\":22,\"endLine\":4,\"provenance\":\"RESOLVED\",\"startChar\":9,\"startLine\":4}],\"path\":\"src/caller.ts\",\"sha256\":\"8c3b4a850d5e5c12b18bc5207a3f6f763ae532503f4904466f8e4a7a223cf7d2\"},{\"edits\":[{\"after\":\"locateTarget\",\"before\":\"resolveTarget\",\"endChar\":29,\"endLine\":2,\"provenance\":\"RESOLVED\",\"startChar\":16,\"startLine\":2},{\"after\":\"locateTarget\",\"before\":\"resolveTarget\",\"endChar\":24,\"endLine\":4,\"provenance\":\"RESOLVED\",\"startChar\":11,\"startLine\":4},{\"after\":\"locateTarget\",\"before\":\"resolveTarget\",\"endChar\":26,\"endLine\":11,\"provenance\":\"RESOLVED\",\"startChar\":13,\"startLine\":11}],\"path\":\"src/core.ts\",\"sha256\":\"01741a6f314d5d11e43c314d46c4959ccec00a18d465c2227d1425f0dec4ae4d\"},{\"edits\":[{\"after\":\"locateTarget\",\"before\":\"resolveTarget\",\"endChar\":22,\"endLine\":1,\"provenance\":\"RESOLVED\",\"startChar\":9,\"startLine\":1},{\"after\":\"locateTarget\",\"before\":\"resolveTarget\",\"endChar\":43,\"endLine\":5,\"provenance\":\"RESOLVED\",\"startChar\":30,\"startLine\":5}],\"path\":\"src/toplevel.ts\",\"sha256\":\"8b47cdf568e826e8305e50c329d71d51ed6c3ef80cd8326693c1b74225317bff\"}],\"operation\":\"rename_symbol\",\"schemaVersion\":\"weavatrix.edit-plan.v1\"},\"previewed\":true,\"renamedEdits\":7,\"status\":\"PLANNED\",\"uncertainReferences\":[{\"excerpt\":\"export const HELP = \u0027call resolveTarget with a selector\u0027;\",\"file\":\"src/caller.ts\",\"kind\":\"UNPROVEN_OCCURRENCE\",\"line\":8},{\"excerpt\":\"// Trap 3: the name inside a comment: resolveTarget is documented here. Must NOT change.\",\"file\":\"src/caller.ts\",\"kind\":\"UNPROVEN_OCCURRENCE\",\"line\":10},{\"excerpt\":\"// The symbol under rename: resolveTarget -\u003e locateTarget.\",\"file\":\"src/core.ts\",\"kind\":\"UNPROVEN_OCCURRENCE\",\"line\":1}],\"warnings\":[\"GRAPH_PROVEN_SITES_ONLY\"]}}",
+                      "recorded":  {
+                                       "status":  "PLANNED",
+                                       "edits":  7,
+                                       "uncertain":  3,
+                                       "tokenIssued":  true
+                                   }
+                  },
+                  {
+                      "tool":  "rename_symbol",
+                      "label":  "apply exact rename with preview token",
+                      "ms":  68.6,
+                      "requestBytes":  266,
+                      "responseBytes":  726,
+                      "requestTokens":  61,
+                      "responseTokens":  246,
+                      "taskTokens":  307,
+                      "isError":  false,
+                      "protocolError":  null,
+                      "requestText":  "{\"name\":\"rename_symbol\",\"arguments\":{\"symbol\":\"symbol:src/core.ts#function:resolveTarget@2:1\",\"new_name\":\"locateTarget\",\"mode\":\"apply\",\"confirm_token\":\"a369a803ecbf4c83140219f54465012e\",\"output_format\":\"json\"}}",
+                      "responseText":  "{\"content\":[{\"type\":\"text\",\"text\":\"{\\n  \\\"files\\\": [\\n    \\\"src/caller.ts\\\",\\n    \\\"src/core.ts\\\",\\n    \\\"src/toplevel.ts\\\"\\n  ],\\n  \\\"next\\\": \\\"the previous contents are retained; rollback_last_apply restores them.\\\",\\n  \\\"status\\\": \\\"APPLIED\\\",\\n  \\\"totalEdits\\\": 7,\\n  \\\"transactionId\\\": \\\"4a59a9327de3675b8bac29d6b7d40e49\\\",\\n  \\\"undoId\\\": \\\"4a59a9327de3675b8bac29d6b7d40e49\\\"\\n}\"}],\"isError\":false,\"structuredContent\":{\"files\":[\"src/caller.ts\",\"src/core.ts\",\"src/toplevel.ts\"],\"next\":\"the previous contents are retained; rollback_last_apply restores them.\",\"status\":\"APPLIED\",\"totalEdits\":7,\"transactionId\":\"4a59a9327de3675b8bac29d6b7d40e49\",\"undoId\":\"4a59a9327de3675b8bac29d6b7d40e49\"}}",
+                      "recorded":  "APPLIED"
+                  }
+              ],
+    "toolCount":  54,
+    "error":  null,
+    "toolNames":  [
+                      "graph_stats",
+                      "get_node",
+                      "get_neighbors",
+                      "query_graph",
+                      "god_nodes",
+                      "shortest_path",
+                      "get_dependents",
+                      "change_impact",
+                      "map_stacktrace",
+                      "select_tests",
+                      "git_history",
+                      "cross_repo_git",
+                      "verified_change",
+                      "trace_api_contract",
+                      "get_community",
+                      "search_code",
+                      "read_source",
+                      "inspect_symbol",
+                      "context_bundle",
+                      "find_duplicates",
+                      "find_dead_code",
+                      "run_audit",
+                      "coverage_map",
+                      "hot_path_review",
+                      "list_communities",
+                      "module_map",
+                      "build_graph",
+                      "list_endpoints",
+                      "trace_endpoint",
+                      "rebuild_graph",
+                      "graph_diff",
+                      "get_architecture_contract",
+                      "prepare_change",
+                      "verify_architecture",
+                      "verify_capabilities",
+                      "explain_architecture_violation",
+                      "propose_architecture_exception",
+                      "open_repo",
+                      "list_known_repos",
+                      "semantic_link",
+                      "vector_search",
+                      "seo_link_suggestions",
+                      "memory_context",
+                      "rename_symbol",
+                      "rename_related_symbols",
+                      "apply_edit_plan",
+                      "rollback_last_apply",
+                      "change_signature",
+                      "edit_symbol",
+                      "bulk_replace",
+                      "organize_imports",
+                      "move_file",
+                      "move_symbol",
+                      "delete_readiness"
+                  ],
+    "listBytes":  43137,
+    "sessionFixedTokens":  {
+                               "initialize":  79,
+                               "instructionsWithinInitialize":  21,
+                               "catalog":  9252,
+                               "total":  9331
+                           },
+    "taskTokens":  {
+                       "requests":  123,
+                       "responses":  2309,
+                       "total":  2432
+                   },
+    "benchmark":  {
+                      "arm":  "weavatrix",
+                      "language":  "typescript",
+                      "run":  2,
+                      "driverExitCode":  0,
+                      "gradeExitCode":  0,
+                      "grade":  {
+                                    "language":  "typescript",
+                                    "score":  "12/12",
+                                    "passed":  12,
+                                    "total":  12,
+                                    "checks":  [
+                                                   {
+                                                       "name":  "core: declaration renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "core: recursive call renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "core: call inside resolveTargetPath renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "caller: import renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "caller: call renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "toplevel: import renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "toplevel: top-level call renamed",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP prefix identifier untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP string literal untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP comment untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "TRAP shadow declaration untouched",
+                                                       "passed":  true
+                                                   },
+                                                   {
+                                                       "name":  "tsc --noEmit still passes",
+                                                       "passed":  true
+                                                   }
+                                               ]
+                                }
+                  }
+}

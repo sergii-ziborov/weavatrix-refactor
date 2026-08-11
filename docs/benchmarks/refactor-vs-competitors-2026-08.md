@@ -1,141 +1,164 @@
-# Rename benchmark: weavatrix-refactor vs Serena vs a naked Codex agent
+# Rename benchmark: Weavatrix Refactor vs Serena vs naked Codex
 
-Measured on 2026-08-10 and 2026-08-11 on one Windows 11 machine. All times are
-milliseconds. All protocol text is counted with `o200k_base`; bytes are retained
-only as transport diagnostics. The fixture, drivers, grader, raw captures, and
-summary generator are versioned under [`benchmarks/rename-agent`](../../benchmarks/rename-agent/README.md).
+Measured on 2026-08-11 on one Windows 11 machine. Every time below is an
+observed wall-clock duration in milliseconds. Token counts are tokens, never
+payload bytes.
 
-## The task and ground truth
+The reproducible harness, fixtures, grader, raw results, and generated summaries
+are under [`benchmarks/rename-agent`](../../benchmarks/rename-agent/README.md).
+The two machine-readable summaries are
+[`summary.json`](../../benchmarks/rename-agent/results/2026-08-11-v2/summary.json)
+and
+[`rename-profile-summary.json`](../../benchmarks/rename-agent/results/2026-08-11-v2/rename-profile-summary.json).
 
-Rename the exported `resolveTarget` in `src/core.ts` to `locateTarget` across a
-four-file TypeScript repository. The grader has 12 checks:
+## Pinned subjects
 
-- seven required edits: declaration, recursion, template interpolation, two
-  imports, a function-body call, and a module-top-level call;
-- four traps that must remain unchanged: a longer identifier, string literal,
-  comment, and unrelated module-local shadow;
-- one build gate: `tsc --noEmit` passes.
+- Weavatrix full surface: `weavatrix-refactor 1.0.5`, core `2.5.1`, refactor
+  engine `0.1.6`.
+- Weavatrix rename surface: local `1.0.6` candidate from this repository.
+- Serena: commit `f1d78a88cec2031d6b699c9944839979e9a0175d`.
+- Agent: Codex CLI `0.147.0-alpha.6.5`, model `gpt-5.6-sol`, reasoning effort
+  `medium`. The model and effort were explicit, not inferred from a default.
 
-## Two measurements, kept separate
+`gpt-5.6-sol` and medium effort were selected using the
+[official OpenAI model guidance](https://developers.openai.com/api/docs/guides/latest-model).
 
-The MCP rows are a deterministic **protocol-layer** benchmark: real server
-startup and tool wall time, plus the exact tokens exposed to an agent by
-`initialize`, `tools/list`, tool calls, and tool results. They exclude the
-agent model's common system prompt and planning loop.
+## Ground truth
 
-The naked row is a real **agent end-to-end** benchmark: Codex CLI with no MCP
-servers performs the task, edits files, and runs the compiler. Its cumulative
-usage includes repeated model invocations, built-in tool context, file reads,
-tool output, planning, and the final answer. Therefore its token totals are not
-placed in the MCP protocol table and no assumed tokens-per-second conversion is
-added to server time.
+The benchmark has equivalent TypeScript, Rust, and Python repositories. Each
+fixture requires seven symbol edits while preserving four traps:
 
-### MCP protocol layer
+- declaration, recursive call, nested interpolation/formatting call, two
+  imports, an ordinary call, and a module-level call must change;
+- a longer identifier, string literal, comment, and unrelated local shadow must
+  not change;
+- the language build or test gate must still pass.
 
-| Contender | Correctness | Session fixed context | Task result context | Task-call output | Startup median | Task median | Per-run total median |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| weavatrix-refactor 1.0.4 | **12/12 x3** | 9,170 tok | 2,521 tok | 574 tok | 235 ms | 744 ms | 1,236 ms |
-| weavatrix-refactor-js 0.1.6 | **12/12 x3** | 10,489 tok | 2,096 tok | 124 tok | 650 ms | 989 ms | 1,605 ms |
-| Serena, suggested flow | **7/12 x3** | 5,682 tok | 140 tok | 42 tok | 9,938 ms | 1,467 ms | 11,215 ms |
-| Serena, warmed by hand | **12/12 x1** | 5,682 tok | 674 tok | 103 tok | 18,816 ms | 16,989 ms | 35,805 ms |
+The independent grader therefore reports a score out of 12. Every contender
+gets a fresh fixture for every run.
 
-`Session fixed context` is the complete initialize response plus `tools/list`.
-Instructions are already inside initialize and are not added twice. The fixed
-breakdown is:
+## Two layers, deliberately not merged
 
-| Server | Initialize | Instructions within initialize | Tool catalog | Total fixed |
+The protocol layer executes fixed MCP call sequences with no model. It measures
+server startup/calls and counts exact `o200k_base` tokens for initialization,
+the catalog, tool arguments, and tool results.
+
+The agent layer runs a real coding agent end to end. Its `turn.completed` usage
+already includes the model host, repeated context, MCP catalog/instructions,
+tool calls, tool results, file operations, and planning. Protocol tokens are
+not added again. Cached input is shown as a subset of input, not subtracted.
+Each tool arm also carries a sanitized call audit: expected MCP server/method,
+call counts, manual file-change count, and source-writing command count. The
+harness rejects a tool arm that does not use its required rename method or that
+writes source outside that MCP. Arguments, results, paths, and event streams are
+not published.
+
+No tokens-per-second estimate is used anywhere.
+
+## Protocol layer: three runs per cell
+
+`Fixed input` is initialization plus the tool catalog. `Call output` is the
+model-side tool argument that a real agent would have to generate. `Result
+input` is the tool result added to its context.
+
+| Flow | Language | Correct runs | Median total | Fixed input | Call output | Result input | Total visible |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Weavatrix 1.0.5 full | TypeScript | **3/3** | **117 ms** | 9,331 | 124 | 2,295 | 11,752 |
+| Weavatrix 1.0.5 full | Rust | **3/3** | **81 ms** | 9,331 | 128 | 2,295 | 11,752 |
+| Weavatrix 1.0.5 full | Python | **3/3** | **133 ms** | 9,331 | 126 | 2,275 | 11,732 |
+| Serena suggested | TypeScript | **0/3** (7/12 each) | 6,890 ms | 5,682 | 42 | 140 | 5,864 |
+| Serena suggested | Rust | **3/3** | 13,539 ms | 5,682 | 42 | 140 | 5,864 |
+| Serena suggested | Python | **3/3** | 17,477 ms | 5,682 | 42 | 140 | 5,864 |
+| Serena warmed | TypeScript | **3/3** | 21,571 ms | 5,682 | 103 | 674 | 6,459 |
+| Serena warmed | Rust | **3/3** | 35,249 ms | 5,682 | 103 | 677 | 6,462 |
+| Serena warmed | Python | **3/3** | 16,169 ms | 5,682 | 103 | 646 | 6,431 |
+
+The suggested Serena flow is `find_symbol` then `rename_symbol`. On TypeScript
+it returned success after changing only the declaring file in all three runs;
+the cross-file imports and calls remained stale. That defect did not reproduce
+on the Rust or Python fixtures, so it is language-server-state dependent rather
+than a universal Serena failure. Manual diagnostics/reference warm-up restored
+TypeScript correctness, but cost substantially more time.
+
+## Agent layer: same model, three runs per cell
+
+| Arm | Language | Correct / operational | Median wall | Median input | Cached subset | Output | Reasoning output |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Naked Codex | TypeScript | **3/3 · 3/3** | **42,602 ms** | **72,169** | 56,064 | 1,043 | 64 |
+| Weavatrix full | TypeScript | **3/3 · 3/3** | 58,719 ms | 275,784 | 236,288 | 1,255 | 315 |
+| Serena | TypeScript | **3/3 · 3/3** | 68,728 ms | 388,271 | 340,480 | 1,387 | 381 |
+| Naked Codex | Rust | **3/3 · 3/3** | **38,502 ms** | **71,912** | 65,280 | 1,009 | 71 |
+| Weavatrix full | Rust | **3/3 · 3/3** | 65,088 ms | 395,712 | 349,184 | 2,013 | 514 |
+| Serena | Rust | **3/3 · 3/3** | 84,204 ms | 283,041 | 245,248 | 1,362 | 460 |
+| Naked Codex | Python | **3/3 · 3/3** | 98,780 ms | **237,239** | 207,360 | 2,943 | 436 |
+| Weavatrix full | Python | **3/3 · 3/3** | **96,633 ms** | 459,029 | 415,232 | 2,520 | 678 |
+| Serena | Python | **3/3 · 3/3** | 121,888 ms | 601,627 | 530,432 | 2,165 | 658 |
+
+The real Serena agent did better than the fixed suggested protocol: it loaded
+Serena's instructions, called `find_referencing_symbols`, and then renamed. That
+extra reasoning recovered 12/12 on TypeScript, but it also explains why the
+agent result is much larger than the two-call protocol result.
+
+## Measured rename-only surface
+
+The full Weavatrix catalog was the dominant repeatable cost. Version 1.0.6 adds
+`--profile=rename`, which exposes only `rename_symbol` and
+`rollback_last_apply`, refuses hidden tools, and gives the agent the exact
+bare-name → candidate → preview → apply workflow. It preserves hashes,
+`PARTIAL`, the write gate, the single-use token, and drift-safe rollback.
+
+Protocol result across nine runs:
+
+| Language | Correct runs | Median total | Fixed input | Total visible |
 | --- | ---: | ---: | ---: | ---: |
-| weavatrix-refactor | 79 tok | 21 tok | 9,091 tok | 9,170 tok |
-| weavatrix-refactor-js | 230 tok | 68 tok | 10,259 tok | 10,489 tok |
-| Serena | 122 tok | 29 tok | 5,560 tok | 5,682 tok |
+| TypeScript | **3/3** | 223 ms | **485** | 2,914 |
+| Rust | **3/3** | 333 ms | **485** | 2,908 |
+| Python | **3/3** | 459 ms | **485** | 2,885 |
 
-This exposes the real trade-off on the toy repository: after the 1.0.4 flow
-fixes, Weavatrix spends 3,095 task tokens, but its 54-tool catalog makes the
-one-session total 12,265 protocol-visible tokens. Serena's failed suggested
-flow spends only 5,864 total protocol-visible tokens; that lower number does
-not compensate for a silently broken build.
+The fixed catalog/context fell from 9,331 to 485 tokens (94.8%) without a
+correctness regression. A second, guided TypeScript agent A/B produced:
 
-### Real naked Codex agent
+| Arm | Correct runs | Median wall | Median input | Cached subset | Output |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Weavatrix 1.0.5 full | **3/3** | 58,719 ms | 275,784 | 236,288 | 1,255 |
+| Weavatrix 1.0.6 rename profile | **3/3** | **48,389 ms** | **108,155** | 83,456 | **799** |
+| Naked Codex | **3/3** | **42,602 ms** | **72,169** | 56,064 | 1,043 |
 
-Codex CLI `0.147.0-alpha.6.5` ran three fresh copies with `--ephemeral`,
-`--ignore-user-config`, `--ignore-rules`, and no MCP server. The CLI event stream
-did not expose the default model id, so the result records that limitation
-instead of guessing.
+The profile reduces Weavatrix median input by 60.8% and wall time by 17.6%
+versus the full surface. It still does not beat naked Codex on this toy
+TypeScript repository: it is 13.6% slower and uses 49.9% more input tokens.
 
-Two setup probes happened before the measured series and are excluded: the
-first copied only `codex.exe` without its companion command host, and the
-second used the default read-only sandbox. Neither completed the task or
-produced a scored run. The three rows below all use the final documented
-configuration and fresh fixture repositories.
+## Defects the expanded fixtures found
 
-| Run | Correctness | Wall time | Input tokens | Cached subset | Output tokens | Reasoning output |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | **12/12** | 33,638 ms | 71,363 | 52,224 | 927 | 67 |
-| 2 | **12/12** | 38,913 ms | 71,779 | 46,080 | 886 | 73 |
-| 3 | **12/12** | 38,475 ms | 70,566 | 52,224 | 886 | 49 |
-| **Median** | **12/12 x3** | **38,475 ms** | **71,363** | **52,224** | **886** | **67** |
+The cross-language expansion found two real Weavatrix evidence gaps before the
+1.0.6 release candidate:
 
-The previous 523-input/241-output-token, 13.11-ms number is retained only as a
-**deterministic mechanical oracle**: a hand-written script reads, decides, and
-rewrites the known fixture perfectly. It is not an agent benchmark. The real
-agent result is roughly 71K cumulative input tokens and 38.5 seconds on this
-setup, including its host context and multiple model/tool turns.
+- Rust calls inside standard formatting macros were omitted from rename edges;
+- Python recursive, module-level, and f-string expression calls were incomplete.
 
-## What the benchmark caught
-
-It found two shipping Weavatrix defects in one day. Version 1.0.1 changed a
-string literal because an import-widened textual scan did not distinguish code
-from quoted text. The first correction then missed a call inside a template
-interpolation because the tokenizer represented the whole template as one
-string token. Both failures now have regression tests; 1.0.3 and 1.0.4 score
-12/12 across all three protocol runs.
-
-It also caught Serena's cold-program boundary. The documented-looking flow,
-`find_symbol` then `rename_symbol`, answered “Successfully renamed (1 changes
-applied)” in all three runs after changing only the declaring file. Cross-file
-imports and calls retained the old name and TypeScript failed. Manually warming
-the language server with three extra calls produced 12/12 once, but took
-35,805 ms at the protocol layer and nothing in the normal result told an agent
-that the warm-up was required.
-
-## Product changes driven by the result
-
-The benchmark did not merely produce a score:
-
-- an ambiguous bare name now returns candidate ids in the refusal, removing the
-  25.9-KB `query_graph` detour from the measured flow;
-- apply can consume the plan-bound token without the agent echoing the complete
-  plan again;
-- retained rollback backups are centralized under
-  `.weavatrix/worktree` after the durable commit, while crash-time transaction
-  artifacts remain adjacent only until recovery no longer needs them.
-
-The first two changes are in `weavatrix-refactor 1.0.4`. The backup relocation
-is a `weavatrix-worktree` repository change and is not included in the published
-1.0.4 binary measurement above.
+Both were reproduced by the 12-check fixtures, fixed in the parser/core/refactor
+stack, and protected by regression tests. The benchmark is therefore serving
+its primary purpose: finding unsafe omissions before marketing them as speed.
 
 ## Safety comparison
 
-| Property | weavatrix-refactor | Serena | naked Codex agent |
+| Property | Weavatrix Refactor | Serena | Naked Codex |
 | --- | --- | --- | --- |
-| Ambiguous name | refuses with exact candidate ids | chooses the named file's match | prompt and model judgment |
-| Incomplete evidence | `PARTIAL` plus named uncertain references | success message with no expected-reference baseline | model must discover omissions |
-| Before writing | hash-bound preview; `STALE` if the tree moved | writes immediately | writes immediately |
+| Ambiguous name | refusal with exact candidate ids | path/name selection | model judgment |
+| Incomplete evidence | `PARTIAL` plus named uncertain references | no expected-reference baseline | model must detect it |
+| Before writing | hash-bound preview; stale trees refuse | immediate write | immediate write |
 | Authorization | env gate plus plan-bound single-use token | none | host policy |
-| Undo | retained crash-recoverable transaction | none | Git if the agent created a baseline |
+| Undo | retained, drift-checked rollback | none | Git only if prepared |
 
 ## Verdict
 
-On this fixture the naked Codex agent is correct, but it is neither 13 ms nor a
-few hundred tokens: the measured median is 38,475 ms and 71,363 cumulative input
-tokens. The Weavatrix native protocol flow is 12/12 with a 1,236-ms median
-transport path and 12,265 protocol-visible tokens including its full catalog,
-but an actual model-driven Weavatrix run was not measured here and no synthetic
-end-to-end latency is claimed. Serena's suggested flow is cheapest in tokens
-and still unusable because it silently leaves the repository uncompilable;
-manual warming restores correctness at a much higher measured time.
+The product is useful, but the honest value today is safe failure visibility and
+recovery, not a universal token or latency win. Naked Codex wins the small
+TypeScript and Rust agent tests. Weavatrix narrowly wins Python wall time while
+using more input. Serena is correct when the agent performs extra reference
+work, but is slower and substantially more context-heavy in this setup.
 
-The decisive product value remains failure visibility and recoverability, not a
-universal small-repository token win. The benchmark now reports exactly where
-each number comes from and keeps measured agent behavior, measured server
-mechanics, and deterministic scripting as three distinct evidence classes.
+The demonstrated contract is preview before write, named uncertainty,
+stale-plan refusal, explicit authorization, and rollback. The measured profile
+improvement does not show that Weavatrix is cheaper than a naked agent on small
+repositories.
