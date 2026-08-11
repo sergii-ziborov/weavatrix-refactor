@@ -3,13 +3,13 @@
   "name": "io.github.sergii-ziborov/weavatrix-refactor",
   "description": "Transactional refactoring MCP with 11 evidence-backed tools, hash-bound previews, and rollback.",
   "repository": {"url": "https://github.com/sergii-ziborov/weavatrix-refactor", "source": "github"},
-  "version": "1.0.4",
+  "version": "1.0.5",
   "websiteUrl": "https://weavatrix.com",
   "packages": [{
     "registryType": "npm",
     "registryBaseUrl": "https://registry.npmjs.org",
     "identifier": "weavatrix-refactor",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "runtimeHint": "npx",
     "transport": {"type": "stdio"},
     "packageArguments": [
@@ -24,7 +24,7 @@
       }
     ],
     "environmentVariables": [
-      {"name": "WEAVATRIX_ALLOW_SOURCE_EDITS", "description": "Set to 1 to authorize apply_edit_plan and rollback to write source files; unset, the refactor tools stay preview-only", "format": "string", "isRequired": false},
+      {"name": "WEAVATRIX_ALLOW_SOURCE_EDITS", "description": "Set to 1 to authorize confirmed apply operations and rollback to write source files; unset, the refactor tools stay preview-only", "format": "string", "isRequired": false},
       {"name": "WEAVATRIX_REFACTOR_HOME", "description": "Optional directory for the rollback snapshot store; defaults to a per-repo location", "format": "string", "isRequired": false},
       {"name": "WEAVATRIX_PRECISION", "description": "Core semantic precision: lsp (default) or off", "format": "string", "isRequired": false}
     ]

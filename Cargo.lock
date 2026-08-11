@@ -785,7 +785,7 @@ checksum = "45c35f7f17946d859ac88a0f318b8c1a22bb4c2969a0b435aa99cb0beee35697"
 
 [[package]]
 name = "weavatrix-refactor"
-version = "1.0.4"
+version = "1.0.5"
 dependencies = [
  "blazingly-json",
  "mcport",
@@ -833,9 +833,7 @@ dependencies = [
 
 [[package]]
 name = "weavatrix-rust-refactor"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0276778861e3f2dccf513468759ae103654c22973627e5d1e8c3110f48942899"
+version = "0.1.6"
 dependencies = [
  "blazingly-json",
  "regex",

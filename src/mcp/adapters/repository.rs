@@ -1,6 +1,6 @@
 use crate::mcp::ports::RepositoryPort;
 use crate::write_gate::WriteGate;
-use blazingly_json::{Value, json};
+use blazingly_json::Value;
 use std::collections::BTreeSet;
 use std::io;
 use std::path::{Path, PathBuf};
@@ -54,7 +54,6 @@ pub(crate) struct RefactorRepository {
     root: PathBuf,
     engine: Option<Weavatrix>,
     refactor_names: BTreeSet<String>,
-    gate: WriteGate,
     /// Confirmations live for the life of the server, not the call: a token issued by a preview
     /// has to still be there when the apply arrives.
     session: refactor::RefactorSession,
@@ -71,7 +70,6 @@ impl RefactorRepository {
             root,
             engine: Some(engine),
             refactor_names,
-            gate,
             session: refactor::RefactorSession::new(gate.is_open()),
         })
     }
@@ -100,25 +98,6 @@ impl RefactorRepository {
         }
         Ok(refreshed)
     }
-
-    /// Refuses a write before the operation runs, so a closed gate can never reach an engine
-    /// that would otherwise touch the working tree.
-    fn refuse_closed_gate(&self, name: &str) -> Option<Value> {
-        let writes = refactor::Operation::from_name(name).is_some_and(refactor::Operation::writes);
-        if !writes || self.gate.is_open() {
-            return None;
-        }
-        Some(json!({
-            "status": "WRITE_GATE_CLOSED",
-            "operation": name,
-            "gate": WriteGate::VARIABLE,
-            "reason": format!(
-                "the server was started without {}=1. Opening the write gate is a deliberate user \
-                 choice: preview and every read-only analysis stay available while it is closed.",
-                WriteGate::VARIABLE
-            ),
-        }))
-    }
 }
 
 impl RepositoryPort for RefactorRepository {
@@ -140,9 +119,6 @@ impl RepositoryPort for RefactorRepository {
 
     fn call(&mut self, name: &str, arguments: Value) -> Result<Value, String> {
         if self.refactor_names.contains(name) {
-            if let Some(refusal) = self.refuse_closed_gate(name) {
-                return Ok(refusal);
-            }
             self.ensure_loaded()?;
             let state = self
                 .engine

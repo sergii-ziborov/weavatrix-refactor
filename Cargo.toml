@@ -1,6 +1,6 @@
 ﻿[package]
 name = "weavatrix-refactor"
-version = "1.0.4"
+version = "1.0.5"
 edition = "2024"
 rust-version = "1.89"
 description = "Native MCP server for Weavatrix refactoring: proven edit plans, transactional application, and rollback"
@@ -20,7 +20,7 @@ blazingly-json = "0.1.0"
 mcport = "0.5.0"
 notify = "8.2.0"
 weavatrix-rust = { version = "2.4.0", features = ["full", "lang-rust"] }
-weavatrix-rust-refactor = "0.1.4"
+weavatrix-rust-refactor = { version = "0.1.6", path = "../weavatrix-rust-refactor" }
 
 [lints.rust]
 unsafe_code = "forbid"
